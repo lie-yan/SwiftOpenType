@@ -14,7 +14,13 @@ final class MathMetricsTests: XCTestCase {
         XCTAssertTrue(lmm.hasMathTable())
     }
 
+    func testMathConstant() {
+        XCTAssertEqual(MathConstants.scriptRatioScaleDown, 0)
+        XCTAssertEqual(MathConstants.scriptScriptRatioScaleDown, 1)
+    }
+
     static var allTests = [
         ("testTrivial", testTrivial),
+        ("testHasMathTable", testHasMathTable),
     ]
 }
