@@ -2,24 +2,77 @@ import CoreText
 
 extension CTFont {
     public func hasMathTable() -> Bool {
-        if getMathTableData(font: self) != nil {
+        if self.getMathTableData() != nil {
             return true
         }
         return false
     }
+
+    public var mathTable: MathTable? {
+        if self.getMathTableData() != nil {
+            let table = MathTable(font: self)
+            if table.majorVersion == 1 {
+                return table
+            }
+        }
+        return nil
+    }
+
+    func getMathTableData() -> CFData? {
+        CTFontCopyTable(self,
+                        CTFontTableTag(kCTFontTableMATH),
+                        CTFontTableOptions(rawValue: 0))
+    }
 }
 
-private func getMathTableData(font: CTFont) -> CFData? {
-    return CTFontCopyTable(font, CTFontTableTag(kCTFontTableMATH), CTFontTableOptions(rawValue: 0))
+public class MathTable {
+    let font: CTFont
+
+    fileprivate init(font: CTFont) {
+        self.font = font
+    }
+
+    /// Major version of the MATH table, = 1.
+    public var majorVersion: UInt16 {
+        readUnsigned16(offset: 0)
+    }
+
+    /// Minor version of the MATH table, = 0.
+    public var minorVersion: UInt16 {
+        readUnsigned16(offset: 2)
+    }
+
+    /// Offset to MathConstants table - from the beginning of MATH table.
+    public var mathConstantsOffset: Offset16 {
+        readUnsigned16(offset: 4)
+    }
+
+    /// Offset to MathGlyphInfo table - from the beginning of MATH table.
+    public var mathGlyphInfoOffset: Offset16 {
+        readUnsigned16(offset: 6)
+    }
+
+    /// Offset to MathVariants table - from the beginning of MATH table.
+    public var mathVariantsOffset: Offset16 {
+        readUnsigned16(offset: 8)
+    }
+
+    func readUnsigned16(offset: CFIndex) -> UInt16 {
+        let ptr = CFDataGetBytePtr(font.getMathTableData()!)!
+        return (ptr+offset).withMemoryRebound(to: UInt16.self, capacity: 1) {
+            $0.pointee.byteSwapped
+        }
+    }
 }
 
 typealias FWORD = Int16     // int16 that describes a quantity in font design units.
 typealias UFWORD = UInt16   // uint16 that describes a quantity in font design units.
-typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
+public typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
 
 struct MathValueRecord {
-    let value: FWORD
-    let deviceTable: Offset16
+    let value: FWORD          // The X or Y value in design units
+    let deviceTable: Offset16 // Offset to the device table — from the beginning of parent table.
+                              // May be NULL. Suggested format for device table is 1.
 
     init() {
         self.init(value: 0, deviceTable: 0)
@@ -99,8 +152,8 @@ class MathConstantsCache {
         radicalDegreeBottomRaisePercent = 0
     }
 
-    var percentScaleDown: [Int16] // count: 2
-    var minHeight: [UInt16] // count: 2
+    var percentScaleDown: [Int16]           // count: 2
+    var minHeight: [UFWORD]                 // count: 2
     var mathValueRecords: [MathValueRecord] // count: 51
-    var radicalDegreeBottomRaisePercent: Int16
+    var radicalDegreeBottomRaisePercent: Int16 // count: 1
 }

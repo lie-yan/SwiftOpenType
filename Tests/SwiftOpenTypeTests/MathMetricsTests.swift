@@ -12,6 +12,10 @@ final class MathMetricsTests: XCTestCase {
 
         let lmm = CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil)
         XCTAssertTrue(lmm.hasMathTable())
+
+        let mathTable = lmm.mathTable!
+        XCTAssertEqual(mathTable.majorVersion, 1)
+        XCTAssertEqual(mathTable.minorVersion, 0)
     }
 
     func testMathConstant() {
@@ -22,5 +26,6 @@ final class MathMetricsTests: XCTestCase {
     static var allTests = [
         ("testTrivial", testTrivial),
         ("testHasMathTable", testHasMathTable),
+        ("testMathConstant", testMathConstant),
     ]
 }
