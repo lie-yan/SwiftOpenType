@@ -1,13 +1,6 @@
 import CoreText
 
 extension CTFont {
-    public func hasMathTable() -> Bool {
-        if self.mathTable != nil {
-            return true
-        }
-        return false
-    }
-
     public var mathTable: MathTable? {
         if self.getMathTableData() != nil {
             let table = MathTable(font: self)

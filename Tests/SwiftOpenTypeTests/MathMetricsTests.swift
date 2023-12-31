@@ -8,10 +8,10 @@ final class MathMetricsTests: XCTestCase {
 
     func testHasMathTable() {
         let helv = CTFontCreateWithName("Helvetica" as CFString, 12.0, nil)
-        XCTAssertFalse(helv.hasMathTable())
+        XCTAssertFalse(helv.mathTable != nil)
 
         let lmm = CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil)
-        XCTAssertTrue(lmm.hasMathTable())
+        XCTAssertTrue(lmm.mathTable != nil)
 
         let mathTable = lmm.mathTable!
         XCTAssertEqual(mathTable.majorVersion, 1)
