@@ -2,7 +2,7 @@ import CoreText
 
 extension CTFont {
     public func hasMathTable() -> Bool {
-        if self.getMathTableData() != nil {
+        if self.mathTable != nil {
             return true
         }
         return false
