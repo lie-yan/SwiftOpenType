@@ -11,7 +11,7 @@ extension CTFont {
         return nil
     }
 
-    var pointsPerUnit: CGFloat {
+    var sizePerUnit: CGFloat {
         CTFontGetSize(self) / CGFloat(CTFontGetUnitsPerEm(self))
     }
 
@@ -69,11 +69,11 @@ public class MathTable {
         }
         else if (offset <= MathConstants.displayOperatorMinHeight) {
             let value = readUFWORD(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) * font.pointsPerUnit
+            return CGFloat(value) * font.sizePerUnit
         }
         else if (offset <= MathConstants.radicalKernAfterDegree) {
             let value = evalMathValueRecord(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) * font.pointsPerUnit
+            return CGFloat(value) * font.sizePerUnit
         }
         else if (offset == MathConstants.radicalDegreeBottomRaisePercent) {
             let value = readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
@@ -484,8 +484,7 @@ public class MathTable {
     /// Evaluate MathValueRecord, at the given (byte) offset
     func evalMathValueRecord(parentOffset: Offset16, offset: CFIndex) -> Int32 {
         let mathValueRecord = readMathValueRecord(parentOffset: parentOffset, offset: offset)
-        let deltaValue = readDeviceDelta(parentOffset: parentOffset,
-                                                deviceOffset: mathValueRecord.deviceOffset)
+        let deltaValue = readDeviceDelta(parentOffset: parentOffset, deviceOffset: mathValueRecord.deviceOffset)
         return Int32(mathValueRecord.value) + Int32(deltaValue)
     }
 }
