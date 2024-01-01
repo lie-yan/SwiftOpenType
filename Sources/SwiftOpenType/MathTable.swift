@@ -11,6 +11,10 @@ extension CTFont {
         return nil
     }
 
+    public var pointsPerUnit: CGFloat {
+        CTFontGetSize(self) / CGFloat(CTFontGetUnitsPerEm(self))
+    }
+
     func getMathTableData() -> CFData? {
         CTFontCopyTable(self,
                         CTFontTableTag(kCTFontTableMATH),
@@ -21,40 +25,128 @@ extension CTFont {
 public class MathTable {
     let font: CTFont
 
-    fileprivate init(font: CTFont) {
+    init(font: CTFont) {
         self.font = font
     }
 
+    // MARK: - Header fields
+
     /// Major version of the MATH table, = 1.
     public var majorVersion: UInt16 {
-        readUnsigned16(offset: 0)
+        readUInt16(offset: 0)
     }
 
     /// Minor version of the MATH table, = 0.
     public var minorVersion: UInt16 {
-        readUnsigned16(offset: 2)
+        readUInt16(offset: 2)
     }
 
     /// Offset to MathConstants table - from the beginning of MATH table.
     public var mathConstantsOffset: Offset16 {
-        readUnsigned16(offset: 4)
+        readOffset16(offset: 4)
     }
 
     /// Offset to MathGlyphInfo table - from the beginning of MATH table.
     public var mathGlyphInfoOffset: Offset16 {
-        readUnsigned16(offset: 6)
+        readOffset16(offset: 6)
     }
 
     /// Offset to MathVariants table - from the beginning of MATH table.
     public var mathVariantsOffset: Offset16 {
-        readUnsigned16(offset: 8)
+        readOffset16(offset: 8)
     }
 
-    func readUnsigned16(offset: CFIndex) -> UInt16 {
+    // MARK: - Math constants
+
+    /// Percentage of scaling down for level 1 superscripts and subscripts.
+    /// Suggested value: 80%.
+    public var scriptPercentScaleDown: CGFloat {
+        let offset = MathConstants.getByteOffset(offset: MathConstants.scriptPercentScaleDown)
+        return CGFloat(readInt16(parentOffset: mathConstantsOffset, offset: offset)) / 100
+    }
+
+    /// Percentage of scaling down for level 2 (scriptScript) superscripts and subscripts.
+    /// Suggested value: 60%.
+    public var scriptScriptPercentScaleDown: CGFloat {
+        let offset = MathConstants.getByteOffset(offset: MathConstants.scriptScriptPercentScaleDown)
+        return CGFloat(readInt16(parentOffset: mathConstantsOffset, offset: offset)) / 100
+    }
+
+    /// Minimum height required for a delimited expression (contained within parentheses, etc.)
+    /// to be treated as a sub-formula. Suggested value: normal line height × 1.5.
+    public var delimitedSubFormulaMinHeight: CGFloat {
+        let offset = MathConstants.getByteOffset(offset: MathConstants.delimitedSubFormulaMinHeight)
+        return CGFloat(readUFWORD(parentOffset: mathConstantsOffset, offset: offset)) * font.pointsPerUnit
+    }
+
+    // MARK: - Helpers
+
+    /// Read UInt16, in big-endian order, at the given (byte) offset
+    func readUInt16(offset: CFIndex) -> UInt16 {
         let ptr = CFDataGetBytePtr(font.getMathTableData()!)!
         return (ptr+offset).withMemoryRebound(to: UInt16.self, capacity: 1) {
             $0.pointee.byteSwapped
         }
+    }
+
+    /// Read Int16, in big-endian order, at the given (byte) offset
+    func readInt16(offset: CFIndex) -> Int16 {
+        let ptr = CFDataGetBytePtr(font.getMathTableData()!)!
+        return (ptr+offset).withMemoryRebound(to: Int16.self, capacity: 1) {
+            $0.pointee.byteSwapped
+        }
+    }
+
+    /// Read Offset16, at the given (byte) offset
+    func readOffset16(offset: CFIndex) -> Offset16 {
+        readUInt16(offset: offset)
+    }
+
+    /// Read FWORD, at the given (byte) offset
+    func readFWORD(offset: CFIndex) -> FWORD {
+        readInt16(offset: offset)
+    }
+
+    /// Read UFWORD, at the given (byte) offset
+    func readUFWORD(offset: CFIndex) -> UFWORD {
+        readUInt16(offset: offset)
+    }
+
+    /// Read MathValueRecord, at the given (byte) offset
+    func readMathValueRecord(offset: CFIndex) -> MathValueRecord {
+        let value = readFWORD(offset: offset)
+        let deviceTable = readOffset16(offset: offset + 2)
+        return MathValueRecord(value: value, deviceTable: deviceTable)
+    }
+
+    /// Read Int16, at the given (byte) offset
+    func readInt16(parentOffset: Offset16, offset: CFIndex) -> Int16 {
+        readInt16(offset: CFIndex(parentOffset) + offset)
+    }
+
+    /// Read UInt16, at the given (byte) offset
+    func readUInt16(parentOffset: Offset16, offset: CFIndex) -> UInt16 {
+        readUInt16(offset: CFIndex(parentOffset) + offset)
+    }
+
+    /// Read Offset16, at the given (byte) offset
+    func readOffset16(parentOffset: Offset16, offset: CFIndex) -> Offset16 {
+        readOffset16(offset: CFIndex(parentOffset) + offset)
+    }
+
+    /// Read FWORD, at the given (byte) offset
+    func readFWORD(parentOffset: Offset16, offset: CFIndex) -> FWORD {
+        readFWORD(offset: CFIndex(parentOffset) + offset)
+    }
+
+    /// Read UFWORD, at the given (byte) offset
+    func readUFWORD(parentOffset: Offset16, offset: CFIndex) -> UFWORD {
+        readUFWORD(offset: CFIndex(parentOffset) + offset)
+    }
+
+    /// Read MathValueRecord, at the given (byte) offset
+    func readMathValueRecord(parentOffset: Offset16, offset: CFIndex) -> MathValueRecord {
+        readMathValueRecord(offset: CFIndex(parentOffset) + offset)
     }
 }
 
@@ -79,8 +171,8 @@ struct MathValueRecord {
 
 public enum MathConstants {
     public static let
-        scriptRatioScaleDown = 0,
-        scriptScriptRatioScaleDown = 1,
+        scriptPercentScaleDown = 0,
+        scriptScriptPercentScaleDown = 1,
         delimitedSubFormulaMinHeight = 2,
         displayOperatorMinHeight = 3,
         mathLeading = 4,
@@ -135,13 +227,24 @@ public enum MathConstants {
         radicalKernBeforeDegree = 53,
         radicalKernAfterDegree = 54,
         radicalDegreeBottomRaiseRatio = 55
+
+    public static func getByteOffset(offset: CFIndex) -> CFIndex {
+        precondition(0 <= offset && offset <= radicalDegreeBottomRaiseRatio)
+
+        if (offset < mathLeading) {
+            return offset * 2
+        }
+        else {
+            return mathLeading * 2 + (offset - mathLeading) * 4
+        }
+    }
 }
 
 class MathConstantsCache {
     init() {
-        percentScaleDown = Array<Int16>(repeating: 0, count: 2)
-        minHeight = Array<UInt16>(repeating: 0, count: 2)
-        mathValueRecords = Array<MathValueRecord>(repeating: MathValueRecord(), count: 51)
+        percentScaleDown = [Int16](repeating: 0, count: 2)
+        minHeight = [UFWORD](repeating: 0, count: 2)
+        mathValueRecords = [MathValueRecord](repeating: MathValueRecord(), count: 51)
         radicalDegreeBottomRaisePercent = 0
     }
 
