@@ -23,8 +23,8 @@ final class MathTableTests: XCTestCase {
         let commonGap: CGFloat = 1.44
         let eps: CGFloat = 1e-15
 
-        XCTAssertEqual(mathTable.scriptPercentScaleDown, 70)
-        XCTAssertEqual(mathTable.scriptScriptPercentScaleDown, 50)
+        XCTAssertEqual(mathTable.scriptPercentScaleDown, 0.7)
+        XCTAssertEqual(mathTable.scriptScriptPercentScaleDown, 0.5)
 
         XCTAssertEqual(mathTable.delimitedSubFormulaMinHeight, 15.6)
         XCTAssertEqual(mathTable.displayOperatorMinHeight, 15.6)
@@ -90,7 +90,7 @@ final class MathTableTests: XCTestCase {
         XCTAssertEqual(mathTable.radicalKernBeforeDegree, 3.336)
         XCTAssertEqual(mathTable.radicalKernAfterDegree, -6.672)
 
-        XCTAssertEqual(mathTable.radicalDegreeBottomRaisePercent, 60)
+        XCTAssertEqual(mathTable.radicalDegreeBottomRaisePercent, 0.6)
     }
 
     static var allTests = [

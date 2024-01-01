@@ -29,7 +29,7 @@ public class MathTable {
         self.font = font
     }
 
-// MARK: - Header fields
+    // MARK: - Header fields
 
     /// Major version of the MATH table, = 1.
     public var majorVersion: UInt16 {
@@ -42,48 +42,70 @@ public class MathTable {
     }
 
     /// Offset to MathConstants table - from the beginning of MATH table.
-    public var mathConstantsOffset: Offset16 {
+    var mathConstantsOffset: Offset16 {
         readOffset16(offset: 4)
     }
 
     /// Offset to MathGlyphInfo table - from the beginning of MATH table.
-    public var mathGlyphInfoOffset: Offset16 {
+    var mathGlyphInfoOffset: Offset16 {
         readOffset16(offset: 6)
     }
 
     /// Offset to MathVariants table - from the beginning of MATH table.
-    public var mathVariantsOffset: Offset16 {
+    var mathVariantsOffset: Offset16 {
         readOffset16(offset: 8)
     }
 
-// MARK: - Math constants
+    // MARK: - Math constants
+
+    public func getMathConstant(offset: CFIndex) -> CGFloat {
+        precondition(offset >= 0 && offset <= MathConstants.radicalDegreeBottomRaisePercent)
+
+        let byteOffset = MathConstants.getByteOffset(offset: offset)
+
+        if (offset <= MathConstants.scriptScriptPercentScaleDown) {
+            let value = readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
+            return CGFloat(value) / 100
+        }
+        else if (offset <= MathConstants.displayOperatorMinHeight) {
+            let value = readUFWORD(parentOffset: mathConstantsOffset, offset: byteOffset)
+            return CGFloat(value) * font.pointsPerUnit
+        }
+        else if (offset <= MathConstants.radicalKernAfterDegree) {
+            let value = evalMathValueRecord(parentOffset: mathConstantsOffset, offset: byteOffset)
+            return CGFloat(value) * font.pointsPerUnit
+        }
+        else if (offset == MathConstants.radicalDegreeBottomRaisePercent) {
+            let value = readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
+            return CGFloat(value) / 100
+        }
+        else {
+            return 0
+        }
+    }
 
     /// Percentage of scaling down for level 1 superscripts and subscripts.
     /// Suggested value: 80%.
-    public var scriptPercentScaleDown: Int16 {
-        let offset = MathConstants.getByteOffset(offset: MathConstants.scriptPercentScaleDown)
-        return readInt16(parentOffset: mathConstantsOffset, offset: offset)
+    public var scriptPercentScaleDown: CGFloat {
+        getMathConstant(offset: MathConstants.scriptPercentScaleDown)
     }
 
     /// Percentage of scaling down for level 2 (scriptScript) superscripts and subscripts.
     /// Suggested value: 60%.
-    public var scriptScriptPercentScaleDown: Int16 {
-        let offset = MathConstants.getByteOffset(offset: MathConstants.scriptScriptPercentScaleDown)
-        return readInt16(parentOffset: mathConstantsOffset, offset: offset)
+    public var scriptScriptPercentScaleDown: CGFloat {
+        getMathConstant(offset: MathConstants.scriptScriptPercentScaleDown)
     }
 
     /// Minimum height required for a delimited expression (contained within parentheses, etc.)
     /// to be treated as a sub-formula. Suggested value: normal line height × 1.5.
     public var delimitedSubFormulaMinHeight: CGFloat {
-        let offset = MathConstants.getByteOffset(offset: MathConstants.delimitedSubFormulaMinHeight)
-        return CGFloat(readUFWORD(parentOffset: mathConstantsOffset, offset: offset)) * font.pointsPerUnit
+        getMathConstant(offset: MathConstants.delimitedSubFormulaMinHeight)
     }
 
     /// Minimum height of n-ary operators (such as integral and summation) for formulas in display
     /// mode (that is, appearing as standalone page elements, not embedded inline within text).
     public var displayOperatorMinHeight: CGFloat {
-        let offset = MathConstants.getByteOffset(offset: MathConstants.displayOperatorMinHeight)
-        return CGFloat(readUFWORD(parentOffset: mathConstantsOffset, offset: offset)) * font.pointsPerUnit
+        getMathConstant(offset: MathConstants.displayOperatorMinHeight)
     }
 
     /// White space to be left between math formulas to ensure proper line spacing.
@@ -379,12 +401,11 @@ public class MathTable {
 
     /// Height of the bottom of the radical degree, if such is present,
     /// in proportion to the ascender of the radical sign. Suggested: 60%.
-    public var radicalDegreeBottomRaisePercent: Int16 {
-        let offset = MathConstants.getByteOffset(offset: MathConstants.radicalDegreeBottomRaisePercent)
-        return readInt16(parentOffset: mathConstantsOffset, offset: offset)
+    public var radicalDegreeBottomRaisePercent: CGFloat {
+        getMathConstant(offset: MathConstants.radicalDegreeBottomRaisePercent)
     }
 
-// MARK: - Helpers
+    // MARK: - Helpers
 
     /// Read UInt16, in big-endian order, at the given (byte) offset
     func readUInt16(offset: CFIndex) -> UInt16 {
@@ -461,24 +482,17 @@ public class MathTable {
     }
 
     /// Evaluate MathValueRecord, at the given (byte) offset
-    func evalMathValueRecord(parentOffset: Offset16, offset: CFIndex) -> CGFloat {
+    func evalMathValueRecord(parentOffset: Offset16, offset: CFIndex) -> Int32 {
         let mathValueRecord = readMathValueRecord(parentOffset: parentOffset, offset: offset)
-        let adjustment = readDeviceDelta(parentOffset: parentOffset, deviceOffset: mathValueRecord.deviceOffset)
-        return CGFloat(mathValueRecord.value + adjustment) * font.pointsPerUnit
-    }
-
-    /// Evaluate the math constant that is stored as MathValueRecord
-    func getMathConstant(offset: CFIndex) -> CGFloat {
-        precondition(MathConstants.mathLeading <= offset && offset <= MathConstants.radicalKernAfterDegree)
-
-        let byteOffset = MathConstants.getByteOffset(offset: offset)
-        return evalMathValueRecord(parentOffset: mathConstantsOffset, offset: byteOffset)
+        let deltaValue = readDeviceDelta(parentOffset: parentOffset,
+                                                deviceOffset: mathValueRecord.deviceOffset)
+        return Int32(mathValueRecord.value) + Int32(deltaValue)
     }
 }
 
 typealias FWORD = Int16     // int16 that describes a quantity in font design units.
 typealias UFWORD = UInt16   // uint16 that describes a quantity in font design units.
-public typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
+typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
 
 struct MathValueRecord {
     let value: FWORD           // The X or Y value in design units
@@ -564,7 +578,7 @@ public enum MathConstants {
         radicalDegreeBottomRaisePercent = 55
 
     /// Given element offset, return byte offset
-    public static func getByteOffset(offset: CFIndex) -> CFIndex {
+    static func getByteOffset(offset: CFIndex) -> CFIndex {
         precondition(offset >= 0 && offset <= radicalDegreeBottomRaisePercent)
 
         if (offset < mathLeading) {
@@ -574,44 +588,4 @@ public enum MathConstants {
             return mathLeading * 2 + (offset - mathLeading) * 4
         }
     }
-}
-
-class MathConstantsCache {
-    init() {
-        let count = MathConstants.radicalKernAfterDegree - MathConstants.mathLeading + 1
-        assert(count == 51)
-
-        percentScaleDown = [Int16](repeating: 0, count: 2)
-        minHeight = [CGFloat](repeating: 0, count: 2)
-        mathValueRecords = [CGFloat](repeating: 0, count: count)
-        radicalDegreeBottomRaisePercent = 0
-    }
-
-    init(font: CTFont) {
-        let count = MathConstants.radicalKernAfterDegree - MathConstants.mathLeading + 1
-        assert(count == 51)
-
-        if let mathTable = font.mathTable {
-            percentScaleDown = [mathTable.scriptPercentScaleDown, mathTable.scriptScriptPercentScaleDown]
-            minHeight = [mathTable.delimitedSubFormulaMinHeight, mathTable.displayOperatorMinHeight]
-
-            mathValueRecords = [CGFloat](repeating: 0, count: count)
-            for i in 0...count-1 {
-                mathValueRecords[i] = mathTable.getMathConstant(offset: i + MathConstants.mathLeading)
-            }
-
-            radicalDegreeBottomRaisePercent = mathTable.radicalDegreeBottomRaisePercent
-        }
-        else {
-            percentScaleDown = [Int16](repeating: 0, count: 2)
-            minHeight = [CGFloat](repeating: 0, count: 2)
-            mathValueRecords = [CGFloat](repeating: 0, count: count)
-            radicalDegreeBottomRaisePercent = 0
-        }
-    }
-
-    var percentScaleDown: [Int16]   // count: 2
-    var minHeight: [CGFloat]        // count: 2
-    var mathValueRecords: [CGFloat] // count: 51
-    var radicalDegreeBottomRaisePercent: Int16 // count: 1
 }
