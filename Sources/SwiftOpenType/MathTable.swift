@@ -154,7 +154,117 @@ public class MathTable {
         readOffset16(offset: 8)
     }
 
-    // MARK: - Math constants
+    /// MARK: - Sub-tables
+
+    public var mathConstantsTable: MathConstantsTable {
+        MathConstantsTable(mathTable: self, mathConstantsOffset: mathConstantsOffset)
+    }
+
+    public var mathGlyphInfoTable: MathGlyphInfoTable {
+        MathGlyphInfoTable(mathTable: self, mathGlyphInfoOffset: mathGlyphInfoOffset)
+    }
+
+    // MARK: - Helpers
+
+    /// Read UInt16, in big-endian order, at the given (byte) offset
+    func readUInt16(offset: CFIndex) -> UInt16 {
+        let ptr = CFDataGetBytePtr(font.getMathTableData()!)!
+        return (ptr+offset).withMemoryRebound(to: UInt16.self, capacity: 1) {
+            $0.pointee.byteSwapped
+        }
+    }
+
+    /// Read Int16, in big-endian order, at the given (byte) offset
+    func readInt16(offset: CFIndex) -> Int16 {
+        let ptr = CFDataGetBytePtr(font.getMathTableData()!)!
+        return (ptr+offset).withMemoryRebound(to: Int16.self, capacity: 1) {
+            $0.pointee.byteSwapped
+        }
+    }
+
+    /// Read Offset16, at the given (byte) offset
+    func readOffset16(offset: CFIndex) -> Offset16 {
+        readUInt16(offset: offset)
+    }
+
+    /// Read FWORD, at the given (byte) offset
+    func readFWORD(offset: CFIndex) -> FWORD {
+        readInt16(offset: offset)
+    }
+
+    /// Read UFWORD, at the given (byte) offset
+    func readUFWORD(offset: CFIndex) -> UFWORD {
+        readUInt16(offset: offset)
+    }
+
+    /// Read MathValueRecord, at the given (byte) offset
+    func readMathValueRecord(offset: CFIndex) -> MathValueRecord {
+        let value = readFWORD(offset: offset)
+        let deviceOffset = readOffset16(offset: offset + 2)
+        return MathValueRecord(value: value, deviceOffset: deviceOffset)
+    }
+
+    /// Read Int16, at the given (byte) offset
+    func readInt16(parentOffset: Offset16, offset: CFIndex) -> Int16 {
+        readInt16(offset: CFIndex(parentOffset) + offset)
+    }
+
+    /// Read UInt16, at the given (byte) offset
+    func readUInt16(parentOffset: Offset16, offset: CFIndex) -> UInt16 {
+        readUInt16(offset: CFIndex(parentOffset) + offset)
+    }
+
+    /// Read Offset16, at the given (byte) offset
+    func readOffset16(parentOffset: Offset16, offset: CFIndex) -> Offset16 {
+        readOffset16(offset: CFIndex(parentOffset) + offset)
+    }
+
+    /// Read FWORD, at the given (byte) offset
+    func readFWORD(parentOffset: Offset16, offset: CFIndex) -> FWORD {
+        readFWORD(offset: CFIndex(parentOffset) + offset)
+    }
+
+    /// Read UFWORD, at the given (byte) offset
+    func readUFWORD(parentOffset: Offset16, offset: CFIndex) -> UFWORD {
+        readUFWORD(offset: CFIndex(parentOffset) + offset)
+    }
+
+    /// Read MathValueRecord, at the given (byte) offset
+    func readMathValueRecord(parentOffset: Offset16, offset: CFIndex) -> MathValueRecord {
+        readMathValueRecord(offset: CFIndex(parentOffset) + offset)
+    }
+
+    /// Read adjustment from device table
+    func readDeviceDelta(parentOffset: Offset16, deviceOffset: Offset16) -> Int16 {
+        // TODO: add device delta
+        if (deviceOffset != 0) {
+            print("device table present at offset \(parentOffset): \(deviceOffset); \(font)")
+            let deviceTable = parentOffset + deviceOffset
+            let startSize = readUInt16(parentOffset: deviceTable, offset: 0)
+            let endSize = readUInt16(parentOffset: deviceTable, offset: 2)
+            let deltaFormat = readUInt16(parentOffset: deviceTable, offset: 4)
+            let first16 = readUInt16(parentOffset: deviceTable, offset: 6)
+            print(" sizes: \(startSize) to \(endSize); format: \(deltaFormat); first word: \(first16)")
+        }
+        return 0
+    }
+
+    /// Evaluate MathValueRecord, at the given (byte) offset
+    func evalMathValueRecord(parentOffset: Offset16, offset: CFIndex) -> Int32 {
+        let mathValueRecord = readMathValueRecord(parentOffset: parentOffset, offset: offset)
+        let deltaValue = readDeviceDelta(parentOffset: parentOffset, deviceOffset: mathValueRecord.deviceOffset)
+        return Int32(mathValueRecord.value) + Int32(deltaValue)
+    }
+}
+
+public class MathConstantsTable {
+    let mathConstantsOffset: Offset16
+    let mathTable: MathTable
+
+    init(mathTable: MathTable, mathConstantsOffset: Offset16) {
+        self.mathTable = mathTable
+        self.mathConstantsOffset = mathConstantsOffset
+    }
 
     public func getMathConstant(offset: CFIndex) -> CGFloat {
         precondition(offset >= 0 && offset <= MathConstants.radicalDegreeBottomRaisePercent)
@@ -162,19 +272,19 @@ public class MathTable {
         let byteOffset = MathConstants.getByteOffset(offset: offset)
 
         if (offset <= MathConstants.scriptScriptPercentScaleDown) {
-            let value = readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
+            let value = mathTable.readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
             return CGFloat(value) / 100
         }
         else if (offset <= MathConstants.displayOperatorMinHeight) {
-            let value = readUFWORD(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) * font.sizePerUnit
+            let value = mathTable.readUFWORD(parentOffset: mathConstantsOffset, offset: byteOffset)
+            return CGFloat(value) * mathTable.font.sizePerUnit
         }
         else if (offset <= MathConstants.radicalKernAfterDegree) {
-            let value = evalMathValueRecord(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) * font.sizePerUnit
+            let value = mathTable.evalMathValueRecord(parentOffset: mathConstantsOffset, offset: byteOffset)
+            return CGFloat(value) * mathTable.font.sizePerUnit
         }
         else if (offset == MathConstants.radicalDegreeBottomRaisePercent) {
-            let value = readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
+            let value = mathTable.readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
             return CGFloat(value) / 100
         }
         else {
@@ -405,117 +515,6 @@ public class MathTable {
     public var radicalDegreeBottomRaisePercent: CGFloat {
         getMathConstant(offset: MathConstants.radicalDegreeBottomRaisePercent)
     }
-
-    // MARK: - Helpers
-
-    /// Read UInt16, in big-endian order, at the given (byte) offset
-    func readUInt16(offset: CFIndex) -> UInt16 {
-        let ptr = CFDataGetBytePtr(font.getMathTableData()!)!
-        return (ptr+offset).withMemoryRebound(to: UInt16.self, capacity: 1) {
-            $0.pointee.byteSwapped
-        }
-    }
-
-    /// Read Int16, in big-endian order, at the given (byte) offset
-    func readInt16(offset: CFIndex) -> Int16 {
-        let ptr = CFDataGetBytePtr(font.getMathTableData()!)!
-        return (ptr+offset).withMemoryRebound(to: Int16.self, capacity: 1) {
-            $0.pointee.byteSwapped
-        }
-    }
-
-    /// Read Offset16, at the given (byte) offset
-    func readOffset16(offset: CFIndex) -> Offset16 {
-        readUInt16(offset: offset)
-    }
-
-    /// Read FWORD, at the given (byte) offset
-    func readFWORD(offset: CFIndex) -> FWORD {
-        readInt16(offset: offset)
-    }
-
-    /// Read UFWORD, at the given (byte) offset
-    func readUFWORD(offset: CFIndex) -> UFWORD {
-        readUInt16(offset: offset)
-    }
-
-    /// Read MathValueRecord, at the given (byte) offset
-    func readMathValueRecord(offset: CFIndex) -> MathValueRecord {
-        let value = readFWORD(offset: offset)
-        let deviceOffset = readOffset16(offset: offset + 2)
-        return MathValueRecord(value: value, deviceOffset: deviceOffset)
-    }
-
-    /// Read Int16, at the given (byte) offset
-    func readInt16(parentOffset: Offset16, offset: CFIndex) -> Int16 {
-        readInt16(offset: CFIndex(parentOffset) + offset)
-    }
-
-    /// Read UInt16, at the given (byte) offset
-    func readUInt16(parentOffset: Offset16, offset: CFIndex) -> UInt16 {
-        readUInt16(offset: CFIndex(parentOffset) + offset)
-    }
-
-    /// Read Offset16, at the given (byte) offset
-    func readOffset16(parentOffset: Offset16, offset: CFIndex) -> Offset16 {
-        readOffset16(offset: CFIndex(parentOffset) + offset)
-    }
-
-    /// Read FWORD, at the given (byte) offset
-    func readFWORD(parentOffset: Offset16, offset: CFIndex) -> FWORD {
-        readFWORD(offset: CFIndex(parentOffset) + offset)
-    }
-
-    /// Read UFWORD, at the given (byte) offset
-    func readUFWORD(parentOffset: Offset16, offset: CFIndex) -> UFWORD {
-        readUFWORD(offset: CFIndex(parentOffset) + offset)
-    }
-
-    /// Read MathValueRecord, at the given (byte) offset
-    func readMathValueRecord(parentOffset: Offset16, offset: CFIndex) -> MathValueRecord {
-        readMathValueRecord(offset: CFIndex(parentOffset) + offset)
-    }
-
-    /// Read adjustment from device table
-    func readDeviceDelta(parentOffset: Offset16, deviceOffset: Offset16) -> Int16 {
-        // TODO: add device delta
-        if (deviceOffset != 0) {
-            print("device table present at offset \(parentOffset): \(deviceOffset); \(font)")
-            let deviceTable = parentOffset + deviceOffset
-            let startSize = readUInt16(parentOffset: deviceTable, offset: 0)
-            let endSize = readUInt16(parentOffset: deviceTable, offset: 2)
-            let deltaFormat = readUInt16(parentOffset: deviceTable, offset: 4)
-            let first16 = readUInt16(parentOffset: deviceTable, offset: 6)
-            print(" sizes: \(startSize) to \(endSize); format: \(deltaFormat); first word: \(first16)")
-        }
-        return 0
-    }
-
-    /// Evaluate MathValueRecord, at the given (byte) offset
-    func evalMathValueRecord(parentOffset: Offset16, offset: CFIndex) -> Int32 {
-        let mathValueRecord = readMathValueRecord(parentOffset: parentOffset, offset: offset)
-        let deltaValue = readDeviceDelta(parentOffset: parentOffset, deviceOffset: mathValueRecord.deviceOffset)
-        return Int32(mathValueRecord.value) + Int32(deltaValue)
-    }
-}
-
-typealias FWORD = Int16     // int16 that describes a quantity in font design units.
-typealias UFWORD = UInt16   // uint16 that describes a quantity in font design units.
-typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
-
-struct MathValueRecord {
-    let value: FWORD           // The X or Y value in design units
-    let deviceOffset: Offset16 // Offset to the device table — from the beginning of parent table.
-                               // May be NULL. Suggested format for device table is 1.
-
-    init() {
-        self.init(value: 0, deviceOffset: 0)
-    }
-
-    init(value: FWORD, deviceOffset: Offset16) {
-        self.value = value
-        self.deviceOffset = deviceOffset
-    }
 }
 
 /**
@@ -605,3 +604,59 @@ public enum MathConstants {
         }
     }
 }
+
+public class MathGlyphInfoTable {
+    let mathGlyphInfoOffset: Offset16
+    let mathTable: MathTable
+
+    init(mathTable: MathTable, mathGlyphInfoOffset: Offset16) {
+        self.mathTable = mathTable
+        self.mathGlyphInfoOffset = mathGlyphInfoOffset
+    }
+
+    /// MARK: - Header fields
+
+    /// Offset to MathItalicsCorrectionInfo table, from the beginning of the MathGlyphInfo table.
+    var mathItalicsCorrectionInfoOffset: Offset16 {
+        mathTable.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 0)
+    }
+
+    /// Offset to MathTopAccentAttachment table, from the beginning of the MathGlyphInfo table.
+    var mathTopAccentAttachmentOffset: Offset16 {
+        mathTable.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 2)
+    }
+
+    /// Offset to ExtendedShapes coverage table, from the beginning of the MathGlyphInfo table.
+    /// When the glyph to the left or right of a box is an extended shape variant, the (ink) box
+    /// should be used for vertical positioning purposes, not the default position defined by
+    /// values in MathConstants table. May be NULL.
+    var extendedShapeCoverageOffset: Offset16 {
+        mathTable.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 4)
+    }
+
+    /// Offset to MathKernInfo table, from the beginning of the MathGlyphInfo table.
+    var mathKernInfoOffset: Offset16 {
+        mathTable.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 6)
+    }
+}
+
+typealias FWORD = Int16     // int16 that describes a quantity in font design units.
+typealias UFWORD = UInt16   // uint16 that describes a quantity in font design units.
+typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
+
+struct MathValueRecord {
+    let value: FWORD           // The X or Y value in design units
+    let deviceOffset: Offset16 // Offset to the device table — from the beginning of parent table.
+                               // May be NULL. Suggested format for device table is 1.
+
+    init() {
+        self.init(value: 0, deviceOffset: 0)
+    }
+
+    init(value: FWORD, deviceOffset: Offset16) {
+        self.value = value
+        self.deviceOffset = deviceOffset
+    }
+}
+
+
