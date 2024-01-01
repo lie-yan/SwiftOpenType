@@ -88,76 +88,76 @@ public class MathTable {
 
     /// White space to be left between math formulas to ensure proper line spacing.
     public var mathLeading: CGFloat {
-        evalMathConstant(offset: MathConstants.mathLeading)
+        getMathConstant(offset: MathConstants.mathLeading)
     }
 
     /// Axis height of the font.
     public var axisHeight: CGFloat {
-        evalMathConstant(offset: MathConstants.axisHeight)
+        getMathConstant(offset: MathConstants.axisHeight)
     }
 
     /// Maximum (ink) height of accent base that does not require raising the accents.
     public var accentBaseHeight: CGFloat {
-        evalMathConstant(offset: MathConstants.accentBaseHeight)
+        getMathConstant(offset: MathConstants.accentBaseHeight)
     }
 
     /// Maximum (ink) height of accent base that does not require flattening the accents.
     public var flattenedAccentBaseHeight: CGFloat {
-        evalMathConstant(offset: MathConstants.flattenedAccentBaseHeight)
+        getMathConstant(offset: MathConstants.flattenedAccentBaseHeight)
     }
 
     /// The standard shift down applied to subscript elements. Positive for moving in the downward direction.
     public var subscriptShiftDown: CGFloat {
-        evalMathConstant(offset: MathConstants.subscriptShiftDown)
+        getMathConstant(offset: MathConstants.subscriptShiftDown)
     }
 
     /// Maximum allowed height of the (ink) top of subscripts that does not require moving
     /// subscripts further down. Suggested: 4/5 x- height.
     public var subscriptTopMax: CGFloat {
-        evalMathConstant(offset: MathConstants.subscriptTopMax)
+        getMathConstant(offset: MathConstants.subscriptTopMax)
     }
 
     /// Minimum allowed drop of the baseline of subscripts relative to the (ink) bottom of the base.
     /// Checked for bases that are treated as a box or extended shape. Positive for subscript
     /// baseline dropped below the base bottom.
     public var subscriptBaselineDropMin: CGFloat {
-        evalMathConstant(offset: MathConstants.subscriptBaselineDropMin)
+        getMathConstant(offset: MathConstants.subscriptBaselineDropMin)
     }
 
     /// Standard shift up applied to superscript elements.
     public var superscriptShiftUp: CGFloat {
-        evalMathConstant(offset: MathConstants.superscriptShiftUp)
+        getMathConstant(offset: MathConstants.superscriptShiftUp)
     }
 
     /// Standard shift of superscripts relative to the base, in cramped style.
     public var superscriptShiftUpCramped: CGFloat {
-        evalMathConstant(offset: MathConstants.superscriptShiftUpCramped)
+        getMathConstant(offset: MathConstants.superscriptShiftUpCramped)
     }
 
     /// Minimum allowed height of the (ink) bottom of superscripts that does not require moving
     /// subscripts further up. Suggested: ¼ x-height.
     public var superscriptBottomMin: CGFloat {
-        evalMathConstant(offset: MathConstants.superscriptBottomMin)
+        getMathConstant(offset: MathConstants.superscriptBottomMin)
     }
 
     /// Maximum allowed drop of the baseline of superscripts relative to the (ink) top of the base.
     /// Checked for bases that are treated as a box or extended shape.
     /// Positive for superscript baseline below the base top.
     public var superscriptBaselineDropMax: CGFloat {
-        evalMathConstant(offset: MathConstants.superscriptBaselineDropMax)
+        getMathConstant(offset: MathConstants.superscriptBaselineDropMax)
     }
 
     /// Minimum gap between the superscript and subscript ink.
     /// Suggested: 4 × default rule thickness.
     public var subSuperscriptGapMin: CGFloat {
-        evalMathConstant(offset: MathConstants.subSuperscriptGapMin)
+        getMathConstant(offset: MathConstants.subSuperscriptGapMin)
     }
 
     /// The maximum level to which the (ink) bottom of superscript can be pushed to increase the gap
     /// between superscript and subscript, before subscript starts being moved down.
     /// Suggested: 4/5 x-height.
     public var superscriptBottomMaxWithSubscript: CGFloat {
-        evalMathConstant(offset: MathConstants.superscriptBottomMaxWithSubscript)
+        getMathConstant(offset: MathConstants.superscriptBottomMaxWithSubscript)
     }
 
     /// Extra white space to be added after each subscript and superscript.
@@ -165,216 +165,216 @@ public class MathTable {
     /// a constant value, such as 0.5 pt, may be used for all text sizes.
     /// Some implementations may use a constant ratio of text size, such as 1/24 of em.)
     public var spaceAfterScript: CGFloat {
-        evalMathConstant(offset: MathConstants.spaceAfterScript)
+        getMathConstant(offset: MathConstants.spaceAfterScript)
     }
 
     /// Minimum gap between the (ink) bottom of the upper limit, and the (ink) top of the base operator.
     public var upperLimitGapMin: CGFloat {
-        evalMathConstant(offset: MathConstants.upperLimitGapMin)
+        getMathConstant(offset: MathConstants.upperLimitGapMin)
     }
 
     /// Minimum distance between baseline of upper limit and (ink) top of the base operator.
     public var upperLimitBaselineRiseMin: CGFloat {
-        evalMathConstant(offset: MathConstants.upperLimitBaselineRiseMin)
+        getMathConstant(offset: MathConstants.upperLimitBaselineRiseMin)
     }
 
     /// Minimum gap between (ink) top of the lower limit, and (ink) bottom of the base operator.
     public var lowerLimitGapMin: CGFloat {
-        evalMathConstant(offset: MathConstants.lowerLimitGapMin)
+        getMathConstant(offset: MathConstants.lowerLimitGapMin)
     }
 
     /// Minimum distance between baseline of the lower limit and (ink) bottom of the base operator.
     public var lowerLimitBaselineDropMin: CGFloat {
-        evalMathConstant(offset: MathConstants.lowerLimitBaselineDropMin)
+        getMathConstant(offset: MathConstants.lowerLimitBaselineDropMin)
     }
 
     /// Standard shift up applied to the top element of a stack.
     public var stackTopShiftUp: CGFloat {
-        evalMathConstant(offset: MathConstants.stackTopShiftUp)
+        getMathConstant(offset: MathConstants.stackTopShiftUp)
     }
 
     /// Standard shift up applied to the top element of a stack in display style.
     public var stackTopDisplayStyleShiftUp: CGFloat {
-        evalMathConstant(offset: MathConstants.stackTopDisplayStyleShiftUp)
+        getMathConstant(offset: MathConstants.stackTopDisplayStyleShiftUp)
     }
 
     /// Standard shift down applied to the bottom element of a stack.
     /// Positive for moving in the downward direction.
     public var stackBottomShiftDown: CGFloat {
-        evalMathConstant(offset: MathConstants.stackBottomShiftDown)
+        getMathConstant(offset: MathConstants.stackBottomShiftDown)
     }
 
     /// Standard shift down applied to the bottom element of a stack in display style.
     /// Positive for moving in the downward direction.
     public var stackBottomDisplayStyleShiftDown: CGFloat {
-        evalMathConstant(offset: MathConstants.stackBottomDisplayStyleShiftDown)
+        getMathConstant(offset: MathConstants.stackBottomDisplayStyleShiftDown)
     }
 
     /// Minimum gap between (ink) bottom of the top element of a stack, and the (ink) top of the
     /// bottom element. Suggested: 3 × default rule thickness.
     public var stackGapMin: CGFloat {
-        evalMathConstant(offset: MathConstants.stackGapMin)
+        getMathConstant(offset: MathConstants.stackGapMin)
     }
 
     /// Minimum gap between (ink) bottom of the top element of a stack, and the (ink) top of the
     /// bottom element in display style. Suggested: 7 × default rule thickness.
     public var stackDisplayStyleGapMin: CGFloat {
-        evalMathConstant(offset: MathConstants.stackDisplayStyleGapMin)
+        getMathConstant(offset: MathConstants.stackDisplayStyleGapMin)
     }
 
     /// Standard shift up applied to the top element of the stretch stack.
     public var stretchStackTopShiftUp: CGFloat {
-        evalMathConstant(offset: MathConstants.stretchStackTopShiftUp)
+        getMathConstant(offset: MathConstants.stretchStackTopShiftUp)
     }
 
     /// Standard shift down applied to the bottom element of the stretch stack.
     /// Positive for moving in the downward direction.
     public var stretchStackBottomShiftDown: CGFloat {
-        evalMathConstant(offset: MathConstants.stretchStackBottomShiftDown)
+        getMathConstant(offset: MathConstants.stretchStackBottomShiftDown)
     }
 
     /// Minimum gap between the ink of the stretched element, and the (ink) bottom of the element
     /// above. Suggested: same value as upperLimitGapMin.
     public var stretchStackGapAboveMin: CGFloat {
-        evalMathConstant(offset: MathConstants.stretchStackGapAboveMin)
+        getMathConstant(offset: MathConstants.stretchStackGapAboveMin)
     }
 
     /// Minimum gap between the ink of the stretched element, and the (ink) top of the element
     /// below. Suggested: same value as lowerLimitGapMin.
     public var stretchStackGapBelowMin: CGFloat {
-        evalMathConstant(offset: MathConstants.stretchStackGapBelowMin)
+        getMathConstant(offset: MathConstants.stretchStackGapBelowMin)
     }
 
     /// Standard shift up applied to the numerator.
     public var fractionNumeratorShiftUp: CGFloat {
-        evalMathConstant(offset: MathConstants.fractionNumeratorShiftUp)
+        getMathConstant(offset: MathConstants.fractionNumeratorShiftUp)
     }
 
     /// Standard shift up applied to the numerator in display style.
     /// Suggested: same value as stackTopDisplayStyleShiftUp.
     public var fractionNumeratorDisplayStyleShiftUp: CGFloat {
-        evalMathConstant(offset: MathConstants.fractionNumeratorDisplayStyleShiftUp)
+        getMathConstant(offset: MathConstants.fractionNumeratorDisplayStyleShiftUp)
     }
 
     /// Standard shift down applied to the denominator. Positive for moving in
     /// the downward direction.
     public var fractionDenominatorShiftDown: CGFloat {
-        evalMathConstant(offset: MathConstants.fractionDenominatorShiftDown)
+        getMathConstant(offset: MathConstants.fractionDenominatorShiftDown)
     }
 
     /// Standard shift down applied to the denominator in display style.
     /// Positive for moving in the downward direction.
     /// Suggested: same value as stackBottomDisplayStyleShiftDown.
     public var fractionDenominatorDisplayStyleShiftDown: CGFloat {
-        evalMathConstant(offset: MathConstants.fractionDenominatorDisplayStyleShiftDown)
+        getMathConstant(offset: MathConstants.fractionDenominatorDisplayStyleShiftDown)
     }
 
     /// Minimum tolerated gap between the (ink) bottom of the numerator and the
     /// ink of the fraction bar. Suggested: default rule thickness.
     public var fractionNumeratorGapMin: CGFloat {
-        evalMathConstant(offset: MathConstants.fractionNumeratorGapMin)
+        getMathConstant(offset: MathConstants.fractionNumeratorGapMin)
     }
 
     /// Minimum tolerated gap between the (ink) bottom of the numerator and the
     /// ink of the fraction bar in display style. Suggested: 3 × default rule thickness.
     public var fractionNumDisplayStyleGapMin: CGFloat {
-        evalMathConstant(offset: MathConstants.fractionNumDisplayStyleGapMin)
+        getMathConstant(offset: MathConstants.fractionNumDisplayStyleGapMin)
     }
 
     /// Thickness of the fraction bar. Suggested: default rule thickness.
     public var fractionRuleThickness: CGFloat {
-        evalMathConstant(offset: MathConstants.fractionRuleThickness)
+        getMathConstant(offset: MathConstants.fractionRuleThickness)
     }
 
     /// Minimum tolerated gap between the (ink) top of the denominator and the
     /// ink of the fraction bar. Suggested: default rule thickness.
     public var fractionDenominatorGapMin: CGFloat {
-        evalMathConstant(offset: MathConstants.fractionDenominatorGapMin)
+        getMathConstant(offset: MathConstants.fractionDenominatorGapMin)
     }
 
     /// Minimum tolerated gap between the (ink) top of the denominator and the
     /// ink of the fraction bar in display style. Suggested: 3 × default rule thickness.
     public var fractionDenomDisplayStyleGapMin: CGFloat {
-        evalMathConstant(offset: MathConstants.fractionDenomDisplayStyleGapMin)
+        getMathConstant(offset: MathConstants.fractionDenomDisplayStyleGapMin)
     }
 
     /// Horizontal distance between the top and bottom elements of a skewed fraction.
     public var skewedFractionHorizontalGap: CGFloat {
-        evalMathConstant(offset: MathConstants.skewedFractionHorizontalGap)
+        getMathConstant(offset: MathConstants.skewedFractionHorizontalGap)
     }
 
     /// Vertical distance between the ink of the top and bottom elements of a skewed fraction.
     public var skewedFractionVerticalGap: CGFloat {
-        evalMathConstant(offset: MathConstants.skewedFractionVerticalGap)
+        getMathConstant(offset: MathConstants.skewedFractionVerticalGap)
     }
 
     /// Distance between the overbar and the (ink) top of he base.
     /// Suggested: 3 × default rule thickness.
     public var overbarVerticalGap: CGFloat {
-        evalMathConstant(offset: MathConstants.overbarVerticalGap)
+        getMathConstant(offset: MathConstants.overbarVerticalGap)
     }
 
     /// Thickness of overbar. Suggested: default rule thickness.
     public var overbarRuleThickness: CGFloat {
-        evalMathConstant(offset: MathConstants.overbarRuleThickness)
+        getMathConstant(offset: MathConstants.overbarRuleThickness)
     }
 
     /// Extra white space reserved above the overbar. Suggested: default rule thickness.
     public var overbarExtraAscender: CGFloat {
-        evalMathConstant(offset: MathConstants.overbarExtraAscender)
+        getMathConstant(offset: MathConstants.overbarExtraAscender)
     }
 
     /// Distance between underbar and (ink) bottom of the base.
     /// Suggested: 3 × default rule thickness.
     public var underbarVerticalGap: CGFloat {
-        evalMathConstant(offset: MathConstants.underbarVerticalGap)
+        getMathConstant(offset: MathConstants.underbarVerticalGap)
     }
 
     /// Thickness of underbar. Suggested: default rule thickness.
     public var underbarRuleThickness: CGFloat {
-        evalMathConstant(offset: MathConstants.underbarRuleThickness)
+        getMathConstant(offset: MathConstants.underbarRuleThickness)
     }
 
     /// Extra white space reserved below the underbar. Always positive.
     /// Suggested: default rule thickness.
     public var underbarExtraDescender: CGFloat {
-        evalMathConstant(offset: MathConstants.underbarExtraDescender)
+        getMathConstant(offset: MathConstants.underbarExtraDescender)
     }
 
     /// Space between the (ink) top of the expression and the bar over it.
     /// Suggested: 1¼ default rule thickness.
     public var radicalVerticalGap: CGFloat {
-        evalMathConstant(offset: MathConstants.radicalVerticalGap)
+        getMathConstant(offset: MathConstants.radicalVerticalGap)
     }
 
     /// Space between the (ink) top of the expression and the bar over it.
     /// Suggested: default rule thickness + ¼ x-height.
     public var radicalDisplayStyleVerticalGap: CGFloat {
-        evalMathConstant(offset: MathConstants.radicalDisplayStyleVerticalGap)
+        getMathConstant(offset: MathConstants.radicalDisplayStyleVerticalGap)
     }
 
     /// Thickness of the radical rule. This is the thickness of the rule in
     /// designed or constructed radical signs. Suggested: default rule thickness.
     public var radicalRuleThickness: CGFloat {
-        evalMathConstant(offset: MathConstants.radicalRuleThickness)
+        getMathConstant(offset: MathConstants.radicalRuleThickness)
     }
 
     /// Extra white space reserved above the radical.
     /// Suggested: same value as radicalRuleThickness.
     public var radicalExtraAscender: CGFloat {
-        evalMathConstant(offset: MathConstants.radicalExtraAscender)
+        getMathConstant(offset: MathConstants.radicalExtraAscender)
     }
 
     /// Extra horizontal kern before the degree of a radical, if such is present.
     /// Suggested: 5/18 of em.
     public var radicalKernBeforeDegree: CGFloat {
-        evalMathConstant(offset: MathConstants.radicalKernBeforeDegree)
+        getMathConstant(offset: MathConstants.radicalKernBeforeDegree)
     }
 
     /// Negative kern after the degree of a radical, if such is present.
     /// Suggested: −10/18 of em.
     public var radicalKernAfterDegree: CGFloat {
-        evalMathConstant(offset: MathConstants.radicalKernAfterDegree)
+        getMathConstant(offset: MathConstants.radicalKernAfterDegree)
     }
 
     /// Height of the bottom of the radical degree, if such is present,
@@ -468,7 +468,7 @@ public class MathTable {
     }
 
     /// Evaluate the math constant that is stored as MathValueRecord
-    func evalMathConstant(offset: CFIndex) -> CGFloat {
+    func getMathConstant(offset: CFIndex) -> CGFloat {
         precondition(MathConstants.mathLeading <= offset && offset <= MathConstants.radicalKernAfterDegree)
 
         let byteOffset = MathConstants.getByteOffset(offset: offset)
@@ -565,7 +565,7 @@ public enum MathConstants {
 
     /// Given element offset, return byte offset
     public static func getByteOffset(offset: CFIndex) -> CFIndex {
-        precondition(0 <= offset && offset <= radicalDegreeBottomRaisePercent)
+        precondition(offset >= 0 && offset <= radicalDegreeBottomRaisePercent)
 
         if (offset < mathLeading) {
             return offset * 2
@@ -578,14 +578,40 @@ public enum MathConstants {
 
 class MathConstantsCache {
     init() {
+        let count = MathConstants.radicalKernAfterDegree - MathConstants.mathLeading + 1
+        assert(count == 51)
+
         percentScaleDown = [Int16](repeating: 0, count: 2)
-        minHeight = [UFWORD](repeating: 0, count: 2)
-        mathValueRecords = [MathValueRecord](repeating: MathValueRecord(), count: 51)
+        minHeight = [CGFloat](repeating: 0, count: 2)
+        mathValueRecords = [CGFloat](repeating: 0, count: count)
         radicalDegreeBottomRaisePercent = 0
     }
 
-    var percentScaleDown: [Int16]           // count: 2
-    var minHeight: [UFWORD]                 // count: 2
-    var mathValueRecords: [MathValueRecord] // count: 51
+    init(font: CTFont) {
+        let count = MathConstants.radicalKernAfterDegree - MathConstants.mathLeading + 1
+        assert(count == 51)
+
+        if let mathTable = font.mathTable {
+            percentScaleDown = [mathTable.scriptPercentScaleDown, mathTable.scriptScriptPercentScaleDown]
+            minHeight = [mathTable.delimitedSubFormulaMinHeight, mathTable.displayOperatorMinHeight]
+
+            mathValueRecords = [CGFloat](repeating: 0, count: count)
+            for i in 0...count-1 {
+                mathValueRecords[i] = mathTable.getMathConstant(offset: i + MathConstants.mathLeading)
+            }
+
+            radicalDegreeBottomRaisePercent = mathTable.radicalDegreeBottomRaisePercent
+        }
+        else {
+            percentScaleDown = [Int16](repeating: 0, count: 2)
+            minHeight = [CGFloat](repeating: 0, count: 2)
+            mathValueRecords = [CGFloat](repeating: 0, count: count)
+            radicalDegreeBottomRaisePercent = 0
+        }
+    }
+
+    var percentScaleDown: [Int16]   // count: 2
+    var minHeight: [CGFloat]        // count: 2
+    var mathValueRecords: [CGFloat] // count: 51
     var radicalDegreeBottomRaisePercent: Int16 // count: 1
 }
