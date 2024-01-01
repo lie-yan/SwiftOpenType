@@ -442,8 +442,8 @@ public class MathTable {
     /// Read MathValueRecord, at the given (byte) offset
     func readMathValueRecord(offset: CFIndex) -> MathValueRecord {
         let value = readFWORD(offset: offset)
-        let deviceTable = readOffset16(offset: offset + 2)
-        return MathValueRecord(value: value, deviceOffset: deviceTable)
+        let deviceOffset = readOffset16(offset: offset + 2)
+        return MathValueRecord(value: value, deviceOffset: deviceOffset)
     }
 
     /// Read Int16, at the given (byte) offset
