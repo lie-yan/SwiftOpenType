@@ -60,16 +60,16 @@ public class MathTable {
 
     /// Percentage of scaling down for level 1 superscripts and subscripts.
     /// Suggested value: 80%.
-    public var scriptPercentScaleDown: CGFloat {
+    public var scriptPercentScaleDown: Int16 {
         let offset = MathConstants.getByteOffset(offset: MathConstants.scriptPercentScaleDown)
-        return CGFloat(readInt16(parentOffset: mathConstantsOffset, offset: offset)) / 100
+        return readInt16(parentOffset: mathConstantsOffset, offset: offset)
     }
 
     /// Percentage of scaling down for level 2 (scriptScript) superscripts and subscripts.
     /// Suggested value: 60%.
-    public var scriptScriptPercentScaleDown: CGFloat {
+    public var scriptScriptPercentScaleDown: Int16 {
         let offset = MathConstants.getByteOffset(offset: MathConstants.scriptScriptPercentScaleDown)
-        return CGFloat(readInt16(parentOffset: mathConstantsOffset, offset: offset)) / 100
+        return readInt16(parentOffset: mathConstantsOffset, offset: offset)
     }
 
     /// Minimum height required for a delimited expression (contained within parentheses, etc.)
@@ -77,6 +77,20 @@ public class MathTable {
     public var delimitedSubFormulaMinHeight: CGFloat {
         let offset = MathConstants.getByteOffset(offset: MathConstants.delimitedSubFormulaMinHeight)
         return CGFloat(readUFWORD(parentOffset: mathConstantsOffset, offset: offset)) * font.pointsPerUnit
+    }
+
+    /// Minimum height of n-ary operators (such as integral and summation) for formulas in display
+    /// mode (that is, appearing as standalone page elements, not embedded inline within text).
+    public var displayOperatorMinHeight: CGFloat {
+        let offset = MathConstants.getByteOffset(offset: MathConstants.displayOperatorMinHeight)
+        return CGFloat(readUFWORD(parentOffset: mathConstantsOffset, offset: offset)) * font.pointsPerUnit
+    }
+
+    /// Height of the bottom of the radical degree, if such is present,
+    /// in proportion to the ascender of the radical sign. Suggested: 60%.
+    public var radicalDegreeBottomRaisePercent: Int16 {
+        let offset = MathConstants.getByteOffset(offset: MathConstants.radicalDegreeBottomRaisePercent)
+        return readInt16(parentOffset: mathConstantsOffset, offset: offset)
     }
 
     // MARK: - Helpers
@@ -226,10 +240,10 @@ public enum MathConstants {
         radicalExtraAscender = 52,
         radicalKernBeforeDegree = 53,
         radicalKernAfterDegree = 54,
-        radicalDegreeBottomRaiseRatio = 55
+        radicalDegreeBottomRaisePercent = 55
 
     public static func getByteOffset(offset: CFIndex) -> CFIndex {
-        precondition(0 <= offset && offset <= radicalDegreeBottomRaiseRatio)
+        precondition(0 <= offset && offset <= radicalDegreeBottomRaisePercent)
 
         if (offset < mathLeading) {
             return offset * 2

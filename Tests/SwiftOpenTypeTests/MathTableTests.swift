@@ -19,11 +19,13 @@ final class MathTableTests: XCTestCase {
     func testMathConstants() {
         let mathTable = lmmath.mathTable!
 
-        XCTAssertEqual(mathTable.scriptPercentScaleDown, 0.7)
-        XCTAssertEqual(mathTable.scriptScriptPercentScaleDown, 0.5)
+        XCTAssertEqual(mathTable.scriptPercentScaleDown, 70)
+        XCTAssertEqual(mathTable.scriptScriptPercentScaleDown, 50)
 
         XCTAssertEqual(mathTable.delimitedSubFormulaMinHeight, 15.6)
+        XCTAssertEqual(mathTable.displayOperatorMinHeight, 15.6)
 
+        XCTAssertEqual(mathTable.radicalDegreeBottomRaisePercent, 60)
     }
 
     static var allTests = [
