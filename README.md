@@ -1,5 +1,7 @@
 # SwiftOpenType
 
+Simple API for OpenType tables, extending `CTFont`. 
+
 ## Example
 
 Check if the MATH table is present:
@@ -18,6 +20,15 @@ let lmmath = CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil)
 let mathTable = lmmath.mathTable!
 print("axis height, in pts: \(mathTable.axisHeight)")
 ```
+
+## Tests
+
+The Latin Modern Math font is required to run the tests. It can be downloaded from [GUST](https://www.gust.org.pl/projects/e-foundry/lm-math).
+
+## Status
+
+Currently we focus on `MATH` table. 
+
 
 ## See also
 
