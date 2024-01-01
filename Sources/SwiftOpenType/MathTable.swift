@@ -518,6 +518,13 @@ struct MathValueRecord {
     }
 }
 
+/**
+ * The 'MATH' table constants. Refer to [OpenType documentation]
+ * (https://docs.microsoft.com/en-us/typography/opentype/spec/math#mathconstants-table)
+ *
+ * See also
+ *    Ulrik Vieth (2009). OpenType math illuminated.
+ */
 public enum MathConstants {
     public static let
         scriptPercentScaleDown = 0,
