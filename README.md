@@ -5,7 +5,7 @@
 Check if the MATH table is present:
 
 ```swift
-let helvetica = CTFontCreateWithName("Helvetica" as! CFString, 12.0, nil)
+let helvetica = CTFontCreateWithName("Helvetica" as CFString, 12.0, nil)
 if helvetica.mathTable == nil {
     print("no MATH table")
 }
@@ -14,7 +14,7 @@ if helvetica.mathTable == nil {
 Access a constant, scaled to the font size:
 
 ```swift
-let lmmath = CTFontCreateWithName("Latin Modern Math" as! CFString, 12.0, nil)
+let lmmath = CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil)
 let mathTable = lmmath.mathTable!
 print("axis height, in pts: \(mathTable.axisHeight)")
 ```
