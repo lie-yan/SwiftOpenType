@@ -11,7 +11,7 @@ extension CTFont {
         return nil
     }
 
-    public var sizePerUnit: CGFloat {
+    public func sizePerUnit() -> CGFloat {
         CTFontGetSize(self) / CGFloat(CTFontGetUnitsPerEm(self))
     }
 
@@ -294,12 +294,12 @@ public class MathConstantsTable {
         }
         else if (offset <= MathConstants.displayOperatorMinHeight) {
             let value = data.readUFWORD(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) * font.sizePerUnit
+            return CGFloat(value) * font.sizePerUnit()
         }
         else if (offset <= MathConstants.radicalKernAfterDegree) {
             let mathValueRecord = data.readMathValueRecord(parentOffset: mathConstantsOffset, offset: byteOffset)
             let value = data.evalMathValueRecord(parentOffset: mathConstantsOffset, mathValueRecord: mathValueRecord)
-            return CGFloat(value) * font.sizePerUnit
+            return CGFloat(value) * font.sizePerUnit()
         }
         else if (offset == MathConstants.radicalDegreeBottomRaisePercent) {
             let value = data.readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
@@ -682,7 +682,7 @@ public class MathItalicsCorrectionInfoTable {
     }
 
     public var coverageTable: CoverageTable {
-        CoverageTable(data: data, baseOffset: mathItalicsCorrectionInfoOffset + italicsCorrectionCoverageOffset)
+        CoverageTable(data: data, coverageOffset: mathItalicsCorrectionInfoOffset + italicsCorrectionCoverageOffset)
     }
 
     func italicsCorrection(glyph: CGGlyph) -> CGFloat {
@@ -728,38 +728,76 @@ struct RangeRecord {
 
 public class CoverageTable {
     let data: CFData
-    let baseOffset: Offset16
+    let coverageOffset: Offset16
 
-    init(data: CFData, baseOffset: Offset16) {
+    init(data: CFData, coverageOffset: Offset16) {
         self.data = data
-        self.baseOffset = baseOffset
+        self.coverageOffset = coverageOffset
     }
 
-    public var coverageFormat: UInt16 {
-        data.readUInt16(parentOffset: baseOffset, offset: 0)
+    public func coverageFormat() -> UInt16 {
+        data.readUInt16(parentOffset: coverageOffset, offset: 0)
     }
 
     /// Number of glyphs in the glyph array
     /// Coverage Format 1
-    var glyphCount: UInt16 {
-        data.readUInt16(parentOffset: baseOffset, offset: 2)
+    public func glyphCount() -> UInt16 {
+        data.readUInt16(parentOffset: coverageOffset, offset: 2)
     }
 
     /// Array of glyph IDs — in numerical order
     /// Coverage Format 1
     func glyphArray(_ index: CFIndex) -> UInt16 {
-        data.readUInt16(parentOffset: baseOffset, offset: 4 + index * 2)
+        data.readUInt16(parentOffset: coverageOffset, offset: 4 + index * 2)
     }
 
     /// Number of RangeRecords
     /// Coverage Format 2
-    var rangeCount: UInt16 {
-        data.readUInt16(parentOffset: baseOffset, offset: 2)
+    func rangeCount() -> UInt16 {
+        data.readUInt16(parentOffset: coverageOffset, offset: 2)
     }
 
     /// Array of glyph ranges — ordered by startGlyphID.
     /// Coverage Format 2
     func rangeRecords(_ index: CFIndex) -> RangeRecord {
-        data.readRangeRecord(parentOffset: baseOffset, offset: 4 + index * 6)
+        data.readRangeRecord(parentOffset: coverageOffset, offset: 4 + index * 6)
+    }
+
+    public func coverageIndex(glyphID: UInt16) -> CFIndex? {
+        let coverageFormat = self.coverageFormat()
+        if (coverageFormat == 1) {
+            return binarySearch_1(target: glyphID)
+        }
+        else if (coverageFormat == 2) {
+            return binarySearch_2(target: glyphID)
+        }
+
+        return nil
+    }
+
+    /// binary search for Coverage Format 1
+    func binarySearch_1(target: UInt16) -> CFIndex? {
+        var left = 0
+        var right = Int(glyphCount()) - 1
+
+        while (left <= right) {
+            let mid = left + (right - left) / 2
+            let value = glyphArray(mid)
+
+            if (value == target) {
+                return mid
+            } else if (value < target) {
+                left = mid + 1
+            } else {
+                right = mid - 1
+            }
+        }
+        return nil
+    }
+
+    /// binary search for Coverage Format 2
+    func binarySearch_2(target: UInt16) -> CFIndex? {
+        // TODO: implement this
+        return nil
     }
 }

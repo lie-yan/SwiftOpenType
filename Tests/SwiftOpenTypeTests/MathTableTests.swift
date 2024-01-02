@@ -95,6 +95,7 @@ final class MathTableTests: XCTestCase {
 
     func testMathItalicsCorrectionInfo() {
         let coverageTable = lmmath.mathTable!.mathGlyphInfoTable.mathItalicsCorrectionInfoTable.coverageTable
-        XCTAssert(coverageTable.coverageFormat == 1 || coverageTable.coverageFormat == 2)
+        XCTAssert(coverageTable.coverageFormat() == 1)
+        print("glyphCount: \(coverageTable.glyphCount())")
     }
 }
