@@ -1,5 +1,5 @@
 import XCTest
-import SwiftOpenType
+@testable import SwiftOpenType
 
 final class MathTableTests: XCTestCase {
 
