@@ -92,4 +92,9 @@ final class MathTableTests: XCTestCase {
 
         XCTAssertEqual(mathConstants.radicalDegreeBottomRaisePercent, 0.6)
     }
+
+    func testMathItalicsCorrectionInfo() {
+        let coverageTable = lmmath.mathTable!.mathGlyphInfoTable.mathItalicsCorrectionInfoTable.coverageTable
+        XCTAssert(coverageTable.coverageFormat == 1 || coverageTable.coverageFormat == 2)
+    }
 }
