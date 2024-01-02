@@ -17,84 +17,79 @@ final class MathTableTests: XCTestCase {
     }
 
     func testMathConstants() {
-        let mathTable = lmmath.mathTable!
+        let mathConstants = lmmath.mathTable!.mathConstantsTable
 
         let ruleThickness: CGFloat = 0.48
         let commonGap: CGFloat = 1.44
         let eps: CGFloat = 1e-15
 
-        XCTAssertEqual(mathTable.scriptPercentScaleDown, 0.7)
-        XCTAssertEqual(mathTable.scriptScriptPercentScaleDown, 0.5)
+        XCTAssertEqual(mathConstants.scriptPercentScaleDown, 0.7)
+        XCTAssertEqual(mathConstants.scriptScriptPercentScaleDown, 0.5)
 
-        XCTAssertEqual(mathTable.delimitedSubFormulaMinHeight, 15.6)
-        XCTAssertEqual(mathTable.displayOperatorMinHeight, 15.6)
+        XCTAssertEqual(mathConstants.delimitedSubFormulaMinHeight, 15.6)
+        XCTAssertEqual(mathConstants.displayOperatorMinHeight, 15.6)
 
-        XCTAssertEqual(mathTable.mathLeading, 1.848)
-        XCTAssertEqual(mathTable.axisHeight, 3.0)
-        XCTAssertEqual(mathTable.accentBaseHeight, 5.4)
-        XCTAssertEqual(mathTable.flattenedAccentBaseHeight, 7.968)
+        XCTAssertEqual(mathConstants.mathLeading, 1.848)
+        XCTAssertEqual(mathConstants.axisHeight, 3.0)
+        XCTAssertEqual(mathConstants.accentBaseHeight, 5.4)
+        XCTAssertEqual(mathConstants.flattenedAccentBaseHeight, 7.968)
 
-        XCTAssertEqual(mathTable.subscriptShiftDown, 2.964)
-        XCTAssertEqual(mathTable.subscriptTopMax, 4.128)
-        XCTAssertEqual(mathTable.subscriptBaselineDropMin, 2.4)
-        XCTAssertEqual(mathTable.superscriptShiftUp, 4.356)
-        XCTAssertEqual(mathTable.superscriptShiftUpCramped, 3.468)
-        XCTAssertEqual(mathTable.superscriptBottomMin, 1.296)
-        XCTAssertEqual(mathTable.superscriptBaselineDropMax, 3.0)
-        XCTAssertEqual(mathTable.subSuperscriptGapMin, 1.92)
-        XCTAssertEqual(mathTable.superscriptBottomMaxWithSubscript, 4.128)
-        XCTAssertEqual(mathTable.spaceAfterScript, 0.672)
+        XCTAssertEqual(mathConstants.subscriptShiftDown, 2.964)
+        XCTAssertEqual(mathConstants.subscriptTopMax, 4.128)
+        XCTAssertEqual(mathConstants.subscriptBaselineDropMin, 2.4)
+        XCTAssertEqual(mathConstants.superscriptShiftUp, 4.356)
+        XCTAssertEqual(mathConstants.superscriptShiftUpCramped, 3.468)
+        XCTAssertEqual(mathConstants.superscriptBottomMin, 1.296)
+        XCTAssertEqual(mathConstants.superscriptBaselineDropMax, 3.0)
+        XCTAssertEqual(mathConstants.subSuperscriptGapMin, 1.92)
+        XCTAssertEqual(mathConstants.superscriptBottomMaxWithSubscript, 4.128)
+        XCTAssertEqual(mathConstants.spaceAfterScript, 0.672)
 
-        XCTAssertEqual(mathTable.upperLimitGapMin, 2.4)
-        XCTAssertEqual(mathTable.upperLimitBaselineRiseMin, 1.332)
-        XCTAssertEqual(mathTable.lowerLimitGapMin, 2.004)
-        XCTAssertEqual(mathTable.lowerLimitBaselineDropMin, 7.2)
+        XCTAssertEqual(mathConstants.upperLimitGapMin, 2.4)
+        XCTAssertEqual(mathConstants.upperLimitBaselineRiseMin, 1.332)
+        XCTAssertEqual(mathConstants.lowerLimitGapMin, 2.004)
+        XCTAssertEqual(mathConstants.lowerLimitBaselineDropMin, 7.2)
 
-        XCTAssertEqual(mathTable.stackTopShiftUp, 5.328)
-        XCTAssertEqual(mathTable.stackTopDisplayStyleShiftUp, 8.124)
-        XCTAssertEqual(mathTable.stackBottomShiftDown, 4.14)
-        XCTAssertEqual(mathTable.stackBottomDisplayStyleShiftDown, 8.232)
-        XCTAssertEqual(mathTable.stackGapMin, 1.44)
-        XCTAssertEqual(mathTable.stackDisplayStyleGapMin, 3.36)
+        XCTAssertEqual(mathConstants.stackTopShiftUp, 5.328)
+        XCTAssertEqual(mathConstants.stackTopDisplayStyleShiftUp, 8.124)
+        XCTAssertEqual(mathConstants.stackBottomShiftDown, 4.14)
+        XCTAssertEqual(mathConstants.stackBottomDisplayStyleShiftDown, 8.232)
+        XCTAssertEqual(mathConstants.stackGapMin, 1.44)
+        XCTAssertEqual(mathConstants.stackDisplayStyleGapMin, 3.36)
 
-        XCTAssertEqual(mathTable.stretchStackTopShiftUp, 1.332)
-        XCTAssertEqual(mathTable.stretchStackBottomShiftDown, 7.2)
-        XCTAssertEqual(mathTable.stretchStackGapAboveMin, 2.4)
-        XCTAssertEqual(mathTable.stretchStackGapBelowMin, 2.004)
+        XCTAssertEqual(mathConstants.stretchStackTopShiftUp, 1.332)
+        XCTAssertEqual(mathConstants.stretchStackBottomShiftDown, 7.2)
+        XCTAssertEqual(mathConstants.stretchStackGapAboveMin, 2.4)
+        XCTAssertEqual(mathConstants.stretchStackGapBelowMin, 2.004)
 
-        XCTAssertEqual(mathTable.fractionNumeratorShiftUp, 4.728)
-        XCTAssertEqual(mathTable.fractionNumeratorDisplayStyleShiftUp, 8.124)
-        XCTAssertEqual(mathTable.fractionDenominatorShiftDown, 4.14)
-        XCTAssertEqual(mathTable.fractionDenominatorDisplayStyleShiftDown, 8.232)
-        XCTAssertEqual(mathTable.fractionNumeratorGapMin, ruleThickness)
-        XCTAssertEqual(mathTable.fractionNumDisplayStyleGapMin, commonGap)
-        XCTAssertEqual(mathTable.fractionRuleThickness, ruleThickness)
-        XCTAssertEqual(mathTable.fractionDenominatorGapMin, ruleThickness)
-        XCTAssertEqual(mathTable.fractionDenomDisplayStyleGapMin, commonGap)
+        XCTAssertEqual(mathConstants.fractionNumeratorShiftUp, 4.728)
+        XCTAssertEqual(mathConstants.fractionNumeratorDisplayStyleShiftUp, 8.124)
+        XCTAssertEqual(mathConstants.fractionDenominatorShiftDown, 4.14)
+        XCTAssertEqual(mathConstants.fractionDenominatorDisplayStyleShiftDown, 8.232)
+        XCTAssertEqual(mathConstants.fractionNumeratorGapMin, ruleThickness)
+        XCTAssertEqual(mathConstants.fractionNumDisplayStyleGapMin, commonGap)
+        XCTAssertEqual(mathConstants.fractionRuleThickness, ruleThickness)
+        XCTAssertEqual(mathConstants.fractionDenominatorGapMin, ruleThickness)
+        XCTAssertEqual(mathConstants.fractionDenomDisplayStyleGapMin, commonGap)
 
-        XCTAssertEqual(mathTable.skewedFractionHorizontalGap, 4.2)
-        XCTAssertEqual(mathTable.skewedFractionVerticalGap, 1.152, accuracy: eps)
+        XCTAssertEqual(mathConstants.skewedFractionHorizontalGap, 4.2)
+        XCTAssertEqual(mathConstants.skewedFractionVerticalGap, 1.152, accuracy: eps)
 
-        XCTAssertEqual(mathTable.overbarVerticalGap, commonGap)
-        XCTAssertEqual(mathTable.overbarRuleThickness, ruleThickness)
-        XCTAssertEqual(mathTable.overbarExtraAscender, ruleThickness)
+        XCTAssertEqual(mathConstants.overbarVerticalGap, commonGap)
+        XCTAssertEqual(mathConstants.overbarRuleThickness, ruleThickness)
+        XCTAssertEqual(mathConstants.overbarExtraAscender, ruleThickness)
 
-        XCTAssertEqual(mathTable.underbarVerticalGap, commonGap)
-        XCTAssertEqual(mathTable.underbarRuleThickness, ruleThickness)
-        XCTAssertEqual(mathTable.underbarExtraDescender, ruleThickness)
+        XCTAssertEqual(mathConstants.underbarVerticalGap, commonGap)
+        XCTAssertEqual(mathConstants.underbarRuleThickness, ruleThickness)
+        XCTAssertEqual(mathConstants.underbarExtraDescender, ruleThickness)
 
-        XCTAssertEqual(mathTable.radicalVerticalGap, 0.6)
-        XCTAssertEqual(mathTable.radicalDisplayStyleVerticalGap, 1.776)
-        XCTAssertEqual(mathTable.radicalRuleThickness, ruleThickness)
-        XCTAssertEqual(mathTable.radicalExtraAscender, ruleThickness)
-        XCTAssertEqual(mathTable.radicalKernBeforeDegree, 3.336)
-        XCTAssertEqual(mathTable.radicalKernAfterDegree, -6.672)
+        XCTAssertEqual(mathConstants.radicalVerticalGap, 0.6)
+        XCTAssertEqual(mathConstants.radicalDisplayStyleVerticalGap, 1.776)
+        XCTAssertEqual(mathConstants.radicalRuleThickness, ruleThickness)
+        XCTAssertEqual(mathConstants.radicalExtraAscender, ruleThickness)
+        XCTAssertEqual(mathConstants.radicalKernBeforeDegree, 3.336)
+        XCTAssertEqual(mathConstants.radicalKernAfterDegree, -6.672)
 
-        XCTAssertEqual(mathTable.radicalDegreeBottomRaisePercent, 0.6)
+        XCTAssertEqual(mathConstants.radicalDegreeBottomRaisePercent, 0.6)
     }
-
-    static var allTests = [
-        ("testMathTableHeader", testMathTableHeader),
-        ("testMathConstants", testMathConstants)
-    ]
 }

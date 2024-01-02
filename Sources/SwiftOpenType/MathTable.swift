@@ -1,103 +1,5 @@
 import CoreText
 
-/*
- * Correspondence between OpenType parameters and TeX parameters.
- * Reference: Ulrik Vieth (2009). OpenType math illuminated.
- *
- *  ----------------------------------------------------------------------------
- *  OpenType parameter                       | TeX parameter
- *  ----------------------------------------------------------------------------
- *  scriptPercentScaleDown                   | e.g. 70-80 %
- *  scriptScriptPercentScaleDown             | e.g. 50-60 %
- *  (no correspondence)                      | σ20 (e.g. 20-24 pt)
- *  delimitedSubFormulaMinHeight             | σ21 (e.g. 10-12 pt)
- *  displayOperatorMinHeight                 | ?? (e.g. 12-15 pt)
- *  mathLeading                              | unused
- *  axisHeight                               | σ22 (axis height)
- *  accentBaseHeight                         | σ5 (x-height)
- *  flattenedAccentBaseHeight                | ?? (capital height)
- *  ----------------------------------------------------------------------------
- *  subscriptShiftDown                       | σ16, σ17
- *  subscriptTopMax                          | (= 4/5 σ5)
- *  subscriptBaselineDropMin                 | σ19
- *  superscriptShiftUp                       | σ13, σ14
- *  superscriptShiftUpCramped                | σ15
- *  superscriptBottomMin                     | (= 1/4 σ5)
- *  superscriptBaselineDropMax               | σ18
- *  subSuperscriptGapMin                     | (= 4 ξ8)
- *  superscriptBottomMaxWithSubscript        | (= 4/5 σ5)
- *  spaceAfterScript                         | \scriptspace
- *  ----------------------------------------------------------------------------
- *  upperLimitGapMin                         | ξ9
- *  upperLimitBaselineRiseMin                | ξ11
- *  lowerLimitGapMin                         | ξ10
- *  lowerLimitBaselineDropMin                | ξ12
- *  (no correspondence)                      | ξ13
- *  ----------------------------------------------------------------------------
- *  stackTopShiftUp                          | σ10
- *  stackTopDisplayStyleShiftUp              | σ8
- *  stackBottomShiftDown                     | σ12
- *  stackBottomDisplayStyleShiftDown         | σ11
- *  stackGapMin                              | (= 3 ξ8)
- *  stackDisplayStyleGapMin                  | (= 7 ξ8)
- *  ----------------------------------------------------------------------------
- *  stretchStackTopShiftUp                   | ξ11
- *  stretchStackBottomShiftDown              | ξ12
- *  stretchStackGapAboveMin                  | ξ9
- *  stretchStackGapBelowMin                  | ξ10
- *  ----------------------------------------------------------------------------
- *  fractionNumeratorShiftUp                 | σ9
- *  fractionNumeratorDisplayStyleShiftUp     | σ8
- *  fractionDenominatorShiftDown             | σ12
- *  fractionDenominatorDisplayStyleShiftDown | σ11
- *  fractionNumeratorGapMin                  | (= ξ8)
- *  fractionNumDisplayStyleGapMin            | (= 3 ξ8)
- *  fractionRuleThickness                    | (= ξ8)
- *  fractionDenominatorGapMin                | (= ξ8)
- *  fractionDenomDisplayStyleGapMin          | (= 3 ξ8)
- *  skewedFractionHorizontalGap              |
- *  skewedFractionVerticalGap                |
- *  ----------------------------------------------------------------------------
- *  overbarVerticalGap                       | (= 3 ξ8)
- *  overbarRuleThickness                     | (= ξ8)
- *  overbarExtraAscender                     | (= ξ8)
- *  underbarVerticalGap                      | (= 3 ξ8)
- *  underbarRuleThickness                    | (= ξ8)
- *  underbarExtraDescender                   | (= ξ8)
- *  ----------------------------------------------------------------------------
- *  radicalVerticalGap                       | (= ξ8 + 1/4 ξ8)
- *  radicalDisplayStyleVerticalGap           | (= ξ8 + 1/4 σ5)
- *  radicalRuleThickness                     | (= ξ8)
- *  radicalExtraAscender                     | (= ξ8)
- *  radicalKernBeforeDegree                  | e.g. 5/18 em
- *  radicalKernAfterDegree                   | e.g. 10/18 em
- *  radicalDegreeBottomRaisePercent          | e.g. 60 %
- *  ----------------------------------------------------------------------------
- *
- *
- *  ----------------------------------------------------------------------------
- *  Parameter                                | Notation
- *  ----------------------------------------------------------------------------
- *  x_height                                 | σ5
- *  quad                                     | σ6
- *  sup1                                     | σ13
- *  sup2                                     | σ14
- *  sup3                                     | σ15
- *  sub1                                     | σ16
- *  sub2                                     | σ17
- *  sup_drop                                 | σ18
- *  sub_drop                                 | σ19
- *  axis_height                              | σ22
- *  default_rule_thickness                   | ξ8
- *  ----------------------------------------------------------------------------
- *  math unit                                | σ6 / 18
- *  math quad                                | σ6
- *  thin space                               | normally 1/6 σ6  (= 3mu)
- *  medium space                             | normally 2/9 σ6  (= 4mu)
- *  thick space                              | normally 5/18 σ6 (= 5mu)
- *  ----------------------------------------------------------------------------
- */
-
 extension CTFont {
     public var mathTable: MathTable? {
         if self.getMathTableData() != nil {
@@ -109,7 +11,7 @@ extension CTFont {
         return nil
     }
 
-    var sizePerUnit: CGFloat {
+    public var sizePerUnit: CGFloat {
         CTFontGetSize(self) / CGFloat(CTFontGetUnitsPerEm(self))
     }
 
@@ -120,11 +22,16 @@ extension CTFont {
     }
 }
 
+/**
+ The MATH table
+ */
 public class MathTable {
     let font: CTFont
+    let data: CFData
 
     init(font: CTFont) {
         self.font = font
+        self.data = font.getMathTableData()!
     }
 
     // MARK: - Header fields
@@ -154,263 +61,21 @@ public class MathTable {
         readOffset16(offset: 8)
     }
 
-    // MARK: - Math constants
+    // MARK: - Sub-tables
 
-    public func getMathConstant(offset: CFIndex) -> CGFloat {
-        precondition(offset >= 0 && offset <= MathConstants.radicalDegreeBottomRaisePercent)
-
-        let byteOffset = MathConstants.getByteOffset(offset: offset)
-
-        if (offset <= MathConstants.scriptScriptPercentScaleDown) {
-            let value = readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) / 100
-        }
-        else if (offset <= MathConstants.displayOperatorMinHeight) {
-            let value = readUFWORD(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) * font.sizePerUnit
-        }
-        else if (offset <= MathConstants.radicalKernAfterDegree) {
-            let value = evalMathValueRecord(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) * font.sizePerUnit
-        }
-        else if (offset == MathConstants.radicalDegreeBottomRaisePercent) {
-            let value = readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) / 100
-        }
-        else {
-            return 0
-        }
+    public var mathConstantsTable: MathConstantsTable {
+        MathConstantsTable(mathTable: self, mathConstantsOffset: mathConstantsOffset)
     }
 
-    public var scriptPercentScaleDown: CGFloat {
-        getMathConstant(offset: MathConstants.scriptPercentScaleDown)
-    }
-
-    public var scriptScriptPercentScaleDown: CGFloat {
-        getMathConstant(offset: MathConstants.scriptScriptPercentScaleDown)
-    }
-
-    public var delimitedSubFormulaMinHeight: CGFloat {
-        getMathConstant(offset: MathConstants.delimitedSubFormulaMinHeight)
-    }
-
-    public var displayOperatorMinHeight: CGFloat {
-        getMathConstant(offset: MathConstants.displayOperatorMinHeight)
-    }
-
-    public var mathLeading: CGFloat {
-        getMathConstant(offset: MathConstants.mathLeading)
-    }
-
-    public var axisHeight: CGFloat {
-        getMathConstant(offset: MathConstants.axisHeight)
-    }
-
-    public var accentBaseHeight: CGFloat {
-        getMathConstant(offset: MathConstants.accentBaseHeight)
-    }
-
-    public var flattenedAccentBaseHeight: CGFloat {
-        getMathConstant(offset: MathConstants.flattenedAccentBaseHeight)
-    }
-
-    public var subscriptShiftDown: CGFloat {
-        getMathConstant(offset: MathConstants.subscriptShiftDown)
-    }
-
-    public var subscriptTopMax: CGFloat {
-        getMathConstant(offset: MathConstants.subscriptTopMax)
-    }
-
-    public var subscriptBaselineDropMin: CGFloat {
-        getMathConstant(offset: MathConstants.subscriptBaselineDropMin)
-    }
-
-    public var superscriptShiftUp: CGFloat {
-        getMathConstant(offset: MathConstants.superscriptShiftUp)
-    }
-
-    public var superscriptShiftUpCramped: CGFloat {
-        getMathConstant(offset: MathConstants.superscriptShiftUpCramped)
-    }
-
-    public var superscriptBottomMin: CGFloat {
-        getMathConstant(offset: MathConstants.superscriptBottomMin)
-    }
-
-    public var superscriptBaselineDropMax: CGFloat {
-        getMathConstant(offset: MathConstants.superscriptBaselineDropMax)
-    }
-
-    public var subSuperscriptGapMin: CGFloat {
-        getMathConstant(offset: MathConstants.subSuperscriptGapMin)
-    }
-
-    public var superscriptBottomMaxWithSubscript: CGFloat {
-        getMathConstant(offset: MathConstants.superscriptBottomMaxWithSubscript)
-    }
-
-    public var spaceAfterScript: CGFloat {
-        getMathConstant(offset: MathConstants.spaceAfterScript)
-    }
-
-    public var upperLimitGapMin: CGFloat {
-        getMathConstant(offset: MathConstants.upperLimitGapMin)
-    }
-
-    public var upperLimitBaselineRiseMin: CGFloat {
-        getMathConstant(offset: MathConstants.upperLimitBaselineRiseMin)
-    }
-
-    public var lowerLimitGapMin: CGFloat {
-        getMathConstant(offset: MathConstants.lowerLimitGapMin)
-    }
-
-    public var lowerLimitBaselineDropMin: CGFloat {
-        getMathConstant(offset: MathConstants.lowerLimitBaselineDropMin)
-    }
-
-    public var stackTopShiftUp: CGFloat {
-        getMathConstant(offset: MathConstants.stackTopShiftUp)
-    }
-
-    public var stackTopDisplayStyleShiftUp: CGFloat {
-        getMathConstant(offset: MathConstants.stackTopDisplayStyleShiftUp)
-    }
-
-    public var stackBottomShiftDown: CGFloat {
-        getMathConstant(offset: MathConstants.stackBottomShiftDown)
-    }
-
-    public var stackBottomDisplayStyleShiftDown: CGFloat {
-        getMathConstant(offset: MathConstants.stackBottomDisplayStyleShiftDown)
-    }
-
-    public var stackGapMin: CGFloat {
-        getMathConstant(offset: MathConstants.stackGapMin)
-    }
-
-    public var stackDisplayStyleGapMin: CGFloat {
-        getMathConstant(offset: MathConstants.stackDisplayStyleGapMin)
-    }
-
-    public var stretchStackTopShiftUp: CGFloat {
-        getMathConstant(offset: MathConstants.stretchStackTopShiftUp)
-    }
-
-    public var stretchStackBottomShiftDown: CGFloat {
-        getMathConstant(offset: MathConstants.stretchStackBottomShiftDown)
-    }
-
-    public var stretchStackGapAboveMin: CGFloat {
-        getMathConstant(offset: MathConstants.stretchStackGapAboveMin)
-    }
-
-    public var stretchStackGapBelowMin: CGFloat {
-        getMathConstant(offset: MathConstants.stretchStackGapBelowMin)
-    }
-
-    public var fractionNumeratorShiftUp: CGFloat {
-        getMathConstant(offset: MathConstants.fractionNumeratorShiftUp)
-    }
-
-    public var fractionNumeratorDisplayStyleShiftUp: CGFloat {
-        getMathConstant(offset: MathConstants.fractionNumeratorDisplayStyleShiftUp)
-    }
-
-    public var fractionDenominatorShiftDown: CGFloat {
-        getMathConstant(offset: MathConstants.fractionDenominatorShiftDown)
-    }
-
-    public var fractionDenominatorDisplayStyleShiftDown: CGFloat {
-        getMathConstant(offset: MathConstants.fractionDenominatorDisplayStyleShiftDown)
-    }
-
-    public var fractionNumeratorGapMin: CGFloat {
-        getMathConstant(offset: MathConstants.fractionNumeratorGapMin)
-    }
-
-    public var fractionNumDisplayStyleGapMin: CGFloat {
-        getMathConstant(offset: MathConstants.fractionNumDisplayStyleGapMin)
-    }
-
-    public var fractionRuleThickness: CGFloat {
-        getMathConstant(offset: MathConstants.fractionRuleThickness)
-    }
-
-    public var fractionDenominatorGapMin: CGFloat {
-        getMathConstant(offset: MathConstants.fractionDenominatorGapMin)
-    }
-
-    public var fractionDenomDisplayStyleGapMin: CGFloat {
-        getMathConstant(offset: MathConstants.fractionDenomDisplayStyleGapMin)
-    }
-
-    public var skewedFractionHorizontalGap: CGFloat {
-        getMathConstant(offset: MathConstants.skewedFractionHorizontalGap)
-    }
-
-    public var skewedFractionVerticalGap: CGFloat {
-        getMathConstant(offset: MathConstants.skewedFractionVerticalGap)
-    }
-
-    public var overbarVerticalGap: CGFloat {
-        getMathConstant(offset: MathConstants.overbarVerticalGap)
-    }
-
-    public var overbarRuleThickness: CGFloat {
-        getMathConstant(offset: MathConstants.overbarRuleThickness)
-    }
-
-    public var overbarExtraAscender: CGFloat {
-        getMathConstant(offset: MathConstants.overbarExtraAscender)
-    }
-
-    public var underbarVerticalGap: CGFloat {
-        getMathConstant(offset: MathConstants.underbarVerticalGap)
-    }
-
-    public var underbarRuleThickness: CGFloat {
-        getMathConstant(offset: MathConstants.underbarRuleThickness)
-    }
-
-    public var underbarExtraDescender: CGFloat {
-        getMathConstant(offset: MathConstants.underbarExtraDescender)
-    }
-
-    public var radicalVerticalGap: CGFloat {
-        getMathConstant(offset: MathConstants.radicalVerticalGap)
-    }
-
-    public var radicalDisplayStyleVerticalGap: CGFloat {
-        getMathConstant(offset: MathConstants.radicalDisplayStyleVerticalGap)
-    }
-
-    public var radicalRuleThickness: CGFloat {
-        getMathConstant(offset: MathConstants.radicalRuleThickness)
-    }
-
-    public var radicalExtraAscender: CGFloat {
-        getMathConstant(offset: MathConstants.radicalExtraAscender)
-    }
-
-    public var radicalKernBeforeDegree: CGFloat {
-        getMathConstant(offset: MathConstants.radicalKernBeforeDegree)
-    }
-
-    public var radicalKernAfterDegree: CGFloat {
-        getMathConstant(offset: MathConstants.radicalKernAfterDegree)
-    }
-
-    public var radicalDegreeBottomRaisePercent: CGFloat {
-        getMathConstant(offset: MathConstants.radicalDegreeBottomRaisePercent)
+    public var mathGlyphInfoTable: MathGlyphInfoTable {
+        MathGlyphInfoTable(mathTable: self, mathGlyphInfoOffset: mathGlyphInfoOffset)
     }
 
     // MARK: - Helpers
 
     /// Read UInt16, in big-endian order, at the given (byte) offset
     func readUInt16(offset: CFIndex) -> UInt16 {
-        let ptr = CFDataGetBytePtr(font.getMathTableData()!)!
+        let ptr = CFDataGetBytePtr(data)!
         return (ptr+offset).withMemoryRebound(to: UInt16.self, capacity: 1) {
             $0.pointee.byteSwapped
         }
@@ -418,7 +83,7 @@ public class MathTable {
 
     /// Read Int16, in big-endian order, at the given (byte) offset
     func readInt16(offset: CFIndex) -> Int16 {
-        let ptr = CFDataGetBytePtr(font.getMathTableData()!)!
+        let ptr = CFDataGetBytePtr(data)!
         return (ptr+offset).withMemoryRebound(to: Int16.self, capacity: 1) {
             $0.pointee.byteSwapped
         }
@@ -499,32 +164,357 @@ public class MathTable {
     }
 }
 
-typealias FWORD = Int16     // int16 that describes a quantity in font design units.
-typealias UFWORD = UInt16   // uint16 that describes a quantity in font design units.
-typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
+/**
+ The MathConstants table
 
-struct MathValueRecord {
-    let value: FWORD           // The X or Y value in design units
-    let deviceOffset: Offset16 // Offset to the device table — from the beginning of parent table.
-                               // May be NULL. Suggested format for device table is 1.
+ For more details, refer to [MathConstants Table](https://docs.microsoft.com/en-us/typography/opentype/spec/math#mathconstants-table)
+ of the OpenType specification.
 
-    init() {
-        self.init(value: 0, deviceOffset: 0)
+ Below is the correspondence between OpenType parameters and TeX parameters.
+ For an illustrated exposition, refer to _Ulrik Vieth (2009). OpenType math illuminated._
+
+ | OpenType parameter                       | TeX parameter
+ | -----------------------------------------|----------------------------------
+ | scriptPercentScaleDown                   | e.g. 70-80 %
+ | scriptScriptPercentScaleDown             | e.g. 50-60 %
+ | (no correspondence)                      | σ20 (e.g. 20-24 pt)
+ | delimitedSubFormulaMinHeight             | σ21 (e.g. 10-12 pt)
+ | displayOperatorMinHeight                 | ?? (e.g. 12-15 pt)
+ | mathLeading                              | unused
+ | axisHeight                               | σ22 (axis height)
+ | accentBaseHeight                         | σ5 (x-height)
+ | flattenedAccentBaseHeight                | ?? (capital height)
+ | subscriptShiftDown                       | σ16, σ17
+ | subscriptTopMax                          | (= 4/5 σ5)
+ | subscriptBaselineDropMin                 | σ19
+ | superscriptShiftUp                       | σ13, σ14
+ | superscriptShiftUpCramped                | σ15
+ | superscriptBottomMin                     | (= 1/4 σ5)
+ | superscriptBaselineDropMax               | σ18
+ | subSuperscriptGapMin                     | (= 4 ξ8)
+ | superscriptBottomMaxWithSubscript        | (= 4/5 σ5)
+ | spaceAfterScript                         | \scriptspace
+ | upperLimitGapMin                         | ξ9
+ | upperLimitBaselineRiseMin                | ξ11
+ | lowerLimitGapMin                         | ξ10
+ | lowerLimitBaselineDropMin                | ξ12
+ | (no correspondence)                      | ξ13
+ | stackTopShiftUp                          | σ10
+ | stackTopDisplayStyleShiftUp              | σ8
+ | stackBottomShiftDown                     | σ12
+ | stackBottomDisplayStyleShiftDown         | σ11
+ | stackGapMin                              | (= 3 ξ8)
+ | stackDisplayStyleGapMin                  | (= 7 ξ8)
+ | stretchStackTopShiftUp                   | ξ11
+ | stretchStackBottomShiftDown              | ξ12
+ | stretchStackGapAboveMin                  | ξ9
+ | stretchStackGapBelowMin                  | ξ10
+ | fractionNumeratorShiftUp                 | σ9
+ | fractionNumeratorDisplayStyleShiftUp     | σ8
+ | fractionDenominatorShiftDown             | σ12
+ | fractionDenominatorDisplayStyleShiftDown | σ11
+ | fractionNumeratorGapMin                  | (= ξ8)
+ | fractionNumDisplayStyleGapMin            | (= 3 ξ8)
+ | fractionRuleThickness                    | (= ξ8)
+ | fractionDenominatorGapMin                | (= ξ8)
+ | fractionDenomDisplayStyleGapMin          | (= 3 ξ8)
+ | skewedFractionHorizontalGap              |
+ | skewedFractionVerticalGap                |
+ | overbarVerticalGap                       | (= 3 ξ8)
+ | overbarRuleThickness                     | (= ξ8)
+ | overbarExtraAscender                     | (= ξ8)
+ | underbarVerticalGap                      | (= 3 ξ8)
+ | underbarRuleThickness                    | (= ξ8)
+ | underbarExtraDescender                   | (= ξ8)
+ | radicalVerticalGap                       | (= ξ8 + 1/4 ξ8)
+ | radicalDisplayStyleVerticalGap           | (= ξ8 + 1/4 σ5)
+ | radicalRuleThickness                     | (= ξ8)
+ | radicalExtraAscender                     | (= ξ8)
+ | radicalKernBeforeDegree                  | e.g. 5/18 em
+ | radicalKernAfterDegree                   | e.g. 10/18 em
+ | radicalDegreeBottomRaisePercent          | e.g. 60 %
+
+ | Parameter                                | Notation
+ | -----------------------------------------|----------------------------------
+ | x_height                                 | σ5
+ | quad                                     | σ6
+ | sup1                                     | σ13
+ | sup2                                     | σ14
+ | sup3                                     | σ15
+ | sub1                                     | σ16
+ | sub2                                     | σ17
+ | sup_drop                                 | σ18
+ | sub_drop                                 | σ19
+ | axis_height                              | σ22
+ | default_rule_thickness                   | ξ8
+ | math unit                                | σ6 / 18
+ | math quad                                | σ6
+ | thin space                               | normally 1/6 σ6  (= 3mu)
+ | medium space                             | normally 2/9 σ6  (= 4mu)
+ | thick space                              | normally 5/18 σ6 (= 5mu)
+ */
+public class MathConstantsTable {
+    let mathTable: MathTable
+    let mathConstantsOffset: Offset16
+
+    init(mathTable: MathTable, mathConstantsOffset: Offset16) {
+        self.mathTable = mathTable
+        self.mathConstantsOffset = mathConstantsOffset
     }
 
-    init(value: FWORD, deviceOffset: Offset16) {
-        self.value = value
-        self.deviceOffset = deviceOffset
+    /// Return the value of the math constant specified by the argument whose value
+    /// should be taken from ``MathConstants``.
+    public func getMathConstant(_ offset: CFIndex) -> CGFloat {
+        precondition(offset >= 0 && offset <= MathConstants.radicalDegreeBottomRaisePercent)
+
+        let byteOffset = MathConstants.getByteOffset(offset: offset)
+
+        if (offset <= MathConstants.scriptScriptPercentScaleDown) {
+            let value = mathTable.readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
+            return CGFloat(value) / 100
+        }
+        else if (offset <= MathConstants.displayOperatorMinHeight) {
+            let value = mathTable.readUFWORD(parentOffset: mathConstantsOffset, offset: byteOffset)
+            return CGFloat(value) * mathTable.font.sizePerUnit
+        }
+        else if (offset <= MathConstants.radicalKernAfterDegree) {
+            let value = mathTable.evalMathValueRecord(parentOffset: mathConstantsOffset, offset: byteOffset)
+            return CGFloat(value) * mathTable.font.sizePerUnit
+        }
+        else if (offset == MathConstants.radicalDegreeBottomRaisePercent) {
+            let value = mathTable.readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
+            return CGFloat(value) / 100
+        }
+
+        assert(false)
+    }
+
+    public var scriptPercentScaleDown: CGFloat {
+        getMathConstant(MathConstants.scriptPercentScaleDown)
+    }
+
+    public var scriptScriptPercentScaleDown: CGFloat {
+        getMathConstant(MathConstants.scriptScriptPercentScaleDown)
+    }
+
+    public var delimitedSubFormulaMinHeight: CGFloat {
+        getMathConstant(MathConstants.delimitedSubFormulaMinHeight)
+    }
+
+    public var displayOperatorMinHeight: CGFloat {
+        getMathConstant(MathConstants.displayOperatorMinHeight)
+    }
+
+    public var mathLeading: CGFloat {
+        getMathConstant(MathConstants.mathLeading)
+    }
+
+    public var axisHeight: CGFloat {
+        getMathConstant(MathConstants.axisHeight)
+    }
+
+    public var accentBaseHeight: CGFloat {
+        getMathConstant(MathConstants.accentBaseHeight)
+    }
+
+    public var flattenedAccentBaseHeight: CGFloat {
+        getMathConstant(MathConstants.flattenedAccentBaseHeight)
+    }
+
+    public var subscriptShiftDown: CGFloat {
+        getMathConstant(MathConstants.subscriptShiftDown)
+    }
+
+    public var subscriptTopMax: CGFloat {
+        getMathConstant(MathConstants.subscriptTopMax)
+    }
+
+    public var subscriptBaselineDropMin: CGFloat {
+        getMathConstant(MathConstants.subscriptBaselineDropMin)
+    }
+
+    public var superscriptShiftUp: CGFloat {
+        getMathConstant(MathConstants.superscriptShiftUp)
+    }
+
+    public var superscriptShiftUpCramped: CGFloat {
+        getMathConstant(MathConstants.superscriptShiftUpCramped)
+    }
+
+    public var superscriptBottomMin: CGFloat {
+        getMathConstant(MathConstants.superscriptBottomMin)
+    }
+
+    public var superscriptBaselineDropMax: CGFloat {
+        getMathConstant(MathConstants.superscriptBaselineDropMax)
+    }
+
+    public var subSuperscriptGapMin: CGFloat {
+        getMathConstant(MathConstants.subSuperscriptGapMin)
+    }
+
+    public var superscriptBottomMaxWithSubscript: CGFloat {
+        getMathConstant(MathConstants.superscriptBottomMaxWithSubscript)
+    }
+
+    public var spaceAfterScript: CGFloat {
+        getMathConstant(MathConstants.spaceAfterScript)
+    }
+
+    public var upperLimitGapMin: CGFloat {
+        getMathConstant(MathConstants.upperLimitGapMin)
+    }
+
+    public var upperLimitBaselineRiseMin: CGFloat {
+        getMathConstant(MathConstants.upperLimitBaselineRiseMin)
+    }
+
+    public var lowerLimitGapMin: CGFloat {
+        getMathConstant(MathConstants.lowerLimitGapMin)
+    }
+
+    public var lowerLimitBaselineDropMin: CGFloat {
+        getMathConstant(MathConstants.lowerLimitBaselineDropMin)
+    }
+
+    public var stackTopShiftUp: CGFloat {
+        getMathConstant(MathConstants.stackTopShiftUp)
+    }
+
+    public var stackTopDisplayStyleShiftUp: CGFloat {
+        getMathConstant(MathConstants.stackTopDisplayStyleShiftUp)
+    }
+
+    public var stackBottomShiftDown: CGFloat {
+        getMathConstant(MathConstants.stackBottomShiftDown)
+    }
+
+    public var stackBottomDisplayStyleShiftDown: CGFloat {
+        getMathConstant(MathConstants.stackBottomDisplayStyleShiftDown)
+    }
+
+    public var stackGapMin: CGFloat {
+        getMathConstant(MathConstants.stackGapMin)
+    }
+
+    public var stackDisplayStyleGapMin: CGFloat {
+        getMathConstant(MathConstants.stackDisplayStyleGapMin)
+    }
+
+    public var stretchStackTopShiftUp: CGFloat {
+        getMathConstant(MathConstants.stretchStackTopShiftUp)
+    }
+
+    public var stretchStackBottomShiftDown: CGFloat {
+        getMathConstant(MathConstants.stretchStackBottomShiftDown)
+    }
+
+    public var stretchStackGapAboveMin: CGFloat {
+        getMathConstant(MathConstants.stretchStackGapAboveMin)
+    }
+
+    public var stretchStackGapBelowMin: CGFloat {
+        getMathConstant(MathConstants.stretchStackGapBelowMin)
+    }
+
+    public var fractionNumeratorShiftUp: CGFloat {
+        getMathConstant(MathConstants.fractionNumeratorShiftUp)
+    }
+
+    public var fractionNumeratorDisplayStyleShiftUp: CGFloat {
+        getMathConstant(MathConstants.fractionNumeratorDisplayStyleShiftUp)
+    }
+
+    public var fractionDenominatorShiftDown: CGFloat {
+        getMathConstant(MathConstants.fractionDenominatorShiftDown)
+    }
+
+    public var fractionDenominatorDisplayStyleShiftDown: CGFloat {
+        getMathConstant(MathConstants.fractionDenominatorDisplayStyleShiftDown)
+    }
+
+    public var fractionNumeratorGapMin: CGFloat {
+        getMathConstant(MathConstants.fractionNumeratorGapMin)
+    }
+
+    public var fractionNumDisplayStyleGapMin: CGFloat {
+        getMathConstant(MathConstants.fractionNumDisplayStyleGapMin)
+    }
+
+    public var fractionRuleThickness: CGFloat {
+        getMathConstant(MathConstants.fractionRuleThickness)
+    }
+
+    public var fractionDenominatorGapMin: CGFloat {
+        getMathConstant(MathConstants.fractionDenominatorGapMin)
+    }
+
+    public var fractionDenomDisplayStyleGapMin: CGFloat {
+        getMathConstant(MathConstants.fractionDenomDisplayStyleGapMin)
+    }
+
+    public var skewedFractionHorizontalGap: CGFloat {
+        getMathConstant(MathConstants.skewedFractionHorizontalGap)
+    }
+
+    public var skewedFractionVerticalGap: CGFloat {
+        getMathConstant(MathConstants.skewedFractionVerticalGap)
+    }
+
+    public var overbarVerticalGap: CGFloat {
+        getMathConstant(MathConstants.overbarVerticalGap)
+    }
+
+    public var overbarRuleThickness: CGFloat {
+        getMathConstant(MathConstants.overbarRuleThickness)
+    }
+
+    public var overbarExtraAscender: CGFloat {
+        getMathConstant(MathConstants.overbarExtraAscender)
+    }
+
+    public var underbarVerticalGap: CGFloat {
+        getMathConstant(MathConstants.underbarVerticalGap)
+    }
+
+    public var underbarRuleThickness: CGFloat {
+        getMathConstant(MathConstants.underbarRuleThickness)
+    }
+
+    public var underbarExtraDescender: CGFloat {
+        getMathConstant(MathConstants.underbarExtraDescender)
+    }
+
+    public var radicalVerticalGap: CGFloat {
+        getMathConstant(MathConstants.radicalVerticalGap)
+    }
+
+    public var radicalDisplayStyleVerticalGap: CGFloat {
+        getMathConstant(MathConstants.radicalDisplayStyleVerticalGap)
+    }
+
+    public var radicalRuleThickness: CGFloat {
+        getMathConstant(MathConstants.radicalRuleThickness)
+    }
+
+    public var radicalExtraAscender: CGFloat {
+        getMathConstant(MathConstants.radicalExtraAscender)
+    }
+
+    public var radicalKernBeforeDegree: CGFloat {
+        getMathConstant(MathConstants.radicalKernBeforeDegree)
+    }
+
+    public var radicalKernAfterDegree: CGFloat {
+        getMathConstant(MathConstants.radicalKernAfterDegree)
+    }
+
+    public var radicalDegreeBottomRaisePercent: CGFloat {
+        getMathConstant(MathConstants.radicalDegreeBottomRaisePercent)
     }
 }
 
-/**
- * The 'MATH' table constants. Refer to [OpenType documentation]
- * (https://docs.microsoft.com/en-us/typography/opentype/spec/math#mathconstants-table)
- *
- * See also
- *    Ulrik Vieth (2009). OpenType math illuminated.
- */
+/// The math constant index
 public enum MathConstants {
     public static let
         scriptPercentScaleDown = 0,
@@ -603,5 +593,59 @@ public enum MathConstants {
         else {
             return mathLeading * 2 + (offset - mathLeading) * 4
         }
+    }
+}
+
+public class MathGlyphInfoTable {
+    let mathTable: MathTable
+    let mathGlyphInfoOffset: Offset16
+
+    init(mathTable: MathTable, mathGlyphInfoOffset: Offset16) {
+        self.mathTable = mathTable
+        self.mathGlyphInfoOffset = mathGlyphInfoOffset
+    }
+
+    // MARK: - Header fields
+
+    /// Offset to MathItalicsCorrectionInfo table, from the beginning of the MathGlyphInfo table.
+    var mathItalicsCorrectionInfoOffset: Offset16 {
+        mathTable.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 0)
+    }
+
+    /// Offset to MathTopAccentAttachment table, from the beginning of the MathGlyphInfo table.
+    var mathTopAccentAttachmentOffset: Offset16 {
+        mathTable.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 2)
+    }
+
+    /// Offset to ExtendedShapes coverage table, from the beginning of the MathGlyphInfo table.
+    /// When the glyph to the left or right of a box is an extended shape variant, the (ink) box
+    /// should be used for vertical positioning purposes, not the default position defined by
+    /// values in MathConstants table. May be NULL.
+    var extendedShapeCoverageOffset: Offset16 {
+        mathTable.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 4)
+    }
+
+    /// Offset to MathKernInfo table, from the beginning of the MathGlyphInfo table.
+    var mathKernInfoOffset: Offset16 {
+        mathTable.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 6)
+    }
+}
+
+typealias FWORD = Int16     // int16 that describes a quantity in font design units.
+typealias UFWORD = UInt16   // uint16 that describes a quantity in font design units.
+typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
+
+struct MathValueRecord {
+    let value: FWORD           // The X or Y value in design units
+    let deviceOffset: Offset16 // Offset to the device table — from the beginning of parent table.
+                               // May be NULL. Suggested format for device table is 1.
+
+    init() {
+        self.init(value: 0, deviceOffset: 0)
+    }
+
+    init(value: FWORD, deviceOffset: Offset16) {
+        self.value = value
+        self.deviceOffset = deviceOffset
     }
 }
