@@ -140,265 +140,263 @@ public class MathTable {
  | thick space                              | normally 5/18 σ6 (= 5mu)
  */
 public class MathConstantsTable {
-    let font: CTFont
     let data: CFData
-    let mathConstantsOffset: Offset16
+    let tableOffset: Offset16
 
     init(mathTable: MathTable) {
-        self.font = mathTable.font
         self.data = mathTable.data
-        self.mathConstantsOffset = mathTable.mathConstantsOffset
+        self.tableOffset = mathTable.mathConstantsOffset
     }
 
     /// Return the value of the math constant specified by the argument whose value
     /// should be taken from ``MathConstants``.
-    public func getMathConstant(_ index: Int) -> CGFloat {
+    public func getMathConstant(_ index: Int) -> Int32 {
         precondition(index >= 0 && index <= MathConstants.radicalDegreeBottomRaisePercent)
 
         let byteOffset = MathConstants.getByteOffset(index: index)
 
         if (index <= MathConstants.scriptScriptPercentScaleDown) {
-            let value = data.readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) / 100
+            let value = data.readInt16(parentOffset: tableOffset, offset: byteOffset)
+            return Int32(value)
         }
         else if (index <= MathConstants.displayOperatorMinHeight) {
-            let value = data.readUFWORD(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) * font.sizePerUnit()
+            let value = data.readUFWORD(parentOffset: tableOffset, offset: byteOffset)
+            return Int32(value)
         }
         else if (index <= MathConstants.radicalKernAfterDegree) {
-            let mathValueRecord = data.readMathValueRecord(parentOffset: mathConstantsOffset, offset: byteOffset)
-            let value = data.evalMathValueRecord(parentOffset: mathConstantsOffset, mathValueRecord: mathValueRecord)
-            return CGFloat(value) * font.sizePerUnit()
+            let mathValueRecord = data.readMathValueRecord(parentOffset: tableOffset, offset: byteOffset)
+            let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
+            return Int32(value)
         }
         else if (index == MathConstants.radicalDegreeBottomRaisePercent) {
-            let value = data.readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
-            return CGFloat(value) / 100
+            let value = data.readInt16(parentOffset: tableOffset, offset: byteOffset)
+            return Int32(value)
         }
 
         assert(false)
     }
 
-    public var scriptPercentScaleDown: CGFloat {
+    public var scriptPercentScaleDown: Int32 {
         getMathConstant(MathConstants.scriptPercentScaleDown)
     }
 
-    public var scriptScriptPercentScaleDown: CGFloat {
+    public var scriptScriptPercentScaleDown: Int32 {
         getMathConstant(MathConstants.scriptScriptPercentScaleDown)
     }
 
-    public var delimitedSubFormulaMinHeight: CGFloat {
+    public var delimitedSubFormulaMinHeight: Int32 {
         getMathConstant(MathConstants.delimitedSubFormulaMinHeight)
     }
 
-    public var displayOperatorMinHeight: CGFloat {
+    public var displayOperatorMinHeight: Int32 {
         getMathConstant(MathConstants.displayOperatorMinHeight)
     }
 
-    public var mathLeading: CGFloat {
+    public var mathLeading: Int32 {
         getMathConstant(MathConstants.mathLeading)
     }
 
-    public var axisHeight: CGFloat {
+    public var axisHeight: Int32 {
         getMathConstant(MathConstants.axisHeight)
     }
 
-    public var accentBaseHeight: CGFloat {
+    public var accentBaseHeight: Int32 {
         getMathConstant(MathConstants.accentBaseHeight)
     }
 
-    public var flattenedAccentBaseHeight: CGFloat {
+    public var flattenedAccentBaseHeight: Int32 {
         getMathConstant(MathConstants.flattenedAccentBaseHeight)
     }
 
-    public var subscriptShiftDown: CGFloat {
+    public var subscriptShiftDown: Int32 {
         getMathConstant(MathConstants.subscriptShiftDown)
     }
 
-    public var subscriptTopMax: CGFloat {
+    public var subscriptTopMax: Int32 {
         getMathConstant(MathConstants.subscriptTopMax)
     }
 
-    public var subscriptBaselineDropMin: CGFloat {
+    public var subscriptBaselineDropMin: Int32 {
         getMathConstant(MathConstants.subscriptBaselineDropMin)
     }
 
-    public var superscriptShiftUp: CGFloat {
+    public var superscriptShiftUp: Int32 {
         getMathConstant(MathConstants.superscriptShiftUp)
     }
 
-    public var superscriptShiftUpCramped: CGFloat {
+    public var superscriptShiftUpCramped: Int32 {
         getMathConstant(MathConstants.superscriptShiftUpCramped)
     }
 
-    public var superscriptBottomMin: CGFloat {
+    public var superscriptBottomMin: Int32 {
         getMathConstant(MathConstants.superscriptBottomMin)
     }
 
-    public var superscriptBaselineDropMax: CGFloat {
+    public var superscriptBaselineDropMax: Int32 {
         getMathConstant(MathConstants.superscriptBaselineDropMax)
     }
 
-    public var subSuperscriptGapMin: CGFloat {
+    public var subSuperscriptGapMin: Int32 {
         getMathConstant(MathConstants.subSuperscriptGapMin)
     }
 
-    public var superscriptBottomMaxWithSubscript: CGFloat {
+    public var superscriptBottomMaxWithSubscript: Int32 {
         getMathConstant(MathConstants.superscriptBottomMaxWithSubscript)
     }
 
-    public var spaceAfterScript: CGFloat {
+    public var spaceAfterScript: Int32 {
         getMathConstant(MathConstants.spaceAfterScript)
     }
 
-    public var upperLimitGapMin: CGFloat {
+    public var upperLimitGapMin: Int32 {
         getMathConstant(MathConstants.upperLimitGapMin)
     }
 
-    public var upperLimitBaselineRiseMin: CGFloat {
+    public var upperLimitBaselineRiseMin: Int32 {
         getMathConstant(MathConstants.upperLimitBaselineRiseMin)
     }
 
-    public var lowerLimitGapMin: CGFloat {
+    public var lowerLimitGapMin: Int32 {
         getMathConstant(MathConstants.lowerLimitGapMin)
     }
 
-    public var lowerLimitBaselineDropMin: CGFloat {
+    public var lowerLimitBaselineDropMin: Int32 {
         getMathConstant(MathConstants.lowerLimitBaselineDropMin)
     }
 
-    public var stackTopShiftUp: CGFloat {
+    public var stackTopShiftUp: Int32 {
         getMathConstant(MathConstants.stackTopShiftUp)
     }
 
-    public var stackTopDisplayStyleShiftUp: CGFloat {
+    public var stackTopDisplayStyleShiftUp: Int32 {
         getMathConstant(MathConstants.stackTopDisplayStyleShiftUp)
     }
 
-    public var stackBottomShiftDown: CGFloat {
+    public var stackBottomShiftDown: Int32 {
         getMathConstant(MathConstants.stackBottomShiftDown)
     }
 
-    public var stackBottomDisplayStyleShiftDown: CGFloat {
+    public var stackBottomDisplayStyleShiftDown: Int32 {
         getMathConstant(MathConstants.stackBottomDisplayStyleShiftDown)
     }
 
-    public var stackGapMin: CGFloat {
+    public var stackGapMin: Int32 {
         getMathConstant(MathConstants.stackGapMin)
     }
 
-    public var stackDisplayStyleGapMin: CGFloat {
+    public var stackDisplayStyleGapMin: Int32 {
         getMathConstant(MathConstants.stackDisplayStyleGapMin)
     }
 
-    public var stretchStackTopShiftUp: CGFloat {
+    public var stretchStackTopShiftUp: Int32 {
         getMathConstant(MathConstants.stretchStackTopShiftUp)
     }
 
-    public var stretchStackBottomShiftDown: CGFloat {
+    public var stretchStackBottomShiftDown: Int32 {
         getMathConstant(MathConstants.stretchStackBottomShiftDown)
     }
 
-    public var stretchStackGapAboveMin: CGFloat {
+    public var stretchStackGapAboveMin: Int32 {
         getMathConstant(MathConstants.stretchStackGapAboveMin)
     }
 
-    public var stretchStackGapBelowMin: CGFloat {
+    public var stretchStackGapBelowMin: Int32 {
         getMathConstant(MathConstants.stretchStackGapBelowMin)
     }
 
-    public var fractionNumeratorShiftUp: CGFloat {
+    public var fractionNumeratorShiftUp: Int32 {
         getMathConstant(MathConstants.fractionNumeratorShiftUp)
     }
 
-    public var fractionNumeratorDisplayStyleShiftUp: CGFloat {
+    public var fractionNumeratorDisplayStyleShiftUp: Int32 {
         getMathConstant(MathConstants.fractionNumeratorDisplayStyleShiftUp)
     }
 
-    public var fractionDenominatorShiftDown: CGFloat {
+    public var fractionDenominatorShiftDown: Int32 {
         getMathConstant(MathConstants.fractionDenominatorShiftDown)
     }
 
-    public var fractionDenominatorDisplayStyleShiftDown: CGFloat {
+    public var fractionDenominatorDisplayStyleShiftDown: Int32 {
         getMathConstant(MathConstants.fractionDenominatorDisplayStyleShiftDown)
     }
 
-    public var fractionNumeratorGapMin: CGFloat {
+    public var fractionNumeratorGapMin: Int32 {
         getMathConstant(MathConstants.fractionNumeratorGapMin)
     }
 
-    public var fractionNumDisplayStyleGapMin: CGFloat {
+    public var fractionNumDisplayStyleGapMin: Int32 {
         getMathConstant(MathConstants.fractionNumDisplayStyleGapMin)
     }
 
-    public var fractionRuleThickness: CGFloat {
+    public var fractionRuleThickness: Int32 {
         getMathConstant(MathConstants.fractionRuleThickness)
     }
 
-    public var fractionDenominatorGapMin: CGFloat {
+    public var fractionDenominatorGapMin: Int32 {
         getMathConstant(MathConstants.fractionDenominatorGapMin)
     }
 
-    public var fractionDenomDisplayStyleGapMin: CGFloat {
+    public var fractionDenomDisplayStyleGapMin: Int32 {
         getMathConstant(MathConstants.fractionDenomDisplayStyleGapMin)
     }
 
-    public var skewedFractionHorizontalGap: CGFloat {
+    public var skewedFractionHorizontalGap: Int32 {
         getMathConstant(MathConstants.skewedFractionHorizontalGap)
     }
 
-    public var skewedFractionVerticalGap: CGFloat {
+    public var skewedFractionVerticalGap: Int32 {
         getMathConstant(MathConstants.skewedFractionVerticalGap)
     }
 
-    public var overbarVerticalGap: CGFloat {
+    public var overbarVerticalGap: Int32 {
         getMathConstant(MathConstants.overbarVerticalGap)
     }
 
-    public var overbarRuleThickness: CGFloat {
+    public var overbarRuleThickness: Int32 {
         getMathConstant(MathConstants.overbarRuleThickness)
     }
 
-    public var overbarExtraAscender: CGFloat {
+    public var overbarExtraAscender: Int32 {
         getMathConstant(MathConstants.overbarExtraAscender)
     }
 
-    public var underbarVerticalGap: CGFloat {
+    public var underbarVerticalGap: Int32 {
         getMathConstant(MathConstants.underbarVerticalGap)
     }
 
-    public var underbarRuleThickness: CGFloat {
+    public var underbarRuleThickness: Int32 {
         getMathConstant(MathConstants.underbarRuleThickness)
     }
 
-    public var underbarExtraDescender: CGFloat {
+    public var underbarExtraDescender: Int32 {
         getMathConstant(MathConstants.underbarExtraDescender)
     }
 
-    public var radicalVerticalGap: CGFloat {
+    public var radicalVerticalGap: Int32 {
         getMathConstant(MathConstants.radicalVerticalGap)
     }
 
-    public var radicalDisplayStyleVerticalGap: CGFloat {
+    public var radicalDisplayStyleVerticalGap: Int32 {
         getMathConstant(MathConstants.radicalDisplayStyleVerticalGap)
     }
 
-    public var radicalRuleThickness: CGFloat {
+    public var radicalRuleThickness: Int32 {
         getMathConstant(MathConstants.radicalRuleThickness)
     }
 
-    public var radicalExtraAscender: CGFloat {
+    public var radicalExtraAscender: Int32 {
         getMathConstant(MathConstants.radicalExtraAscender)
     }
 
-    public var radicalKernBeforeDegree: CGFloat {
+    public var radicalKernBeforeDegree: Int32 {
         getMathConstant(MathConstants.radicalKernBeforeDegree)
     }
 
-    public var radicalKernAfterDegree: CGFloat {
+    public var radicalKernAfterDegree: Int32 {
         getMathConstant(MathConstants.radicalKernAfterDegree)
     }
 
-    public var radicalDegreeBottomRaisePercent: CGFloat {
+    public var radicalDegreeBottomRaisePercent: Int32 {
         getMathConstant(MathConstants.radicalDegreeBottomRaisePercent)
     }
 }
@@ -487,23 +485,23 @@ public enum MathConstants {
 
 public class MathGlyphInfoTable {
     let data: CFData
-    let mathGlyphInfoOffset: Offset16
+    let tableOffset: Offset16
 
     init(mathTable: MathTable) {
         self.data = mathTable.data
-        self.mathGlyphInfoOffset = mathTable.mathGlyphInfoOffset
+        self.tableOffset = mathTable.mathGlyphInfoOffset
     }
 
     // MARK: - Header fields
 
     /// Offset to MathItalicsCorrectionInfo table, from the beginning of the MathGlyphInfo table.
     var mathItalicsCorrectionInfoOffset: Offset16 {
-        data.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 0)
+        data.readOffset16(parentOffset: tableOffset, offset: 0)
     }
 
     /// Offset to MathTopAccentAttachment table, from the beginning of the MathGlyphInfo table.
     var mathTopAccentAttachmentOffset: Offset16 {
-        data.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 2)
+        data.readOffset16(parentOffset: tableOffset, offset: 2)
     }
 
     /// Offset to ExtendedShapes coverage table, from the beginning of the MathGlyphInfo table.
@@ -511,12 +509,12 @@ public class MathGlyphInfoTable {
     /// should be used for vertical positioning purposes, not the default position defined by
     /// values in MathConstants table. May be NULL.
     var extendedShapeCoverageOffset: Offset16 {
-        data.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 4)
+        data.readOffset16(parentOffset: tableOffset, offset: 4)
     }
 
     /// Offset to MathKernInfo table, from the beginning of the MathGlyphInfo table.
     var mathKernInfoOffset: Offset16 {
-        data.readOffset16(parentOffset: mathGlyphInfoOffset, offset: 6)
+        data.readOffset16(parentOffset: tableOffset, offset: 6)
     }
 
     /// MARK: - Sub-tables
@@ -528,34 +526,41 @@ public class MathGlyphInfoTable {
 
 public class MathItalicsCorrectionInfoTable {
     let data: CFData
-    let mathItalicsCorrectionInfoOffset: Offset16 /// offset from the beginning of MATH table
+    let tableOffset: Offset16 /// offset from the beginning of MATH table
 
     init(mathGlyphInfoTable: MathGlyphInfoTable) {
         self.data = mathGlyphInfoTable.data
-        self.mathItalicsCorrectionInfoOffset = mathGlyphInfoTable.mathGlyphInfoOffset + mathGlyphInfoTable.mathItalicsCorrectionInfoOffset
+        self.tableOffset = mathGlyphInfoTable.tableOffset + mathGlyphInfoTable.mathItalicsCorrectionInfoOffset
     }
 
     /// Offset to Coverage table - from the beginning of MathItalicsCorrectionInfo table.
-    var italicsCorrectionCoverageOffset: Offset16 {
-        data.readOffset16(parentOffset: mathItalicsCorrectionInfoOffset, offset: 0)
+    func italicsCorrectionCoverageOffset() -> Offset16 {
+        data.readOffset16(parentOffset: tableOffset, offset: 0)
     }
 
     /// Number of italics correction values. Should coincide with the number of covered glyphs.
-    var italicsCorrectionCount: UInt16 {
-        data.readUInt16(parentOffset: mathItalicsCorrectionInfoOffset, offset: 2)
+    func italicsCorrectionCount() -> UInt16 {
+        data.readUInt16(parentOffset: tableOffset, offset: 2)
     }
 
     /// Array of MathValueRecords defining italics correction values for each covered glyph.
     func italicsCorrection(_ index: Int) -> MathValueRecord {
-        data.readMathValueRecord(parentOffset: mathItalicsCorrectionInfoOffset, offset: 4 + index * 4)
+        data.readMathValueRecord(parentOffset: tableOffset, offset: 4 + index * 4)
     }
 
-    public var coverageTable: CoverageTable {
-        CoverageTable(data: data, coverageOffset: mathItalicsCorrectionInfoOffset + italicsCorrectionCoverageOffset)
+    func coverageTable() -> CoverageTable {
+        CoverageTable(data: data, coverageOffset: tableOffset + italicsCorrectionCoverageOffset())
     }
 
-    func italicsCorrection(glyph: CGGlyph) -> CGFloat {
-        // TODO: implement
+    /// Return italics correction for glyphID in design units
+    public func getItalicsCorrection(_ glyphID: UInt16) -> Int32 {
+        let coverageTable = self.coverageTable()
+        if let coverageIndex = coverageTable.getCoverageIndex(glyphID) {
+            let mathValueRecord = italicsCorrection(coverageIndex)
+            let value = data.evalMathValueRecord(parentOffset: tableOffset,
+                                                        mathValueRecord: mathValueRecord)
+            return value
+        }
         return 0
     }
 }

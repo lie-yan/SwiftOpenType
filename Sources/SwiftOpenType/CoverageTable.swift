@@ -18,7 +18,7 @@ struct RangeRecord {
 
 public class CoverageTable {
     let data: CFData
-    let coverageOffset: Offset16
+    let coverageOffset: Offset16 /// offset of coverage table - from the beginning of data
 
     init(data: CFData, coverageOffset: Offset16) {
         self.data = data
@@ -53,7 +53,7 @@ public class CoverageTable {
         data.readRangeRecord(parentOffset: coverageOffset, offset: 4 + index * 6)
     }
 
-    public func coverageIndex(glyphID: UInt16) -> Int? {
+    public func getCoverageIndex(_ glyphID: UInt16) -> Int? {
         let coverageFormat = self.coverageFormat()
         if (coverageFormat == 1) {
             return binarySearch_1(target: glyphID)
@@ -66,7 +66,7 @@ public class CoverageTable {
     }
 
     /// binary search for Coverage Format 1
-    func binarySearch_1(target: UInt16) -> Int? {
+    private func binarySearch_1(target: UInt16) -> Int? {
         var left = 0
         var right = Int(glyphCount()) - 1
 
@@ -76,9 +76,11 @@ public class CoverageTable {
 
             if (value == target) {
                 return mid
-            } else if (value < target) {
+            }
+            else if (value < target) {
                 left = mid + 1
-            } else {
+            }
+            else {
                 right = mid - 1
             }
         }
@@ -86,8 +88,24 @@ public class CoverageTable {
     }
 
     /// binary search for Coverage Format 2
-    func binarySearch_2(target: UInt16) -> Int? {
-        // TODO: implement this
+    private func binarySearch_2(target: UInt16) -> Int? {
+        var left = 0
+        var right = Int(rangeCount()) - 1
+
+        while (left <= right) {
+            let mid = left + (right - left) / 2
+            let value = rangeRecords(mid)
+
+            if (target >= value.startGlyphID && target <= value.endGlyphID) {
+                return Int(value.startCoverageIndex + (target - value.startGlyphID))
+            }
+            else if (value.endGlyphID < target) {
+                left = mid + 1
+            }
+            else {
+                right = mid - 1
+            }
+        }
         return nil
     }
 }
