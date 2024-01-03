@@ -19,7 +19,10 @@ let package = Package(
         ),
         .testTarget(
             name: "SwiftOpenTypeTests",
-            dependencies: ["SwiftOpenType"]
+            dependencies: ["SwiftOpenType"],
+            resources: [
+                .copy("fonts"),
+            ]
         ),
     ]
 )
