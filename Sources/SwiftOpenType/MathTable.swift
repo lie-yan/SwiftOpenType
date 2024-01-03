@@ -153,251 +153,266 @@ public class MathConstantsTable {
     public func getMathConstant(_ index: Int) -> Int32 {
         precondition(index >= 0 && index <= MathConstants.radicalDegreeBottomRaisePercent)
 
-        let byteOffset = MathConstants.getByteOffset(index: index)
-
         if (index <= MathConstants.scriptScriptPercentScaleDown) {
-            let value = data.readInt16(parentOffset: tableOffset, offset: byteOffset)
-            return Int32(value)
+            return getPercent(index)
         }
         else if (index <= MathConstants.displayOperatorMinHeight) {
-            let value = data.readUFWORD(parentOffset: tableOffset, offset: byteOffset)
-            return Int32(value)
+            return getMinHeight(index)
         }
         else if (index <= MathConstants.radicalKernAfterDegree) {
-            let mathValueRecord = data.readMathValueRecord(parentOffset: tableOffset, offset: byteOffset)
-            let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
-            return Int32(value)
+            return getMathValue(index)
         }
         else if (index == MathConstants.radicalDegreeBottomRaisePercent) {
-            let value = data.readInt16(parentOffset: tableOffset, offset: byteOffset)
-            return Int32(value)
+            return getPercent(index)
         }
 
         assert(false)
     }
 
+    /// for {scriptPercentScaleDown, scriptScriptPercentScaleDown, radicalDegreeBottomRaisePercent}
+    private func getPercent(_ index: Int) -> Int32 {
+        let byteOffset = MathConstants.getByteOffset(index: index)
+        let value = data.readInt16(parentOffset: tableOffset, offset: byteOffset)
+        return Int32(value)
+    }
+
+    /// for {delimitedSubFormulaMinHeight, displayOperatorMinHeight}
+    private func getMinHeight(_ index: Int) -> Int32 {
+        let byteOffset = MathConstants.getByteOffset(index: index)
+        let value = data.readUFWORD(parentOffset: tableOffset, offset: byteOffset)
+        return Int32(value)
+    }
+
+    /// for the remaining
+    private func getMathValue(_ index: Int) -> Int32 {
+        let byteOffset = MathConstants.getByteOffset(index: index)
+        let mathValueRecord = data.readMathValueRecord(parentOffset: tableOffset, offset: byteOffset)
+        let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
+        return Int32(value)
+    }
+
     public var scriptPercentScaleDown: Int32 {
-        getMathConstant(MathConstants.scriptPercentScaleDown)
+        getPercent(MathConstants.scriptPercentScaleDown)
     }
 
     public var scriptScriptPercentScaleDown: Int32 {
-        getMathConstant(MathConstants.scriptScriptPercentScaleDown)
+        getPercent(MathConstants.scriptScriptPercentScaleDown)
     }
 
     public var delimitedSubFormulaMinHeight: Int32 {
-        getMathConstant(MathConstants.delimitedSubFormulaMinHeight)
+        getMinHeight(MathConstants.delimitedSubFormulaMinHeight)
     }
 
     public var displayOperatorMinHeight: Int32 {
-        getMathConstant(MathConstants.displayOperatorMinHeight)
+        getMinHeight(MathConstants.displayOperatorMinHeight)
     }
 
     public var mathLeading: Int32 {
-        getMathConstant(MathConstants.mathLeading)
+        getMathValue(MathConstants.mathLeading)
     }
 
     public var axisHeight: Int32 {
-        getMathConstant(MathConstants.axisHeight)
+        getMathValue(MathConstants.axisHeight)
     }
 
     public var accentBaseHeight: Int32 {
-        getMathConstant(MathConstants.accentBaseHeight)
+        getMathValue(MathConstants.accentBaseHeight)
     }
 
     public var flattenedAccentBaseHeight: Int32 {
-        getMathConstant(MathConstants.flattenedAccentBaseHeight)
+        getMathValue(MathConstants.flattenedAccentBaseHeight)
     }
 
     public var subscriptShiftDown: Int32 {
-        getMathConstant(MathConstants.subscriptShiftDown)
+        getMathValue(MathConstants.subscriptShiftDown)
     }
 
     public var subscriptTopMax: Int32 {
-        getMathConstant(MathConstants.subscriptTopMax)
+        getMathValue(MathConstants.subscriptTopMax)
     }
 
     public var subscriptBaselineDropMin: Int32 {
-        getMathConstant(MathConstants.subscriptBaselineDropMin)
+        getMathValue(MathConstants.subscriptBaselineDropMin)
     }
 
     public var superscriptShiftUp: Int32 {
-        getMathConstant(MathConstants.superscriptShiftUp)
+        getMathValue(MathConstants.superscriptShiftUp)
     }
 
     public var superscriptShiftUpCramped: Int32 {
-        getMathConstant(MathConstants.superscriptShiftUpCramped)
+        getMathValue(MathConstants.superscriptShiftUpCramped)
     }
 
     public var superscriptBottomMin: Int32 {
-        getMathConstant(MathConstants.superscriptBottomMin)
+        getMathValue(MathConstants.superscriptBottomMin)
     }
 
     public var superscriptBaselineDropMax: Int32 {
-        getMathConstant(MathConstants.superscriptBaselineDropMax)
+        getMathValue(MathConstants.superscriptBaselineDropMax)
     }
 
     public var subSuperscriptGapMin: Int32 {
-        getMathConstant(MathConstants.subSuperscriptGapMin)
+        getMathValue(MathConstants.subSuperscriptGapMin)
     }
 
     public var superscriptBottomMaxWithSubscript: Int32 {
-        getMathConstant(MathConstants.superscriptBottomMaxWithSubscript)
+        getMathValue(MathConstants.superscriptBottomMaxWithSubscript)
     }
 
     public var spaceAfterScript: Int32 {
-        getMathConstant(MathConstants.spaceAfterScript)
+        getMathValue(MathConstants.spaceAfterScript)
     }
 
     public var upperLimitGapMin: Int32 {
-        getMathConstant(MathConstants.upperLimitGapMin)
+        getMathValue(MathConstants.upperLimitGapMin)
     }
 
     public var upperLimitBaselineRiseMin: Int32 {
-        getMathConstant(MathConstants.upperLimitBaselineRiseMin)
+        getMathValue(MathConstants.upperLimitBaselineRiseMin)
     }
 
     public var lowerLimitGapMin: Int32 {
-        getMathConstant(MathConstants.lowerLimitGapMin)
+        getMathValue(MathConstants.lowerLimitGapMin)
     }
 
     public var lowerLimitBaselineDropMin: Int32 {
-        getMathConstant(MathConstants.lowerLimitBaselineDropMin)
+        getMathValue(MathConstants.lowerLimitBaselineDropMin)
     }
 
     public var stackTopShiftUp: Int32 {
-        getMathConstant(MathConstants.stackTopShiftUp)
+        getMathValue(MathConstants.stackTopShiftUp)
     }
 
     public var stackTopDisplayStyleShiftUp: Int32 {
-        getMathConstant(MathConstants.stackTopDisplayStyleShiftUp)
+        getMathValue(MathConstants.stackTopDisplayStyleShiftUp)
     }
 
     public var stackBottomShiftDown: Int32 {
-        getMathConstant(MathConstants.stackBottomShiftDown)
+        getMathValue(MathConstants.stackBottomShiftDown)
     }
 
     public var stackBottomDisplayStyleShiftDown: Int32 {
-        getMathConstant(MathConstants.stackBottomDisplayStyleShiftDown)
+        getMathValue(MathConstants.stackBottomDisplayStyleShiftDown)
     }
 
     public var stackGapMin: Int32 {
-        getMathConstant(MathConstants.stackGapMin)
+        getMathValue(MathConstants.stackGapMin)
     }
 
     public var stackDisplayStyleGapMin: Int32 {
-        getMathConstant(MathConstants.stackDisplayStyleGapMin)
+        getMathValue(MathConstants.stackDisplayStyleGapMin)
     }
 
     public var stretchStackTopShiftUp: Int32 {
-        getMathConstant(MathConstants.stretchStackTopShiftUp)
+        getMathValue(MathConstants.stretchStackTopShiftUp)
     }
 
     public var stretchStackBottomShiftDown: Int32 {
-        getMathConstant(MathConstants.stretchStackBottomShiftDown)
+        getMathValue(MathConstants.stretchStackBottomShiftDown)
     }
 
     public var stretchStackGapAboveMin: Int32 {
-        getMathConstant(MathConstants.stretchStackGapAboveMin)
+        getMathValue(MathConstants.stretchStackGapAboveMin)
     }
 
     public var stretchStackGapBelowMin: Int32 {
-        getMathConstant(MathConstants.stretchStackGapBelowMin)
+        getMathValue(MathConstants.stretchStackGapBelowMin)
     }
 
     public var fractionNumeratorShiftUp: Int32 {
-        getMathConstant(MathConstants.fractionNumeratorShiftUp)
+        getMathValue(MathConstants.fractionNumeratorShiftUp)
     }
 
     public var fractionNumeratorDisplayStyleShiftUp: Int32 {
-        getMathConstant(MathConstants.fractionNumeratorDisplayStyleShiftUp)
+        getMathValue(MathConstants.fractionNumeratorDisplayStyleShiftUp)
     }
 
     public var fractionDenominatorShiftDown: Int32 {
-        getMathConstant(MathConstants.fractionDenominatorShiftDown)
+        getMathValue(MathConstants.fractionDenominatorShiftDown)
     }
 
     public var fractionDenominatorDisplayStyleShiftDown: Int32 {
-        getMathConstant(MathConstants.fractionDenominatorDisplayStyleShiftDown)
+        getMathValue(MathConstants.fractionDenominatorDisplayStyleShiftDown)
     }
 
     public var fractionNumeratorGapMin: Int32 {
-        getMathConstant(MathConstants.fractionNumeratorGapMin)
+        getMathValue(MathConstants.fractionNumeratorGapMin)
     }
 
     public var fractionNumDisplayStyleGapMin: Int32 {
-        getMathConstant(MathConstants.fractionNumDisplayStyleGapMin)
+        getMathValue(MathConstants.fractionNumDisplayStyleGapMin)
     }
 
     public var fractionRuleThickness: Int32 {
-        getMathConstant(MathConstants.fractionRuleThickness)
+        getMathValue(MathConstants.fractionRuleThickness)
     }
 
     public var fractionDenominatorGapMin: Int32 {
-        getMathConstant(MathConstants.fractionDenominatorGapMin)
+        getMathValue(MathConstants.fractionDenominatorGapMin)
     }
 
     public var fractionDenomDisplayStyleGapMin: Int32 {
-        getMathConstant(MathConstants.fractionDenomDisplayStyleGapMin)
+        getMathValue(MathConstants.fractionDenomDisplayStyleGapMin)
     }
 
     public var skewedFractionHorizontalGap: Int32 {
-        getMathConstant(MathConstants.skewedFractionHorizontalGap)
+        getMathValue(MathConstants.skewedFractionHorizontalGap)
     }
 
     public var skewedFractionVerticalGap: Int32 {
-        getMathConstant(MathConstants.skewedFractionVerticalGap)
+        getMathValue(MathConstants.skewedFractionVerticalGap)
     }
 
     public var overbarVerticalGap: Int32 {
-        getMathConstant(MathConstants.overbarVerticalGap)
+        getMathValue(MathConstants.overbarVerticalGap)
     }
 
     public var overbarRuleThickness: Int32 {
-        getMathConstant(MathConstants.overbarRuleThickness)
+        getMathValue(MathConstants.overbarRuleThickness)
     }
 
     public var overbarExtraAscender: Int32 {
-        getMathConstant(MathConstants.overbarExtraAscender)
+        getMathValue(MathConstants.overbarExtraAscender)
     }
 
     public var underbarVerticalGap: Int32 {
-        getMathConstant(MathConstants.underbarVerticalGap)
+        getMathValue(MathConstants.underbarVerticalGap)
     }
 
     public var underbarRuleThickness: Int32 {
-        getMathConstant(MathConstants.underbarRuleThickness)
+        getMathValue(MathConstants.underbarRuleThickness)
     }
 
     public var underbarExtraDescender: Int32 {
-        getMathConstant(MathConstants.underbarExtraDescender)
+        getMathValue(MathConstants.underbarExtraDescender)
     }
 
     public var radicalVerticalGap: Int32 {
-        getMathConstant(MathConstants.radicalVerticalGap)
+        getMathValue(MathConstants.radicalVerticalGap)
     }
 
     public var radicalDisplayStyleVerticalGap: Int32 {
-        getMathConstant(MathConstants.radicalDisplayStyleVerticalGap)
+        getMathValue(MathConstants.radicalDisplayStyleVerticalGap)
     }
 
     public var radicalRuleThickness: Int32 {
-        getMathConstant(MathConstants.radicalRuleThickness)
+        getMathValue(MathConstants.radicalRuleThickness)
     }
 
     public var radicalExtraAscender: Int32 {
-        getMathConstant(MathConstants.radicalExtraAscender)
+        getMathValue(MathConstants.radicalExtraAscender)
     }
 
     public var radicalKernBeforeDegree: Int32 {
-        getMathConstant(MathConstants.radicalKernBeforeDegree)
+        getMathValue(MathConstants.radicalKernBeforeDegree)
     }
 
     public var radicalKernAfterDegree: Int32 {
-        getMathConstant(MathConstants.radicalKernAfterDegree)
+        getMathValue(MathConstants.radicalKernAfterDegree)
     }
 
     public var radicalDegreeBottomRaisePercent: Int32 {
-        getMathConstant(MathConstants.radicalDegreeBottomRaisePercent)
+        getPercent(MathConstants.radicalDegreeBottomRaisePercent)
     }
 }
 
