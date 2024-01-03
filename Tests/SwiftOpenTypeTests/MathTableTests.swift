@@ -97,17 +97,39 @@ final class MathTableTests: XCTestCase {
     }
 
     func testMathItalicsCorrectionInfo() {
-        var buf: unichar = 0
-        var glyph: CGGlyph = 0
-
-        ("f" as NSString).getCharacters(&buf, range: NSRange(location: 0, length: 1))
-        CTFontGetGlyphsForCharacters(lmmath, &buf, &glyph, 1)
-
         let table = lmmath.mathTable!.mathGlyphInfoTable.mathItalicsCorrectionInfoTable
+
+        let glyph = CTFontGetGlyphWithName(lmmath, "f" as CFString)
         let italicsCorrection = table.getItalicsCorrection(glyph)
 
-        let toPoints = {(du: Int32) -> CGFloat in CGFloat(du) * self.lmmath.sizePerUnit()}
+        XCTAssertEqual(italicsCorrection, 79)
+    }
+    
+    func testMathItalicsCorrection() {
+        let path = Bundle.module.path(forResource: "MathTestFontFull", ofType: "otf", inDirectory: "fonts")
+        
+        if path == nil {
+            print("Cannot find resource")
+            return Void()
+        }
+        
+        let fileURL = URL(filePath: path!)
+        let fontDesc = CTFontManagerCreateFontDescriptorsFromURL(fileURL as CFURL) as! [CTFontDescriptor]
+        let font = CTFontCreateWithFontDescriptor(fontDesc[0], 20, nil)
+        let table = font.mathTable!.mathGlyphInfoTable.mathItalicsCorrectionInfoTable
 
-        print("\(toPoints(italicsCorrection))")
+        var glyph: CGGlyph
+
+        glyph = CTFontGetGlyphWithName(font, "space" as CFString)
+        XCTAssertEqual(table.getItalicsCorrection(glyph), 0)
+
+        glyph = CTFontGetGlyphWithName(font, "A" as CFString)
+        XCTAssertEqual(table.getItalicsCorrection(glyph), 197)
+
+        glyph = CTFontGetGlyphWithName(font, "B" as CFString)
+        XCTAssertEqual(table.getItalicsCorrection(glyph), 150)
+
+        glyph = CTFontGetGlyphWithName(font, "C" as CFString)
+        XCTAssertEqual(table.getItalicsCorrection(glyph), 452)
     }
 }

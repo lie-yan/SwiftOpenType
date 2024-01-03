@@ -573,7 +573,7 @@ public class MathItalicsCorrectionInfoTable {
         if let coverageIndex = coverageTable.getCoverageIndex(glyphID) {
             let mathValueRecord = italicsCorrection(coverageIndex)
             let value = data.evalMathValueRecord(parentOffset: tableOffset,
-                                                        mathValueRecord: mathValueRecord)
+                                                 mathValueRecord: mathValueRecord)
             return value
         }
         return 0

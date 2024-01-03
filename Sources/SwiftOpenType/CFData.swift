@@ -15,7 +15,7 @@ internal extension CFData {
             $0.pointee.byteSwapped
         }
     }
-
+    
     /// Read Int16 at the given (byte) offset
     func readInt16(_ offset: Int) -> Int16 {
         let ptr = CFDataGetBytePtr(self)!
@@ -23,29 +23,29 @@ internal extension CFData {
             $0.pointee.byteSwapped
         }
     }
-
+    
     /// Read Offset16 at the given (byte) offset
     func readOffset16(_ offset: Int) -> Offset16 {
         readUInt16(offset)
     }
-
+    
     /// Read FWORD at the given (byte) offset
     func readFWORD(_ offset: Int) -> FWORD {
         readInt16(offset)
     }
-
+    
     /// Read UFWORD at the given (byte) offset
     func readUFWORD(_ offset: Int) -> UFWORD {
         readUInt16(offset)
     }
-
+    
     /// Read MathValueRecord at the given (byte) offset
     func readMathValueRecord(_ offset: Int) -> MathValueRecord {
         let value = readFWORD(offset)
         let deviceOffset = readOffset16(offset + 2)
         return MathValueRecord(value: value, deviceOffset: deviceOffset)
     }
-
+    
     /// Read RangeRecord at the given (byte) offset
     func readRangeRecord(_ offset: Int) -> RangeRecord {
         let startGlyphID = readUInt16(offset)
@@ -55,42 +55,42 @@ internal extension CFData {
                            endGlyphID: endGlyphID,
                            startCoverageIndex: startCoverageIndex)
     }
-
+    
     /// Read Int16 at the given (byte) offset
     func readInt16(parentOffset: Offset16, offset: Int) -> Int16 {
         readInt16(Int(parentOffset) + offset)
     }
-
+    
     /// Read UInt16 at the given (byte) offset
     func readUInt16(parentOffset: Offset16, offset: Int) -> UInt16 {
         readUInt16(Int(parentOffset) + offset)
     }
-
+    
     /// Read Offset16 at the given (byte) offset
     func readOffset16(parentOffset: Offset16, offset: Int) -> Offset16 {
         readOffset16(Int(parentOffset) + offset)
     }
-
+    
     /// Read FWORD at the given (byte) offset
     func readFWORD(parentOffset: Offset16, offset: Int) -> FWORD {
         readFWORD(Int(parentOffset) + offset)
     }
-
+    
     /// Read UFWORD at the given (byte) offset
     func readUFWORD(parentOffset: Offset16, offset: Int) -> UFWORD {
         readUFWORD(Int(parentOffset) + offset)
     }
-
+    
     /// Read MathValueRecord at the given (byte) offset
     func readMathValueRecord(parentOffset: Offset16, offset: Int) -> MathValueRecord {
         readMathValueRecord(Int(parentOffset) + offset)
     }
-
+    
     /// Read RangeRecord at the given (byte) offset
     func readRangeRecord(parentOffset: Offset16, offset: Int) -> RangeRecord {
         readRangeRecord(Int(parentOffset) + offset)
     }
-
+    
     /// Read adjustment from device table
     func readDeviceDelta(parentOffset: Offset16, deviceOffset: Offset16) -> Int16 {
         // TODO: add device delta
@@ -105,7 +105,7 @@ internal extension CFData {
         }
         return 0
     }
-
+    
     /// Evaluate the given MathValueRecord, and return the result value of design units.
     func evalMathValueRecord(parentOffset: Offset16, mathValueRecord: MathValueRecord) -> Int32 {
         let deltaValue = readDeviceDelta(parentOffset: parentOffset, deviceOffset: mathValueRecord.deviceOffset)
