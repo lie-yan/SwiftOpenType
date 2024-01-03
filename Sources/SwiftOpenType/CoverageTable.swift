@@ -37,7 +37,7 @@ public class CoverageTable {
 
     /// Array of glyph IDs — in numerical order
     /// Coverage Format 1
-    func glyphArray(_ index: CFIndex) -> UInt16 {
+    func glyphArray(_ index: Int) -> UInt16 {
         data.readUInt16(parentOffset: coverageOffset, offset: 4 + index * 2)
     }
 
@@ -49,11 +49,11 @@ public class CoverageTable {
 
     /// Array of glyph ranges — ordered by startGlyphID.
     /// Coverage Format 2
-    func rangeRecords(_ index: CFIndex) -> RangeRecord {
+    func rangeRecords(_ index: Int) -> RangeRecord {
         data.readRangeRecord(parentOffset: coverageOffset, offset: 4 + index * 6)
     }
 
-    public func coverageIndex(glyphID: UInt16) -> CFIndex? {
+    public func coverageIndex(glyphID: UInt16) -> Int? {
         let coverageFormat = self.coverageFormat()
         if (coverageFormat == 1) {
             return binarySearch_1(target: glyphID)
@@ -66,7 +66,7 @@ public class CoverageTable {
     }
 
     /// binary search for Coverage Format 1
-    func binarySearch_1(target: UInt16) -> CFIndex? {
+    func binarySearch_1(target: UInt16) -> Int? {
         var left = 0
         var right = Int(glyphCount()) - 1
 
@@ -86,7 +86,7 @@ public class CoverageTable {
     }
 
     /// binary search for Coverage Format 2
-    func binarySearch_2(target: UInt16) -> CFIndex? {
+    func binarySearch_2(target: UInt16) -> Int? {
         // TODO: implement this
         return nil
     }

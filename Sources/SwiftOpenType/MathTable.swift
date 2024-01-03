@@ -152,25 +152,25 @@ public class MathConstantsTable {
 
     /// Return the value of the math constant specified by the argument whose value
     /// should be taken from ``MathConstants``.
-    public func getMathConstant(_ offset: CFIndex) -> CGFloat {
-        precondition(offset >= 0 && offset <= MathConstants.radicalDegreeBottomRaisePercent)
+    public func getMathConstant(_ index: Int) -> CGFloat {
+        precondition(index >= 0 && index <= MathConstants.radicalDegreeBottomRaisePercent)
 
-        let byteOffset = MathConstants.getByteOffset(offset: offset)
+        let byteOffset = MathConstants.getByteOffset(index: index)
 
-        if (offset <= MathConstants.scriptScriptPercentScaleDown) {
+        if (index <= MathConstants.scriptScriptPercentScaleDown) {
             let value = data.readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
             return CGFloat(value) / 100
         }
-        else if (offset <= MathConstants.displayOperatorMinHeight) {
+        else if (index <= MathConstants.displayOperatorMinHeight) {
             let value = data.readUFWORD(parentOffset: mathConstantsOffset, offset: byteOffset)
             return CGFloat(value) * font.sizePerUnit()
         }
-        else if (offset <= MathConstants.radicalKernAfterDegree) {
+        else if (index <= MathConstants.radicalKernAfterDegree) {
             let mathValueRecord = data.readMathValueRecord(parentOffset: mathConstantsOffset, offset: byteOffset)
             let value = data.evalMathValueRecord(parentOffset: mathConstantsOffset, mathValueRecord: mathValueRecord)
             return CGFloat(value) * font.sizePerUnit()
         }
-        else if (offset == MathConstants.radicalDegreeBottomRaisePercent) {
+        else if (index == MathConstants.radicalDegreeBottomRaisePercent) {
             let value = data.readInt16(parentOffset: mathConstantsOffset, offset: byteOffset)
             return CGFloat(value) / 100
         }
@@ -473,14 +473,14 @@ public enum MathConstants {
         radicalDegreeBottomRaisePercent = 55
 
     /// Given element offset, return byte offset
-    static func getByteOffset(offset: CFIndex) -> CFIndex {
-        precondition(offset >= 0 && offset <= radicalDegreeBottomRaisePercent)
+    static func getByteOffset(index: Int) -> Int {
+        precondition(index >= 0 && index <= radicalDegreeBottomRaisePercent)
 
-        if (offset < mathLeading) {
-            return offset * 2
+        if (index < mathLeading) {
+            return index * 2
         }
         else {
-            return mathLeading * 2 + (offset - mathLeading) * 4
+            return mathLeading * 2 + (index - mathLeading) * 4
         }
     }
 }
@@ -546,7 +546,7 @@ public class MathItalicsCorrectionInfoTable {
     }
 
     /// Array of MathValueRecords defining italics correction values for each covered glyph.
-    func italicsCorrection(_ index: CFIndex) -> MathValueRecord {
+    func italicsCorrection(_ index: Int) -> MathValueRecord {
         data.readMathValueRecord(parentOffset: mathItalicsCorrectionInfoOffset, offset: 4 + index * 4)
     }
 
