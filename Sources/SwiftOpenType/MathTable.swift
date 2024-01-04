@@ -580,6 +580,17 @@ public class MathItalicsCorrectionInfoTable {
     }
 }
 
+public class MathTopAccentAttachmentTable {
+    let data: CFData
+    let tableOffset: Offset16 /// offset from the beginning of MATH table
+
+    init(mathGlyphInfoTable: MathGlyphInfoTable) {
+        self.data = mathGlyphInfoTable.data
+        self.tableOffset = mathGlyphInfoTable.tableOffset + mathGlyphInfoTable.mathTopAccentAttachmentOffset
+    }
+
+}
+
 struct MathValueRecord {
     let value: FWORD           // The X or Y value in design units
     let deviceOffset: Offset16 // Offset to the device table — from the beginning of parent table.
