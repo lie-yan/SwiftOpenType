@@ -7,9 +7,9 @@ final class MathTableTests: XCTestCase {
     let lmmath = CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil)
 
     func testMathTableHeader() {
-        XCTAssertFalse(helvetica.mathTable != nil)
+        XCTAssert(helvetica.mathTable == nil)
 
-        XCTAssertTrue(lmmath.mathTable != nil)
+        XCTAssert(lmmath.mathTable != nil)
 
         let mathTable = lmmath.mathTable!
         XCTAssertEqual(mathTable.majorVersion(), 1)
@@ -17,96 +17,108 @@ final class MathTableTests: XCTestCase {
     }
 
     func testMathConstants() {
-        let mathConstants = lmmath.mathTable!.mathConstantsTable!
+        let font = lmmath
+        let table = lmmath.mathTable!.mathConstantsTable!
 
         let ruleThickness: CGFloat = 0.48
         let commonGap: CGFloat = 1.44
         let eps: CGFloat = 1e-15
 
         let toRatio = {(p: Int32) -> CGFloat in CGFloat(p) / 100}
-        let toPoints = {(du: Int32) -> CGFloat in CGFloat(du) * self.lmmath.sizePerUnit()}
+        let toPoints = {(du: Int32) -> CGFloat in CGFloat(du) * font.sizePerUnit()}
 
-        XCTAssertEqual(toRatio(mathConstants.scriptPercentScaleDown), 0.7)
-        XCTAssertEqual(toRatio(mathConstants.scriptScriptPercentScaleDown), 0.5)
+        XCTAssertEqual(toRatio(table.scriptPercentScaleDown), 0.7)
+        XCTAssertEqual(toRatio(table.scriptScriptPercentScaleDown), 0.5)
 
-        XCTAssertEqual(toPoints(mathConstants.delimitedSubFormulaMinHeight), 15.6)
-        XCTAssertEqual(toPoints(mathConstants.displayOperatorMinHeight), 15.6)
+        XCTAssertEqual(toPoints(table.delimitedSubFormulaMinHeight), 15.6)
+        XCTAssertEqual(toPoints(table.displayOperatorMinHeight), 15.6)
 
-        XCTAssertEqual(toPoints(mathConstants.mathLeading), 1.848)
-        XCTAssertEqual(toPoints(mathConstants.axisHeight), 3.0)
-        XCTAssertEqual(toPoints(mathConstants.accentBaseHeight), 5.4)
-        XCTAssertEqual(toPoints(mathConstants.flattenedAccentBaseHeight), 7.968)
+        XCTAssertEqual(toPoints(table.mathLeading), 1.848)
+        XCTAssertEqual(toPoints(table.axisHeight), 3.0)
+        XCTAssertEqual(toPoints(table.accentBaseHeight), 5.4)
+        XCTAssertEqual(toPoints(table.flattenedAccentBaseHeight), 7.968)
 
-        XCTAssertEqual(toPoints(mathConstants.subscriptShiftDown), 2.964)
-        XCTAssertEqual(toPoints(mathConstants.subscriptTopMax), 4.128)
-        XCTAssertEqual(toPoints(mathConstants.subscriptBaselineDropMin), 2.4)
-        XCTAssertEqual(toPoints(mathConstants.superscriptShiftUp), 4.356)
-        XCTAssertEqual(toPoints(mathConstants.superscriptShiftUpCramped), 3.468)
-        XCTAssertEqual(toPoints(mathConstants.superscriptBottomMin), 1.296)
-        XCTAssertEqual(toPoints(mathConstants.superscriptBaselineDropMax), 3.0)
-        XCTAssertEqual(toPoints(mathConstants.subSuperscriptGapMin), 1.92)
-        XCTAssertEqual(toPoints(mathConstants.superscriptBottomMaxWithSubscript), 4.128)
-        XCTAssertEqual(toPoints(mathConstants.spaceAfterScript), 0.672)
+        XCTAssertEqual(toPoints(table.subscriptShiftDown), 2.964)
+        XCTAssertEqual(toPoints(table.subscriptTopMax), 4.128)
+        XCTAssertEqual(toPoints(table.subscriptBaselineDropMin), 2.4)
+        XCTAssertEqual(toPoints(table.superscriptShiftUp), 4.356)
+        XCTAssertEqual(toPoints(table.superscriptShiftUpCramped), 3.468)
+        XCTAssertEqual(toPoints(table.superscriptBottomMin), 1.296)
+        XCTAssertEqual(toPoints(table.superscriptBaselineDropMax), 3.0)
+        XCTAssertEqual(toPoints(table.subSuperscriptGapMin), 1.92)
+        XCTAssertEqual(toPoints(table.superscriptBottomMaxWithSubscript), 4.128)
+        XCTAssertEqual(toPoints(table.spaceAfterScript), 0.672)
 
-        XCTAssertEqual(toPoints(mathConstants.upperLimitGapMin), 2.4)
-        XCTAssertEqual(toPoints(mathConstants.upperLimitBaselineRiseMin), 1.332)
-        XCTAssertEqual(toPoints(mathConstants.lowerLimitGapMin), 2.004)
-        XCTAssertEqual(toPoints(mathConstants.lowerLimitBaselineDropMin), 7.2)
+        XCTAssertEqual(toPoints(table.upperLimitGapMin), 2.4)
+        XCTAssertEqual(toPoints(table.upperLimitBaselineRiseMin), 1.332)
+        XCTAssertEqual(toPoints(table.lowerLimitGapMin), 2.004)
+        XCTAssertEqual(toPoints(table.lowerLimitBaselineDropMin), 7.2)
 
-        XCTAssertEqual(toPoints(mathConstants.stackTopShiftUp), 5.328)
-        XCTAssertEqual(toPoints(mathConstants.stackTopDisplayStyleShiftUp), 8.124)
-        XCTAssertEqual(toPoints(mathConstants.stackBottomShiftDown), 4.14)
-        XCTAssertEqual(toPoints(mathConstants.stackBottomDisplayStyleShiftDown), 8.232)
-        XCTAssertEqual(toPoints(mathConstants.stackGapMin), 1.44)
-        XCTAssertEqual(toPoints(mathConstants.stackDisplayStyleGapMin), 3.36)
+        XCTAssertEqual(toPoints(table.stackTopShiftUp), 5.328)
+        XCTAssertEqual(toPoints(table.stackTopDisplayStyleShiftUp), 8.124)
+        XCTAssertEqual(toPoints(table.stackBottomShiftDown), 4.14)
+        XCTAssertEqual(toPoints(table.stackBottomDisplayStyleShiftDown), 8.232)
+        XCTAssertEqual(toPoints(table.stackGapMin), 1.44)
+        XCTAssertEqual(toPoints(table.stackDisplayStyleGapMin), 3.36)
 
-        XCTAssertEqual(toPoints(mathConstants.stretchStackTopShiftUp), 1.332)
-        XCTAssertEqual(toPoints(mathConstants.stretchStackBottomShiftDown), 7.2)
-        XCTAssertEqual(toPoints(mathConstants.stretchStackGapAboveMin), 2.4)
-        XCTAssertEqual(toPoints(mathConstants.stretchStackGapBelowMin), 2.004)
+        XCTAssertEqual(toPoints(table.stretchStackTopShiftUp), 1.332)
+        XCTAssertEqual(toPoints(table.stretchStackBottomShiftDown), 7.2)
+        XCTAssertEqual(toPoints(table.stretchStackGapAboveMin), 2.4)
+        XCTAssertEqual(toPoints(table.stretchStackGapBelowMin), 2.004)
 
-        XCTAssertEqual(toPoints(mathConstants.fractionNumeratorShiftUp), 4.728)
-        XCTAssertEqual(toPoints(mathConstants.fractionNumeratorDisplayStyleShiftUp), 8.124)
-        XCTAssertEqual(toPoints(mathConstants.fractionDenominatorShiftDown), 4.14)
-        XCTAssertEqual(toPoints(mathConstants.fractionDenominatorDisplayStyleShiftDown), 8.232)
-        XCTAssertEqual(toPoints(mathConstants.fractionNumeratorGapMin), ruleThickness)
-        XCTAssertEqual(toPoints(mathConstants.fractionNumDisplayStyleGapMin), commonGap)
-        XCTAssertEqual(toPoints(mathConstants.fractionRuleThickness), ruleThickness)
-        XCTAssertEqual(toPoints(mathConstants.fractionDenominatorGapMin), ruleThickness)
-        XCTAssertEqual(toPoints(mathConstants.fractionDenomDisplayStyleGapMin), commonGap)
+        XCTAssertEqual(toPoints(table.fractionNumeratorShiftUp), 4.728)
+        XCTAssertEqual(toPoints(table.fractionNumeratorDisplayStyleShiftUp), 8.124)
+        XCTAssertEqual(toPoints(table.fractionDenominatorShiftDown), 4.14)
+        XCTAssertEqual(toPoints(table.fractionDenominatorDisplayStyleShiftDown), 8.232)
+        XCTAssertEqual(toPoints(table.fractionNumeratorGapMin), ruleThickness)
+        XCTAssertEqual(toPoints(table.fractionNumDisplayStyleGapMin), commonGap)
+        XCTAssertEqual(toPoints(table.fractionRuleThickness), ruleThickness)
+        XCTAssertEqual(toPoints(table.fractionDenominatorGapMin), ruleThickness)
+        XCTAssertEqual(toPoints(table.fractionDenomDisplayStyleGapMin), commonGap)
 
-        XCTAssertEqual(toPoints(mathConstants.skewedFractionHorizontalGap), 4.2)
-        XCTAssertEqual(toPoints(mathConstants.skewedFractionVerticalGap), 1.152, accuracy: eps)
+        XCTAssertEqual(toPoints(table.skewedFractionHorizontalGap), 4.2)
+        XCTAssertEqual(toPoints(table.skewedFractionVerticalGap), 1.152, accuracy: eps)
 
-        XCTAssertEqual(toPoints(mathConstants.overbarVerticalGap), commonGap)
-        XCTAssertEqual(toPoints(mathConstants.overbarRuleThickness), ruleThickness)
-        XCTAssertEqual(toPoints(mathConstants.overbarExtraAscender), ruleThickness)
+        XCTAssertEqual(toPoints(table.overbarVerticalGap), commonGap)
+        XCTAssertEqual(toPoints(table.overbarRuleThickness), ruleThickness)
+        XCTAssertEqual(toPoints(table.overbarExtraAscender), ruleThickness)
 
-        XCTAssertEqual(toPoints(mathConstants.underbarVerticalGap), commonGap)
-        XCTAssertEqual(toPoints(mathConstants.underbarRuleThickness), ruleThickness)
-        XCTAssertEqual(toPoints(mathConstants.underbarExtraDescender), ruleThickness)
+        XCTAssertEqual(toPoints(table.underbarVerticalGap), commonGap)
+        XCTAssertEqual(toPoints(table.underbarRuleThickness), ruleThickness)
+        XCTAssertEqual(toPoints(table.underbarExtraDescender), ruleThickness)
 
-        XCTAssertEqual(toPoints(mathConstants.radicalVerticalGap), 0.6)
-        XCTAssertEqual(toPoints(mathConstants.radicalDisplayStyleVerticalGap), 1.776)
-        XCTAssertEqual(toPoints(mathConstants.radicalRuleThickness), ruleThickness)
-        XCTAssertEqual(toPoints(mathConstants.radicalExtraAscender), ruleThickness)
-        XCTAssertEqual(toPoints(mathConstants.radicalKernBeforeDegree), 3.336)
-        XCTAssertEqual(toPoints(mathConstants.radicalKernAfterDegree), -6.672)
+        XCTAssertEqual(toPoints(table.radicalVerticalGap), 0.6)
+        XCTAssertEqual(toPoints(table.radicalDisplayStyleVerticalGap), 1.776)
+        XCTAssertEqual(toPoints(table.radicalRuleThickness), ruleThickness)
+        XCTAssertEqual(toPoints(table.radicalExtraAscender), ruleThickness)
+        XCTAssertEqual(toPoints(table.radicalKernBeforeDegree), 3.336)
+        XCTAssertEqual(toPoints(table.radicalKernAfterDegree), -6.672)
 
-        XCTAssertEqual(toRatio(mathConstants.radicalDegreeBottomRaisePercent), 0.6)
+        XCTAssertEqual(toRatio(table.radicalDegreeBottomRaisePercent), 0.6)
     }
 
-    func testMathItalicsCorrectionInfo() {
-        let table = lmmath.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
+    func testMathItalicsCorrection() {
+        let font = lmmath
+        let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
 
-        let glyph = CTFontGetGlyphWithName(lmmath, "f" as CFString)
+        let glyph = CTFontGetGlyphWithName(font, "f" as CFString)
         let italicsCorrection = table.getItalicsCorrection(glyph)
 
         XCTAssertEqual(italicsCorrection, 79)
     }
+
+    func testMathTopAccentAttachment() {
+        let font = lmmath
+        let table = lmmath.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
         
-    func testMathItalicsCorrection() {
-        let font = openFont(path: "fonts/MathTestFontFull.otf", size: 20.0)
+        var glyph: CGGlyph
+        
+        glyph = CTFontGetGlyphWithName(font, "f" as CFString)
+        XCTAssertEqual(table.getTopAccentAttachment(glyph), 262)
+    }
+
+    func testMathItalicsCorrection_2() {
+        let font = openFont(path: "fonts/MathTestFontFull.otf", size: 10.0)
         let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
 
         var glyph: CGGlyph
@@ -123,7 +135,7 @@ final class MathTableTests: XCTestCase {
         glyph = CTFontGetGlyphWithName(font, "C" as CFString)
         XCTAssertEqual(table.getItalicsCorrection(glyph), 452)
     }
-    
+        
     func openFont(path : String, size: CGFloat) -> CTFont {
         let resourcePath = Bundle.module.resourcePath!
         let path = resourcePath + "/" + path
