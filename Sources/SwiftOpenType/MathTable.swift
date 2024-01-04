@@ -15,38 +15,46 @@ public class MathTable {
     // MARK: - Header fields
 
     /// Major version of the MATH table, = 1.
-    public var majorVersion: UInt16 {
+    public func majorVersion() -> UInt16 {
         data.readUInt16(0)
     }
 
     /// Minor version of the MATH table, = 0.
-    public var minorVersion: UInt16 {
+    public func minorVersion() -> UInt16 {
         data.readUInt16(2)
     }
 
     /// Offset to MathConstants table - from the beginning of MATH table.
-    var mathConstantsOffset: Offset16 {
+    public func mathConstantsOffset() -> Offset16 {
         data.readOffset16(4)
     }
 
     /// Offset to MathGlyphInfo table - from the beginning of MATH table.
-    var mathGlyphInfoOffset: Offset16 {
+    public func mathGlyphInfoOffset() -> Offset16 {
         data.readOffset16(6)
     }
 
     /// Offset to MathVariants table - from the beginning of MATH table.
-    var mathVariantsOffset: Offset16 {
+    public func mathVariantsOffset() -> Offset16 {
         data.readOffset16(8)
     }
 
     // MARK: - Sub-tables
 
-    public var mathConstantsTable: MathConstantsTable {
-        MathConstantsTable(mathTable: self)
+    public var mathConstantsTable: MathConstantsTable? {
+        let tableOffset = mathConstantsOffset()
+        if tableOffset != 0 {
+            return MathConstantsTable(data: data, tableOffset: tableOffset)
+        }
+        return nil
     }
 
-    public var mathGlyphInfoTable: MathGlyphInfoTable {
-        MathGlyphInfoTable(mathTable: self)
+    public var mathGlyphInfoTable: MathGlyphInfoTable? {
+        let tableOffset = mathGlyphInfoOffset()
+        if tableOffset != 0 {
+            return MathGlyphInfoTable(data: data, tableOffset: tableOffset)
+        }
+        return nil
     }
 }
 
@@ -143,9 +151,9 @@ public class MathConstantsTable {
     let data: CFData
     let tableOffset: Offset16
 
-    init(mathTable: MathTable) {
-        self.data = mathTable.data
-        self.tableOffset = mathTable.mathConstantsOffset
+    init(data: CFData, tableOffset: Offset16) {
+        self.data = data
+        self.tableOffset = tableOffset
     }
 
     /// Return the value of the math constant specified by the argument whose value
@@ -500,11 +508,11 @@ public enum MathConstants {
 
 public class MathGlyphInfoTable {
     let data: CFData
-    let tableOffset: Offset16
+    let tableOffset: Offset16 /// offset from beginning of data
 
-    init(mathTable: MathTable) {
-        self.data = mathTable.data
-        self.tableOffset = mathTable.mathGlyphInfoOffset
+    init(data: CFData, tableOffset: Offset16) {
+        self.data = data
+        self.tableOffset = tableOffset
     }
 
     // MARK: - Header fields
@@ -535,36 +543,36 @@ public class MathGlyphInfoTable {
     /// MARK: - Sub-tables
 
     public var mathItalicsCorrectionInfoTable: MathItalicsCorrectionInfoTable {
-        MathItalicsCorrectionInfoTable(mathGlyphInfoTable: self)
+        MathItalicsCorrectionInfoTable(data: data, tableOffset: tableOffset + mathItalicsCorrectionInfoOffset)
     }
 }
 
 public class MathItalicsCorrectionInfoTable {
     let data: CFData
     let tableOffset: Offset16 /// offset from the beginning of MATH table
-
-    init(mathGlyphInfoTable: MathGlyphInfoTable) {
-        self.data = mathGlyphInfoTable.data
-        self.tableOffset = mathGlyphInfoTable.tableOffset + mathGlyphInfoTable.mathItalicsCorrectionInfoOffset
+    
+    init(data: CFData, tableOffset: Offset16) {
+        self.data = data
+        self.tableOffset = tableOffset
     }
 
     /// Offset to Coverage table - from the beginning of MathItalicsCorrectionInfo table.
-    func italicsCorrectionCoverageOffset() -> Offset16 {
+    public func italicsCorrectionCoverageOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 0)
     }
 
     /// Number of italics correction values. Should coincide with the number of covered glyphs.
-    func italicsCorrectionCount() -> UInt16 {
+    public func italicsCorrectionCount() -> UInt16 {
         data.readUInt16(parentOffset: tableOffset, offset: 2)
     }
 
     /// Array of MathValueRecords defining italics correction values for each covered glyph.
-    func italicsCorrection(_ index: Int) -> MathValueRecord {
-        data.readMathValueRecord(parentOffset: tableOffset, offset: 4 + index * 4)
+    public func italicsCorrection(_ index: Int) -> MathValueRecord {
+        data.readMathValueRecord(parentOffset: tableOffset, offset: 4 + index * MathValueRecord.byteSize)
     }
 
-    func coverageTable() -> CoverageTable {
-        CoverageTable(data: data, coverageOffset: tableOffset + italicsCorrectionCoverageOffset())
+    public func coverageTable() -> CoverageTable {
+        CoverageTable(data: data, tableOffset: tableOffset + italicsCorrectionCoverageOffset())
     }
 
     /// Return italics correction for glyphID in design units
@@ -580,10 +588,54 @@ public class MathItalicsCorrectionInfoTable {
     }
 }
 
-struct MathValueRecord {
-    let value: FWORD           // The X or Y value in design units
-    let deviceOffset: Offset16 // Offset to the device table — from the beginning of parent table.
-                               // May be NULL. Suggested format for device table is 1.
+public class MathTopAccentAttachmentTable {
+    let data: CFData
+    let tableOffset: Offset16 /// offset from the beginning of MATH table
+
+    init(data: CFData, tableOffset: Offset16) {
+        self.data = data
+        self.tableOffset = tableOffset
+    }
+    
+    /// Offset to Coverage table, from the beginning of the MathTopAccentAttachment table.
+    public func topAccentCoverageOffset() -> Offset16 {
+        data.readOffset16(parentOffset: tableOffset, offset: 0)
+    }
+
+    /// Number of top accent attachment point values. Must be the same as the number of
+    /// glyph IDs referenced in the Coverage table.
+    public func topAccentAttachmentCount() -> UInt16 {
+        data.readUInt16(parentOffset: tableOffset, offset: 2)
+    }
+        
+    /// Array of MathValueRecords defining top accent attachment points for each covered glyph.
+    public func topAccentAttachment(_ index: Int) -> MathValueRecord {
+        data.readMathValueRecord(parentOffset: tableOffset, offset: 4 + index * MathValueRecord.byteSize)
+    }
+    
+    public func coverageTable() -> CoverageTable {
+        CoverageTable(data: data, tableOffset: tableOffset + topAccentCoverageOffset())
+    }
+
+    /// Return top accent attachment for glyphID in design units
+    public func getTopAccentAttachment(_ glyphID: UInt16) -> Int32 {
+        let coverageTable = self.coverageTable()
+        if let coverageIndex = coverageTable.getCoverageIndex(glyphID) {
+            let mathValueRecord = topAccentAttachment(coverageIndex)
+            let value = data.evalMathValueRecord(parentOffset: tableOffset,
+                                                 mathValueRecord: mathValueRecord)
+            return value
+        }
+        return 0
+    }
+}
+
+public struct MathValueRecord {
+    static let byteSize = 4
+
+    public let value: FWORD           // The X or Y value in design units
+    public let deviceOffset: Offset16 // Offset to the device table — from the beginning of parent table.
+                                      // May be NULL. Suggested format for device table is 1.
 
     init() {
         self.init(value: 0, deviceOffset: 0)
@@ -594,4 +646,3 @@ struct MathValueRecord {
         self.deviceOffset = deviceOffset
     }
 }
-

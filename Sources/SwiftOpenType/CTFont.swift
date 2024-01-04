@@ -4,7 +4,7 @@ extension CTFont {
     public var mathTable: MathTable? {
         if self.getMathTableData() != nil {
             let table = MathTable(font: self)
-            if table.majorVersion == 1 {
+            if table.majorVersion() == 1 {
                 return table
             }
         }
