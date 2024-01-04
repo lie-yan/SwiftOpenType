@@ -97,26 +97,17 @@ final class MathTableTests: XCTestCase {
     }
 
     func testMathItalicsCorrectionInfo() {
-        let table = lmmath.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable
+        let table = lmmath.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
 
         let glyph = CTFontGetGlyphWithName(lmmath, "f" as CFString)
         let italicsCorrection = table.getItalicsCorrection(glyph)
 
         XCTAssertEqual(italicsCorrection, 79)
     }
-    
-    func openFont(path : String, size: CGFloat) -> CTFont {
-        let resourcePath = Bundle.module.resourcePath!
-        let path = resourcePath + "/" + path
-
-        let fileURL = URL(filePath: path)
-        let fontDesc = CTFontManagerCreateFontDescriptorsFromURL(fileURL as CFURL) as! [CTFontDescriptor]
-        return CTFontCreateWithFontDescriptor(fontDesc[0], size, nil)
-    }
-    
+        
     func testMathItalicsCorrection() {
         let font = openFont(path: "fonts/MathTestFontFull.otf", size: 20.0)
-        let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable
+        let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
 
         var glyph: CGGlyph
 
@@ -131,5 +122,14 @@ final class MathTableTests: XCTestCase {
 
         glyph = CTFontGetGlyphWithName(font, "C" as CFString)
         XCTAssertEqual(table.getItalicsCorrection(glyph), 452)
+    }
+    
+    func openFont(path : String, size: CGFloat) -> CTFont {
+        let resourcePath = Bundle.module.resourcePath!
+        let path = resourcePath + "/" + path
+
+        let fileURL = URL(filePath: path)
+        let fontDesc = CTFontManagerCreateFontDescriptorsFromURL(fileURL as CFURL) as! [CTFontDescriptor]
+        return CTFontCreateWithFontDescriptor(fontDesc[0], size, nil)
     }
 }
