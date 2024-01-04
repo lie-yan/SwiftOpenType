@@ -56,6 +56,18 @@ internal extension CFData {
                            startCoverageIndex: startCoverageIndex)
     }
     
+    /// Read MathKernInfoRecord at the given (byte) offset
+    func readMathKernInfoRecord(_ offset: Int) -> MathKernInfoRecord {
+        let topRightMathKernOffset = readOffset16(offset)
+        let topLeftMathKernOffset = readOffset16(offset + 2)
+        let bottomRightMathKernOffset = readOffset16(offset + 4)
+        let bottomLeftMathKernOffset = readOffset16(offset + 6)
+        return MathKernInfoRecord(topRightMathKernOffset: topRightMathKernOffset,
+                                  topLeftMathKernOffset: topLeftMathKernOffset,
+                                  bottomRightMathKernOffset: bottomRightMathKernOffset,
+                                  bottomLeftMathKernOffset: bottomLeftMathKernOffset)
+    }
+    
     /// Read Int16 at the given (byte) offset
     func readInt16(parentOffset: Offset16, offset: Int) -> Int16 {
         readInt16(Int(parentOffset) + offset)
@@ -89,6 +101,11 @@ internal extension CFData {
     /// Read RangeRecord at the given (byte) offset
     func readRangeRecord(parentOffset: Offset16, offset: Int) -> RangeRecord {
         readRangeRecord(Int(parentOffset) + offset)
+    }
+    
+    /// Read MathKernInfoRecord at the given (byte) offset
+    func readMathKernInfoRecord(parentOffset: Offset16, offset: Int) -> MathKernInfoRecord {
+        readMathKernInfoRecord(Int(parentOffset) + offset)
     }
     
     /// Read adjustment from device table
