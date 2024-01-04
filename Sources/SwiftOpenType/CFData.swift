@@ -1,8 +1,8 @@
 import CoreFoundation
 
-typealias FWORD = Int16     // int16 that describes a quantity in font design units.
-typealias UFWORD = UInt16   // uint16 that describes a quantity in font design units.
-typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
+public typealias FWORD = Int16     // int16 that describes a quantity in font design units.
+public typealias UFWORD = UInt16   // uint16 that describes a quantity in font design units.
+public typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
 
 /// Extend CFData for internal use.
 ///

@@ -1,9 +1,11 @@
 import CoreText
 
-struct RangeRecord {
-    let startGlyphID: UInt16 /// First glyph ID in the range
-    let endGlyphID: UInt16   /// Last glyph ID in the range
-    let startCoverageIndex: UInt16 /// Coverage Index of first glyph ID in range
+public struct RangeRecord {
+    static let byteSize = 6
+    
+    public let startGlyphID: UInt16 /// First glyph ID in the range
+    public let endGlyphID: UInt16   /// Last glyph ID in the range
+    public let startCoverageIndex: UInt16 /// Coverage Index of first glyph ID in range
 
     init() {
         self.init(startGlyphID: 0, endGlyphID: 0, startCoverageIndex: 0)
@@ -18,39 +20,39 @@ struct RangeRecord {
 
 public class CoverageTable {
     let data: CFData
-    let coverageOffset: Offset16 /// offset of coverage table - from the beginning of data
+    let tableOffset: Offset16 /// offset of coverage table - from the beginning of data
 
-    init(data: CFData, coverageOffset: Offset16) {
+    init(data: CFData, tableOffset: Offset16) {
         self.data = data
-        self.coverageOffset = coverageOffset
+        self.tableOffset = tableOffset
     }
 
     public func coverageFormat() -> UInt16 {
-        data.readUInt16(parentOffset: coverageOffset, offset: 0)
+        data.readUInt16(parentOffset: tableOffset, offset: 0)
     }
 
     /// Number of glyphs in the glyph array
     /// Coverage Format 1
-    func glyphCount() -> UInt16 {
-        data.readUInt16(parentOffset: coverageOffset, offset: 2)
+    public func glyphCount() -> UInt16 {
+        data.readUInt16(parentOffset: tableOffset, offset: 2)
     }
 
     /// Array of glyph IDs — in numerical order
     /// Coverage Format 1
-    func glyphArray(_ index: Int) -> UInt16 {
-        data.readUInt16(parentOffset: coverageOffset, offset: 4 + index * 2)
+    public func glyphArray(_ index: Int) -> UInt16 {
+        data.readUInt16(parentOffset: tableOffset, offset: 4 + index * 2)
     }
 
     /// Number of RangeRecords
     /// Coverage Format 2
-    func rangeCount() -> UInt16 {
-        data.readUInt16(parentOffset: coverageOffset, offset: 2)
+    public func rangeCount() -> UInt16 {
+        data.readUInt16(parentOffset: tableOffset, offset: 2)
     }
 
     /// Array of glyph ranges — ordered by startGlyphID.
     /// Coverage Format 2
-    func rangeRecords(_ index: Int) -> RangeRecord {
-        data.readRangeRecord(parentOffset: coverageOffset, offset: 4 + index * 6)
+    public func rangeRecords(_ index: Int) -> RangeRecord {
+        data.readRangeRecord(parentOffset: tableOffset, offset: 4 + index * RangeRecord.byteSize)
     }
 
     public func getCoverageIndex(_ glyphID: UInt16) -> Int? {

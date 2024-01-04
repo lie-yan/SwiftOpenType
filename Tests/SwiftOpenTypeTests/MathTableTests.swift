@@ -12,12 +12,12 @@ final class MathTableTests: XCTestCase {
         XCTAssertTrue(lmmath.mathTable != nil)
 
         let mathTable = lmmath.mathTable!
-        XCTAssertEqual(mathTable.majorVersion, 1)
-        XCTAssertEqual(mathTable.minorVersion, 0)
+        XCTAssertEqual(mathTable.majorVersion(), 1)
+        XCTAssertEqual(mathTable.minorVersion(), 0)
     }
 
     func testMathConstants() {
-        let mathConstants = lmmath.mathTable!.mathConstantsTable
+        let mathConstants = lmmath.mathTable!.mathConstantsTable!
 
         let ruleThickness: CGFloat = 0.48
         let commonGap: CGFloat = 1.44
@@ -97,7 +97,7 @@ final class MathTableTests: XCTestCase {
     }
 
     func testMathItalicsCorrectionInfo() {
-        let table = lmmath.mathTable!.mathGlyphInfoTable.mathItalicsCorrectionInfoTable
+        let table = lmmath.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable
 
         let glyph = CTFontGetGlyphWithName(lmmath, "f" as CFString)
         let italicsCorrection = table.getItalicsCorrection(glyph)
@@ -105,18 +105,18 @@ final class MathTableTests: XCTestCase {
         XCTAssertEqual(italicsCorrection, 79)
     }
     
-    func testMathItalicsCorrection() {
-        let path = Bundle.module.path(forResource: "MathTestFontFull", ofType: "otf", inDirectory: "fonts")
-        
-        if path == nil {
-            print("Cannot find resource")
-            return Void()
-        }
-        
-        let fileURL = URL(filePath: path!)
+    func openFont(path : String, size: CGFloat) -> CTFont {
+        let resourcePath = Bundle.module.resourcePath!
+        let path = resourcePath + "/" + path
+
+        let fileURL = URL(filePath: path)
         let fontDesc = CTFontManagerCreateFontDescriptorsFromURL(fileURL as CFURL) as! [CTFontDescriptor]
-        let font = CTFontCreateWithFontDescriptor(fontDesc[0], 20, nil)
-        let table = font.mathTable!.mathGlyphInfoTable.mathItalicsCorrectionInfoTable
+        return CTFontCreateWithFontDescriptor(fontDesc[0], size, nil)
+    }
+    
+    func testMathItalicsCorrection() {
+        let font = openFont(path: "fonts/MathTestFontFull.otf", size: 20.0)
+        let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable
 
         var glyph: CGGlyph
 
