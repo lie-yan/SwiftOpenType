@@ -140,227 +140,227 @@ public class MathConstantsTable {
     }
     
     public var scriptPercentScaleDown: Int32 {
-        getPercent(MathConstant.scriptPercentScaleDown)
+        getPercent(.scriptPercentScaleDown)
     }
     
     public var scriptScriptPercentScaleDown: Int32 {
-        getPercent(MathConstant.scriptScriptPercentScaleDown)
+        getPercent(.scriptScriptPercentScaleDown)
     }
     
     public var delimitedSubFormulaMinHeight: Int32 {
-        getMinHeight(MathConstant.delimitedSubFormulaMinHeight)
+        getMinHeight(.delimitedSubFormulaMinHeight)
     }
     
     public var displayOperatorMinHeight: Int32 {
-        getMinHeight(MathConstant.displayOperatorMinHeight)
+        getMinHeight(.displayOperatorMinHeight)
     }
     
     public var mathLeading: Int32 {
-        getMathValue(MathConstant.mathLeading)
+        getMathValue(.mathLeading)
     }
     
     public var axisHeight: Int32 {
-        getMathValue(MathConstant.axisHeight)
+        getMathValue(.axisHeight)
     }
     
     public var accentBaseHeight: Int32 {
-        getMathValue(MathConstant.accentBaseHeight)
+        getMathValue(.accentBaseHeight)
     }
     
     public var flattenedAccentBaseHeight: Int32 {
-        getMathValue(MathConstant.flattenedAccentBaseHeight)
+        getMathValue(.flattenedAccentBaseHeight)
     }
     
     public var subscriptShiftDown: Int32 {
-        getMathValue(MathConstant.subscriptShiftDown)
+        getMathValue(.subscriptShiftDown)
     }
     
     public var subscriptTopMax: Int32 {
-        getMathValue(MathConstant.subscriptTopMax)
+        getMathValue(.subscriptTopMax)
     }
     
     public var subscriptBaselineDropMin: Int32 {
-        getMathValue(MathConstant.subscriptBaselineDropMin)
+        getMathValue(.subscriptBaselineDropMin)
     }
     
     public var superscriptShiftUp: Int32 {
-        getMathValue(MathConstant.superscriptShiftUp)
+        getMathValue(.superscriptShiftUp)
     }
     
     public var superscriptShiftUpCramped: Int32 {
-        getMathValue(MathConstant.superscriptShiftUpCramped)
+        getMathValue(.superscriptShiftUpCramped)
     }
     
     public var superscriptBottomMin: Int32 {
-        getMathValue(MathConstant.superscriptBottomMin)
+        getMathValue(.superscriptBottomMin)
     }
     
     public var superscriptBaselineDropMax: Int32 {
-        getMathValue(MathConstant.superscriptBaselineDropMax)
+        getMathValue(.superscriptBaselineDropMax)
     }
     
     public var subSuperscriptGapMin: Int32 {
-        getMathValue(MathConstant.subSuperscriptGapMin)
+        getMathValue(.subSuperscriptGapMin)
     }
     
     public var superscriptBottomMaxWithSubscript: Int32 {
-        getMathValue(MathConstant.superscriptBottomMaxWithSubscript)
+        getMathValue(.superscriptBottomMaxWithSubscript)
     }
     
     public var spaceAfterScript: Int32 {
-        getMathValue(MathConstant.spaceAfterScript)
+        getMathValue(.spaceAfterScript)
     }
     
     public var upperLimitGapMin: Int32 {
-        getMathValue(MathConstant.upperLimitGapMin)
+        getMathValue(.upperLimitGapMin)
     }
     
     public var upperLimitBaselineRiseMin: Int32 {
-        getMathValue(MathConstant.upperLimitBaselineRiseMin)
+        getMathValue(.upperLimitBaselineRiseMin)
     }
     
     public var lowerLimitGapMin: Int32 {
-        getMathValue(MathConstant.lowerLimitGapMin)
+        getMathValue(.lowerLimitGapMin)
     }
     
     public var lowerLimitBaselineDropMin: Int32 {
-        getMathValue(MathConstant.lowerLimitBaselineDropMin)
+        getMathValue(.lowerLimitBaselineDropMin)
     }
     
     public var stackTopShiftUp: Int32 {
-        getMathValue(MathConstant.stackTopShiftUp)
+        getMathValue(.stackTopShiftUp)
     }
     
     public var stackTopDisplayStyleShiftUp: Int32 {
-        getMathValue(MathConstant.stackTopDisplayStyleShiftUp)
+        getMathValue(.stackTopDisplayStyleShiftUp)
     }
     
     public var stackBottomShiftDown: Int32 {
-        getMathValue(MathConstant.stackBottomShiftDown)
+        getMathValue(.stackBottomShiftDown)
     }
     
     public var stackBottomDisplayStyleShiftDown: Int32 {
-        getMathValue(MathConstant.stackBottomDisplayStyleShiftDown)
+        getMathValue(.stackBottomDisplayStyleShiftDown)
     }
     
     public var stackGapMin: Int32 {
-        getMathValue(MathConstant.stackGapMin)
+        getMathValue(.stackGapMin)
     }
     
     public var stackDisplayStyleGapMin: Int32 {
-        getMathValue(MathConstant.stackDisplayStyleGapMin)
+        getMathValue(.stackDisplayStyleGapMin)
     }
     
     public var stretchStackTopShiftUp: Int32 {
-        getMathValue(MathConstant.stretchStackTopShiftUp)
+        getMathValue(.stretchStackTopShiftUp)
     }
     
     public var stretchStackBottomShiftDown: Int32 {
-        getMathValue(MathConstant.stretchStackBottomShiftDown)
+        getMathValue(.stretchStackBottomShiftDown)
     }
     
     public var stretchStackGapAboveMin: Int32 {
-        getMathValue(MathConstant.stretchStackGapAboveMin)
+        getMathValue(.stretchStackGapAboveMin)
     }
     
     public var stretchStackGapBelowMin: Int32 {
-        getMathValue(MathConstant.stretchStackGapBelowMin)
+        getMathValue(.stretchStackGapBelowMin)
     }
     
     public var fractionNumeratorShiftUp: Int32 {
-        getMathValue(MathConstant.fractionNumeratorShiftUp)
+        getMathValue(.fractionNumeratorShiftUp)
     }
     
     public var fractionNumeratorDisplayStyleShiftUp: Int32 {
-        getMathValue(MathConstant.fractionNumeratorDisplayStyleShiftUp)
+        getMathValue(.fractionNumeratorDisplayStyleShiftUp)
     }
     
     public var fractionDenominatorShiftDown: Int32 {
-        getMathValue(MathConstant.fractionDenominatorShiftDown)
+        getMathValue(.fractionDenominatorShiftDown)
     }
     
     public var fractionDenominatorDisplayStyleShiftDown: Int32 {
-        getMathValue(MathConstant.fractionDenominatorDisplayStyleShiftDown)
+        getMathValue(.fractionDenominatorDisplayStyleShiftDown)
     }
     
     public var fractionNumeratorGapMin: Int32 {
-        getMathValue(MathConstant.fractionNumeratorGapMin)
+        getMathValue(.fractionNumeratorGapMin)
     }
     
     public var fractionNumDisplayStyleGapMin: Int32 {
-        getMathValue(MathConstant.fractionNumDisplayStyleGapMin)
+        getMathValue(.fractionNumDisplayStyleGapMin)
     }
     
     public var fractionRuleThickness: Int32 {
-        getMathValue(MathConstant.fractionRuleThickness)
+        getMathValue(.fractionRuleThickness)
     }
     
     public var fractionDenominatorGapMin: Int32 {
-        getMathValue(MathConstant.fractionDenominatorGapMin)
+        getMathValue(.fractionDenominatorGapMin)
     }
     
     public var fractionDenomDisplayStyleGapMin: Int32 {
-        getMathValue(MathConstant.fractionDenomDisplayStyleGapMin)
+        getMathValue(.fractionDenomDisplayStyleGapMin)
     }
     
     public var skewedFractionHorizontalGap: Int32 {
-        getMathValue(MathConstant.skewedFractionHorizontalGap)
+        getMathValue(.skewedFractionHorizontalGap)
     }
     
     public var skewedFractionVerticalGap: Int32 {
-        getMathValue(MathConstant.skewedFractionVerticalGap)
+        getMathValue(.skewedFractionVerticalGap)
     }
     
     public var overbarVerticalGap: Int32 {
-        getMathValue(MathConstant.overbarVerticalGap)
+        getMathValue(.overbarVerticalGap)
     }
     
     public var overbarRuleThickness: Int32 {
-        getMathValue(MathConstant.overbarRuleThickness)
+        getMathValue(.overbarRuleThickness)
     }
     
     public var overbarExtraAscender: Int32 {
-        getMathValue(MathConstant.overbarExtraAscender)
+        getMathValue(.overbarExtraAscender)
     }
     
     public var underbarVerticalGap: Int32 {
-        getMathValue(MathConstant.underbarVerticalGap)
+        getMathValue(.underbarVerticalGap)
     }
     
     public var underbarRuleThickness: Int32 {
-        getMathValue(MathConstant.underbarRuleThickness)
+        getMathValue(.underbarRuleThickness)
     }
     
     public var underbarExtraDescender: Int32 {
-        getMathValue(MathConstant.underbarExtraDescender)
+        getMathValue(.underbarExtraDescender)
     }
     
     public var radicalVerticalGap: Int32 {
-        getMathValue(MathConstant.radicalVerticalGap)
+        getMathValue(.radicalVerticalGap)
     }
     
     public var radicalDisplayStyleVerticalGap: Int32 {
-        getMathValue(MathConstant.radicalDisplayStyleVerticalGap)
+        getMathValue(.radicalDisplayStyleVerticalGap)
     }
     
     public var radicalRuleThickness: Int32 {
-        getMathValue(MathConstant.radicalRuleThickness)
+        getMathValue(.radicalRuleThickness)
     }
     
     public var radicalExtraAscender: Int32 {
-        getMathValue(MathConstant.radicalExtraAscender)
+        getMathValue(.radicalExtraAscender)
     }
     
     public var radicalKernBeforeDegree: Int32 {
-        getMathValue(MathConstant.radicalKernBeforeDegree)
+        getMathValue(.radicalKernBeforeDegree)
     }
     
     public var radicalKernAfterDegree: Int32 {
-        getMathValue(MathConstant.radicalKernAfterDegree)
+        getMathValue(.radicalKernAfterDegree)
     }
     
     public var radicalDegreeBottomRaisePercent: Int32 {
-        getPercent(MathConstant.radicalDegreeBottomRaisePercent)
+        getPercent(.radicalDegreeBottomRaisePercent)
     }
 }
 
@@ -370,12 +370,10 @@ public enum MathConstant : Int, Comparable {
     case scriptScriptPercentScaleDown = 1
     case delimitedSubFormulaMinHeight = 2
     case displayOperatorMinHeight = 3
-    
     case mathLeading = 4
     case axisHeight = 5
     case accentBaseHeight = 6
     case flattenedAccentBaseHeight = 7
-    
     case subscriptShiftDown = 8
     case subscriptTopMax = 9
     case subscriptBaselineDropMin = 10
@@ -386,24 +384,20 @@ public enum MathConstant : Int, Comparable {
     case subSuperscriptGapMin = 15
     case superscriptBottomMaxWithSubscript = 16
     case spaceAfterScript = 17
-    
     case upperLimitGapMin = 18
     case upperLimitBaselineRiseMin = 19
     case lowerLimitGapMin = 20
     case lowerLimitBaselineDropMin = 21
-    
     case stackTopShiftUp = 22
     case stackTopDisplayStyleShiftUp = 23
     case stackBottomShiftDown = 24
     case stackBottomDisplayStyleShiftDown = 25
-    case stackGapMin  = 26
+    case stackGapMin = 26
     case stackDisplayStyleGapMin = 27
-    
     case stretchStackTopShiftUp = 28
     case stretchStackBottomShiftDown = 29
     case stretchStackGapAboveMin = 30
     case stretchStackGapBelowMin = 31
-    
     case fractionNumeratorShiftUp = 32
     case fractionNumeratorDisplayStyleShiftUp = 33
     case fractionDenominatorShiftDown = 34
@@ -413,17 +407,14 @@ public enum MathConstant : Int, Comparable {
     case fractionRuleThickness = 38
     case fractionDenominatorGapMin = 39
     case fractionDenomDisplayStyleGapMin = 40
-    
     case skewedFractionHorizontalGap = 41
     case skewedFractionVerticalGap = 42
-    
     case overbarVerticalGap = 43
     case overbarRuleThickness = 44
     case overbarExtraAscender = 45
     case underbarVerticalGap = 46
     case underbarRuleThickness = 47
     case underbarExtraDescender = 48
-    
     case radicalVerticalGap = 49
     case radicalDisplayStyleVerticalGap = 50
     case radicalRuleThickness = 51
