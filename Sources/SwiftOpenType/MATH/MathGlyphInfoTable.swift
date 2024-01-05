@@ -30,7 +30,7 @@ public class MathGlyphInfoTable {
     }
 
     /// Offset to MathKernInfo table, from the beginning of the MathGlyphInfo table.
-    var mathKernInfoOffset: Offset16 {
+    public func mathKernInfoOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 6)
     }
 
@@ -61,6 +61,17 @@ public class MathGlyphInfoTable {
         
         if subtableOffset != 0 {
             return CoverageTable(data: data, tableOffset: self.tableOffset + subtableOffset)
+        }
+        return nil
+    }
+    
+    /// The MathKernInfo table provides mathematical kerning values used for kerning
+    /// of subscript and superscript glyphs relative to a base glyph.
+    public var mathKernInfoTable: MathKernInfoTable? {
+        let subtableOffset = mathKernInfoOffset()
+        
+        if subtableOffset != 0 {
+            return MathKernInfoTable(data: data, tableOffset: self.tableOffset + subtableOffset)
         }
         return nil
     }
@@ -158,6 +169,8 @@ public class MathKernInfoTable {
         self.tableOffset = tableOffset
     }
     
+    // MARK: - table fields
+    
     /// Offset to Coverage table, from the beginning of the MathKernInfo table.
     public func mathKernCoverageOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 0)
@@ -174,11 +187,22 @@ public class MathKernInfoTable {
         data.readMathKernInfoRecord(parentOffset: tableOffset, offset: 4 + index * MathKernInfoRecord.byteSize)
     }
     
-    /// Efficient accessor that read the math kern offset for one corner
-    public func mathKernOffset(index: Int, corner: MathKernCorner) -> Offset16 {
+    // MARK: - optimization
+    
+    private func mathKernOffset(index: Int, corner: MathKernCorner) -> Offset16 {
         let offset = 4 + index * MathKernInfoRecord.byteSize + corner.getByteOffset()
         return data.readOffset16(parentOffset: tableOffset, offset: offset)
     }
+    
+    private func getMathKernOffset(glyphID: UInt16, corner: MathKernCorner) -> Offset16? {
+        let coverageTable = self.coverageTable()
+        if let coverageIndex = coverageTable.getCoverageIndex(glyphID) {
+            return mathKernOffset(index: coverageIndex, corner: corner)
+        }
+        return nil
+    }
+    
+    // MARK: - query functions
     
     public func coverageTable() -> CoverageTable {
         CoverageTable(data: data, tableOffset: tableOffset + mathKernCoverageOffset())
@@ -192,13 +216,124 @@ public class MathKernInfoTable {
         return nil
     }
     
-    /// Given glyph id and corer, return the math kern offset.
-    public func getMathKernOffset(glyphID: UInt16, corner: MathKernCorner) -> Offset16 {
-        let coverageTable = self.coverageTable()
-        if let coverageIndex = coverageTable.getCoverageIndex(glyphID) {
-            return mathKernOffset(index: coverageIndex, corner: corner)
+    public func getKernValue(glyphID: UInt16, corner: MathKernCorner, height: Int32) -> Int32? {
+        if let mathKernOffset = getMathKernOffset(glyphID: glyphID, corner: corner) {
+            let mathKernTable = MathKernTable(data: data, tableOffset: self.tableOffset + mathKernOffset)
+            return mathKernTable.getKernValue(height: height)
         }
-        return 0
+        return nil
+    }
+}
+
+public class MathKernTable {
+    let data: CFData
+    let tableOffset: Offset16
+    
+    init(data: CFData, tableOffset: Offset16) {
+        self.data = data
+        self.tableOffset = tableOffset
+    }
+    
+    // MARK: - table fields
+
+    /// Number of heights at which the kern value changes.
+    public func heightCount() -> UInt16 {
+        data.readUInt16(parentOffset: tableOffset, offset: 0)
+    }
+    
+    /// Array of correction heights, in design units, sorted from lowest to highest.
+    public func correctionHeight(_ index: Int) -> MathValueRecord {
+        data.readMathValueRecord(parentOffset: tableOffset, offset: 2 + index * MathValueRecord.byteSize)
+    }
+    
+    /// Array of kerning values for different height ranges.
+    /// Negative values are used to move glyphs closer to each other.
+    public func kernValues(_ index: Int) -> MathValueRecord {
+        let offset = 2 + Int(heightCount()) * MathValueRecord.byteSize + index * MathValueRecord.byteSize
+        return data.readMathValueRecord(parentOffset: tableOffset, offset: offset)
+    }
+    
+    // MARK: - query functions
+    
+    /// Return the correction height at the given index in design units
+    public func getCorrectionHeight(_ index: Int) -> Int32 {
+        let mathValueRecord = self.correctionHeight(index)
+        let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
+        return value
+    }
+    
+    /// Return the kern value at the given index in design units
+    public func getKernValue(_ index: Int) -> Int32 {
+        let mathValueRecord = self.kernValues(index)
+        let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
+        return value
+    }
+    
+    /// Return the kern value for the given height in design units
+    public func getKernValue(height: Int32) -> Int32 {
+        if let index = upper_bound(height: height) {
+            return self.getKernValue(index)
+        }
+        return self.getKernValue(0)
+    }
+    
+    // MARK: - helper functions
+
+    /// Return the index of the first element not less than the given height.
+    /// We borrow the implementation of `std::lower_bound()` from C++ STL.
+    private func lower_bound(height: Int32) -> Int? {
+        var count = Int(self.heightCount())
+        var first = 0
+        let last = count
+        
+        while (count > 0) {
+            var it = first
+            let step = count / 2
+            it += step
+            
+            if (getCorrectionHeight(it) < height) {
+                it += 1
+                first = it
+                count -= step + 1
+            }
+            else {
+                count = step
+            }
+        }
+        return first == last ? nil : first
+    }
+    
+    /// Return the index of the first element greater than the given height.
+    /// We borrow the implementation of `std::upper_bound()` from C++ STL.
+    private func upper_bound(height: Int32) -> Int? {
+        var count = Int(self.heightCount())
+        var first = 0
+        let last = count
+        
+        while (count > 0) {
+            var it = first
+            let step = count / 2
+            it += step
+            
+            if !(height < getCorrectionHeight(it)) {
+                it += 1
+                first = it
+                count -= step + 1
+            }
+            else {
+                count = step
+            }
+        }
+        
+        if first != last {
+            return first
+        }
+        else if height < getCorrectionHeight(0) {
+            return nil
+        }
+        else {
+            return last
+        }
     }
 }
 
@@ -247,5 +382,18 @@ public struct MathKernInfoRecord {
         self.topLeftMathKernOffset = topLeftMathKernOffset
         self.bottomRightMathKernOffset = bottomRightMathKernOffset
         self.bottomLeftMathKernOffset = bottomLeftMathKernOffset
+    }
+    
+    func getMathKernOffset(corner: MathKernCorner) -> Offset16 {
+        switch corner {
+        case .TopRight:
+            return topRightMathKernOffset
+        case .TopLeft:
+            return topLeftMathKernOffset
+        case .BottomRight:
+            return bottomRightMathKernOffset
+        case .BottomLeft:
+            return bottomLeftMathKernOffset
+        }
     }
 }

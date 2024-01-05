@@ -225,7 +225,29 @@ final class MathTableTests: XCTestCase {
         glyph = CTFontGetGlyphWithName(font, "H" as CFString)
         XCTAssert(table?.getCoverageIndex(glyph) != nil)
     }
+    
+    func testMathKernInfo_2() {
+        let font = openFont(path: "fonts/MathTestFontFull.otf", size: 10.0)
+        let table = font.mathTable!.mathGlyphInfoTable!.mathKernInfoTable!
         
+        let glyph = CTFontGetGlyphWithName(font, "I" as CFString)
+        
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .TopRight, height: 7), 31) // less than min height
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .TopRight, height: 14), 52) // equal to min height
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .TopRight, height: 20), 52)
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .TopRight, height: 23), 73)
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .TopRight, height: 31), 73)
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .TopRight, height: 32), 94)
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .TopRight, height: 86), 220) // equal to max height
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .TopRight, height: 91), 220) // larger than max height
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .TopRight, height: 96), 220) // larger than max height
+
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .TopRight, height: 39), 94) // top right
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .TopLeft, height: 39), 55)  // top left
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .BottomRight, height: 39), 22) // bottom right
+        XCTAssertEqual(table.getKernValue(glyphID: glyph, corner: .BottomLeft, height: 39), 50) // bottom left
+    }
+    
     func openFont(path : String, size: CGFloat) -> CTFont {
         let resourcePath = Bundle.module.resourcePath!
         let path = resourcePath + "/" + path
