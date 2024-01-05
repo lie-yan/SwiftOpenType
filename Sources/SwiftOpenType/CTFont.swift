@@ -2,8 +2,8 @@ import CoreText
 
 extension CTFont {
     public var mathTable: MathTable? {
-        if self.getMathTableData() != nil {
-            let table = MathTable(font: self)
+        if let data = self.getMathTableData() {
+            let table = MathTable(data: data)
             if table.majorVersion() == 1 {
                 return table
             }

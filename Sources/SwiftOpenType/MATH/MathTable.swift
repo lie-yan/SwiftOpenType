@@ -1,15 +1,11 @@
 import CoreText
 
-/**
- The MATH table
- */
+/// The MATH table
 public class MathTable {
-    let font: CTFont
     let data: CFData
 
-    init(font: CTFont) {
-        self.font = font
-        self.data = font.getMathTableData()!
+    init(data: CFData) {
+        self.data = data
     }
 
     // MARK: - Header fields

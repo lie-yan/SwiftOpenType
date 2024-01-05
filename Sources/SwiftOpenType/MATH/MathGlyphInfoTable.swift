@@ -95,7 +95,7 @@ public class MathItalicsCorrectionInfoTable {
     }
 
     /// Return italics correction for glyphID in design units
-    public func getItalicsCorrection(_ glyphID: UInt16) -> Int32 {
+    public func getItalicsCorrection(_ glyphID: UInt16) -> Int32? {
         let coverageTable = self.coverageTable()
         if let coverageIndex = coverageTable.getCoverageIndex(glyphID) {
             let mathValueRecord = italicsCorrection(coverageIndex)
@@ -103,7 +103,7 @@ public class MathItalicsCorrectionInfoTable {
                                                  mathValueRecord: mathValueRecord)
             return value
         }
-        return 0
+        return nil
     }
 }
 
@@ -137,7 +137,7 @@ public class MathTopAccentAttachmentTable {
     }
 
     /// Return top accent attachment for glyphID in design units
-    public func getTopAccentAttachment(_ glyphID: UInt16) -> Int32 {
+    public func getTopAccentAttachment(_ glyphID: UInt16) -> Int32? {
         let coverageTable = self.coverageTable()
         if let coverageIndex = coverageTable.getCoverageIndex(glyphID) {
             let mathValueRecord = topAccentAttachment(coverageIndex)
@@ -145,7 +145,7 @@ public class MathTopAccentAttachmentTable {
                                                  mathValueRecord: mathValueRecord)
             return value
         }
-        return 0
+        return nil
     }
 }
 
