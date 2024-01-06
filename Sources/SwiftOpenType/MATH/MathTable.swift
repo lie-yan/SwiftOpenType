@@ -69,4 +69,14 @@ public struct MathValueRecord {
         self.value = value
         self.deviceOffset = deviceOffset
     }
+    
+    static func read(data: CFData, offset: Int) -> MathValueRecord {
+        let value = data.readFWORD(offset)
+        let deviceOffset = data.readOffset16(offset + 2)
+        return MathValueRecord(value: value, deviceOffset: deviceOffset)
+    }
+    
+    static func read(data: CFData, parentOffset: Offset16, offset: Int) -> MathValueRecord {
+        read(data: data, offset: Int(parentOffset) + offset)
+    }
 }

@@ -98,7 +98,9 @@ public class MathItalicsCorrectionInfoTable {
     
     /// Array of MathValueRecords defining italics correction values for each covered glyph.
     public func italicsCorrection(index: Int) -> MathValueRecord {
-        data.readMathValueRecord(parentOffset: tableOffset, offset: 4 + index * MathValueRecord.byteSize)
+        MathValueRecord.read(data: data, 
+                             parentOffset: tableOffset,
+                             offset: 4 + index * MathValueRecord.byteSize)
     }
     
     public func coverageTable() -> CoverageTable {
@@ -140,7 +142,9 @@ public class MathTopAccentAttachmentTable {
     
     /// Array of MathValueRecords defining top accent attachment points for each covered glyph.
     public func topAccentAttachment(index: Int) -> MathValueRecord {
-        data.readMathValueRecord(parentOffset: tableOffset, offset: 4 + index * MathValueRecord.byteSize)
+        MathValueRecord.read(data: data,
+                             parentOffset: tableOffset,
+                             offset: 4 + index * MathValueRecord.byteSize)
     }
     
     public func coverageTable() -> CoverageTable {
@@ -244,14 +248,16 @@ public class MathKernTable {
     
     /// Array of correction heights, in design units, sorted from lowest to highest.
     public func correctionHeight(index: Int) -> MathValueRecord {
-        data.readMathValueRecord(parentOffset: tableOffset, offset: 2 + index * MathValueRecord.byteSize)
+        MathValueRecord.read(data: data,
+                             parentOffset: tableOffset,
+                             offset: 2 + index * MathValueRecord.byteSize)
     }
     
     /// Array of kerning values for different height ranges.
     /// Negative values are used to move glyphs closer to each other.
     public func kernValues(index: Int) -> MathValueRecord {
         let offset = 2 + Int(heightCount()) * MathValueRecord.byteSize + index * MathValueRecord.byteSize
-        return data.readMathValueRecord(parentOffset: tableOffset, offset: offset)
+        return MathValueRecord.read(data: data, parentOffset: tableOffset, offset: offset)
     }
     
     // MARK: - query functions

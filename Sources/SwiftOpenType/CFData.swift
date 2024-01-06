@@ -1,8 +1,11 @@
 import CoreFoundation
 
-public typealias FWORD = Int16     // int16 that describes a quantity in font design units.
-public typealias UFWORD = UInt16   // uint16 that describes a quantity in font design units.
-public typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
+/// int16 that describes a quantity in font design units.
+public typealias FWORD = Int16
+/// uint16 that describes a quantity in font design units.
+public typealias UFWORD = UInt16
+/// Short offset to a table, same as uint16, NULL offset = 0x0000
+public typealias Offset16 = UInt16
 
 /// Extend CFData for internal use.
 ///
@@ -38,14 +41,7 @@ internal extension CFData {
     func readUFWORD(_ offset: Int) -> UFWORD {
         readUInt16(offset)
     }
-    
-    /// Read MathValueRecord at the given (byte) offset
-    func readMathValueRecord(_ offset: Int) -> MathValueRecord {
-        let value = readFWORD(offset)
-        let deviceOffset = readOffset16(offset + 2)
-        return MathValueRecord(value: value, deviceOffset: deviceOffset)
-    }
-                
+                    
     /// Read Int16 at the given (byte) offset
     func readInt16(parentOffset: Offset16, offset: Int) -> Int16 {
         readInt16(Int(parentOffset) + offset)
@@ -70,12 +66,7 @@ internal extension CFData {
     func readUFWORD(parentOffset: Offset16, offset: Int) -> UFWORD {
         readUFWORD(Int(parentOffset) + offset)
     }
-    
-    /// Read MathValueRecord at the given (byte) offset
-    func readMathValueRecord(parentOffset: Offset16, offset: Int) -> MathValueRecord {
-        readMathValueRecord(Int(parentOffset) + offset)
-    }
-                
+                    
     /// Read adjustment from device table
     func readDeviceDelta(parentOffset: Offset16, deviceOffset: Offset16) -> Int16 {
         // TODO: add device delta

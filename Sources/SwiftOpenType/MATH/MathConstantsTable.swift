@@ -133,7 +133,7 @@ public class MathConstantsTable {
     /// for the remaining
     private func getMathValue(_ index: MathConstant) -> Int32 {
         let byteOffset = index.getByteOffset()
-        let mathValueRecord = data.readMathValueRecord(parentOffset: tableOffset, offset: byteOffset)
+        let mathValueRecord = MathValueRecord.read(data: data, parentOffset: tableOffset, offset: byteOffset)
         let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
         return Int32(value)
     }

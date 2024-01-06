@@ -71,6 +71,9 @@ public class MathVariantsTable {
         let subtableOffset = self.horizGlyphConstructionOffsets(index: index)
         return MathGlyphConstructionTable(data: data, tableOffset: tableOffset + subtableOffset)
     }
+    
+    // MARK: - Query functions
+    
 }
 
 public class MathGlyphConstructionTable {
@@ -139,7 +142,7 @@ public class GlyphAssemblyTable {
     
     /// Italics correction of this GlyphAssembly. Should not depend on the assembly size.
     public func italicsCorrection() -> MathValueRecord {
-        data.readMathValueRecord(parentOffset: tableOffset, offset: 0)
+        MathValueRecord.read(data: data, parentOffset: tableOffset, offset: 0)
     }
     
     /// Number of parts in this assembly.
@@ -152,6 +155,14 @@ public class GlyphAssemblyTable {
     public func partRecords(index: Int) -> GlyphPartRecord {
         let offset = Int(tableOffset) + 4 + index * GlyphPartRecord.byteSize
         return GlyphPartRecord.read(data: data, offset: offset)
+    }
+    
+    // MARK: - Query functions
+    
+    public func getItalicsCorrection() -> Int32 {
+        let mathValueRecord = self.italicsCorrection()
+        let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
+        return value
     }
 }
 
@@ -194,6 +205,10 @@ public struct GlyphPartRecord {
         self.endConnectorLength = endConnectorLength
         self.fullAdvance = fullAdvance
         self.partFlags = partFlags
+    }
+    
+    public func isExtender() -> Bool {
+        self.partFlags == PartFlags.EXTENDER_FLAG.rawValue
     }
         
     static func read(data: CFData, offset: Int) -> GlyphPartRecord {
