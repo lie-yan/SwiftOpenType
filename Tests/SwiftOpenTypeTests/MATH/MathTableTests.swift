@@ -2,25 +2,21 @@ import XCTest
 @testable import SwiftOpenType
 
 final class MathTableTests: XCTestCase {
-    var lmmath: CTFont?
-    
-    override func setUp() async throws {
-        lmmath = openFont(path: "fonts/latinmodern-math.otf", size: 12)
-    }
-    
+        
     func testMathTableHeader() {
         let helvetica = CTFontCreateWithName("Helvetica" as CFString, 12, nil)
         XCTAssert(helvetica.mathTable == nil)
         
-        XCTAssert(lmmath!.mathTable != nil)
+        let lmmath = openFont(path: "fonts/latinmodern-math.otf", size: 12)
+        XCTAssert(lmmath.mathTable != nil)
         
-        let mathTable = lmmath!.mathTable!
+        let mathTable = lmmath.mathTable!
         XCTAssertEqual(mathTable.majorVersion(), 1)
         XCTAssertEqual(mathTable.minorVersion(), 0)
     }
     
     func testMathConstants() {
-        let font = lmmath!
+        let font = openFont(path: "fonts/latinmodern-math.otf", size: 12)
         let table = font.mathTable!.mathConstantsTable!
         
         let ruleThickness: CGFloat = 0.48
@@ -89,7 +85,7 @@ final class MathTableTests: XCTestCase {
     }
     
     func testMathItalicsCorrection() {
-        let font = lmmath!
+        let font = openFont(path: "fonts/latinmodern-math.otf", size: 12)
         let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
         
         let glyph = CTFontGetGlyphWithName(font, "f" as CFString)
@@ -99,7 +95,7 @@ final class MathTableTests: XCTestCase {
     }
     
     func testMathTopAccentAttachment() {
-        let font = lmmath!
+        let font = openFont(path: "fonts/latinmodern-math.otf", size: 12)
         let table = font.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
         
         var glyph: CGGlyph

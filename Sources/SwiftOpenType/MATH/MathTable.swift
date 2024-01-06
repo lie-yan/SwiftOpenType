@@ -57,9 +57,11 @@ public class MathTable {
 public struct MathValueRecord {
     static let byteSize = 4
 
-    public let value: FWORD           // The X or Y value in design units
-    public let deviceOffset: Offset16 // Offset to the device table — from the beginning of parent table.
-                                      // May be NULL. Suggested format for device table is 1.
+    /// The X or Y value in design units
+    public let value: FWORD
+    /// Offset to the device table — from the beginning of parent table.
+    /// May be NULL. Suggested format for device table is 1.
+    public let deviceOffset: Offset16
 
     init() {
         self.init(value: 0, deviceOffset: 0)

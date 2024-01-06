@@ -78,7 +78,7 @@ public class MathVariantsTable {
 
 public class MathGlyphConstructionTable {
     let data: CFData
-    let tableOffset: Offset16 /// offset from beginning of data
+    let tableOffset: Offset16 // offset from beginning of data
     
     init(data: CFData, tableOffset: Offset16) {
         self.data = data
