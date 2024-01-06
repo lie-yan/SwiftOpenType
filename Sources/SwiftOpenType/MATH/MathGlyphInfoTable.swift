@@ -207,12 +207,14 @@ public class MathKernInfoTable {
         return nil
     }
     
-    // MARK: - query functions
+    // MARK: - Sub-tables
     
     public func coverageTable() -> CoverageTable {
         CoverageTable(data: data, tableOffset: tableOffset + mathKernCoverageOffset())
     }
     
+    // MARK: - query functions
+
     public func getMathKernInfoRecord(glyphID: UInt16) -> MathKernInfoRecord? {
         let coverageTable = self.coverageTable()
         if let coverageIndex = coverageTable.getCoverageIndex(glyphID: glyphID) {

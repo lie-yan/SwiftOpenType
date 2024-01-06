@@ -38,35 +38,41 @@ public class CoverageTable {
         self.tableOffset = tableOffset
     }
 
+    // MARK: - Table fields
+    
     public func coverageFormat() -> UInt16 {
         data.readUInt16(parentOffset: tableOffset, offset: 0)
     }
 
-    /// Number of glyphs in the glyph array
-    /// Coverage Format 1
+    /// Number of glyphs in the glyph array.
+    /// For Coverage Format 1
     public func glyphCount() -> UInt16 {
         data.readUInt16(parentOffset: tableOffset, offset: 2)
     }
 
-    /// Array of glyph IDs — in numerical order
-    /// Coverage Format 1
+    /// Array of glyph IDs — in numerical order.
+    /// For Coverage Format 1
     public func glyphArray(index: Int) -> UInt16 {
         data.readUInt16(parentOffset: tableOffset, offset: 4 + index * 2)
     }
 
-    /// Number of RangeRecords
-    /// Coverage Format 2
+    /// Number of RangeRecords.
+    /// For Coverage Format 2
     public func rangeCount() -> UInt16 {
         data.readUInt16(parentOffset: tableOffset, offset: 2)
     }
 
     /// Array of glyph ranges — ordered by startGlyphID.
-    /// Coverage Format 2
+    /// For Coverage Format 2
     public func rangeRecords(index: Int) -> RangeRecord {
         let offset = Int(tableOffset) + 4 + index * RangeRecord.byteSize
         return RangeRecord.read(data: data, offset: offset)
     }
 
+    // MARK: - Query functions
+    
+    /// Given glyph id, return the coverage index for it.
+    /// If not found, return nil.
     public func getCoverageIndex(glyphID: UInt16) -> Int? {
         let coverageFormat = self.coverageFormat()
         if (coverageFormat == 1) {
@@ -78,6 +84,8 @@ public class CoverageTable {
 
         return nil
     }
+    
+    // MARK: - helper functions
 
     /// binary search for Coverage Format 1
     private func binarySearch_1(target: UInt16) -> Int? {

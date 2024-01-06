@@ -103,29 +103,16 @@ public class MathGlyphConstructionTable {
         let offset = Int(tableOffset) + 4 + index * MathGlyphVariantRecord.byteSize
         return MathGlyphVariantRecord.read(data: data, offset: offset)
     }
-}
+    
+    // MARK: - Sub-tables
 
-public struct MathGlyphVariantRecord {
-    static let byteSize = 4
-
-    /// Glyph ID for the variant.
-    public let variantGlyph: UInt16
-    /// Advance width/height, in design units, of the variant, in the direction of requested glyph extension.
-    public let advanceMeasurement: UFWORD
-    
-    init() {
-        self.init(variantGlyph: 0, advanceMeasurement: 0)
-    }
-    
-    init(variantGlyph: UInt16, advanceMeasurement: UFWORD) {
-        self.variantGlyph = variantGlyph
-        self.advanceMeasurement = advanceMeasurement
-    }
-    
-    static func read(data: CFData, offset: Int) -> MathGlyphVariantRecord {
-        let variantGlyph = data.readUInt16(offset)
-        let advanceMeasurement = data.readUFWORD(offset + 2)
-        return MathGlyphVariantRecord(variantGlyph: variantGlyph, advanceMeasurement: advanceMeasurement)
+    public var glyphAssemblyTable: GlyphAssemblyTable? {
+        let subtableOffset = self.glyphAssemblyOffset()
+        
+        if subtableOffset != 0 {
+            return GlyphAssemblyTable(data: data, tableOffset: tableOffset + subtableOffset)
+        }
+        return nil
     }
 }
 
@@ -163,6 +150,30 @@ public class GlyphAssemblyTable {
         let mathValueRecord = self.italicsCorrection()
         let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
         return value
+    }
+}
+
+public struct MathGlyphVariantRecord {
+    static let byteSize = 4
+
+    /// Glyph ID for the variant.
+    public let variantGlyph: UInt16
+    /// Advance width/height, in design units, of the variant, in the direction of requested glyph extension.
+    public let advanceMeasurement: UFWORD
+    
+    init() {
+        self.init(variantGlyph: 0, advanceMeasurement: 0)
+    }
+    
+    init(variantGlyph: UInt16, advanceMeasurement: UFWORD) {
+        self.variantGlyph = variantGlyph
+        self.advanceMeasurement = advanceMeasurement
+    }
+    
+    static func read(data: CFData, offset: Int) -> MathGlyphVariantRecord {
+        let variantGlyph = data.readUInt16(offset)
+        let advanceMeasurement = data.readUFWORD(offset + 2)
+        return MathGlyphVariantRecord(variantGlyph: variantGlyph, advanceMeasurement: advanceMeasurement)
     }
 }
 
