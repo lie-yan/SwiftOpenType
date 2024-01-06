@@ -1,4 +1,4 @@
-import CoreText
+import CoreFoundation
 
 /**
  The MathConstants table
@@ -113,7 +113,7 @@ public class MathConstantsTable {
             return getPercent(index)
         }
         
-        assert(false)
+        fatalError("Unreachable")
     }
     
     /// for {scriptPercentScaleDown, scriptScriptPercentScaleDown, radicalDegreeBottomRaisePercent}

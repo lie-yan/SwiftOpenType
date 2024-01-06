@@ -1,26 +1,26 @@
-import CoreText
+import CoreFoundation
 
 public class MathGlyphInfoTable {
     let data: CFData
     let tableOffset: Offset16 /// offset from beginning of data
-
+    
     init(data: CFData, tableOffset: Offset16) {
         self.data = data
         self.tableOffset = tableOffset
     }
-
+    
     // MARK: - Header fields
-
+    
     /// Offset to MathItalicsCorrectionInfo table, from the beginning of the MathGlyphInfo table.
     public func mathItalicsCorrectionInfoOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 0)
     }
-
+    
     /// Offset to MathTopAccentAttachment table, from the beginning of the MathGlyphInfo table.
     public func mathTopAccentAttachmentOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 2)
     }
-
+    
     /// Offset to ExtendedShapes coverage table, from the beginning of the MathGlyphInfo table.
     /// When the glyph to the left or right of a box is an extended shape variant, the (ink) box
     /// should be used for vertical positioning purposes, not the default position defined by
@@ -28,14 +28,14 @@ public class MathGlyphInfoTable {
     public func extendedShapeCoverageOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 4)
     }
-
+    
     /// Offset to MathKernInfo table, from the beginning of the MathGlyphInfo table.
     public func mathKernInfoOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 6)
     }
-
+    
     // MARK: - Sub-tables
-
+    
     public var mathItalicsCorrectionInfoTable: MathItalicsCorrectionInfoTable? {
         let subtableOffset = mathItalicsCorrectionInfoOffset()
         
@@ -85,26 +85,26 @@ public class MathItalicsCorrectionInfoTable {
         self.data = data
         self.tableOffset = tableOffset
     }
-
+    
     /// Offset to Coverage table - from the beginning of MathItalicsCorrectionInfo table.
     public func italicsCorrectionCoverageOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 0)
     }
-
+    
     /// Number of italics correction values. Should coincide with the number of covered glyphs.
     public func italicsCorrectionCount() -> UInt16 {
         data.readUInt16(parentOffset: tableOffset, offset: 2)
     }
-
+    
     /// Array of MathValueRecords defining italics correction values for each covered glyph.
     public func italicsCorrection(index: Int) -> MathValueRecord {
         data.readMathValueRecord(parentOffset: tableOffset, offset: 4 + index * MathValueRecord.byteSize)
     }
-
+    
     public func coverageTable() -> CoverageTable {
         CoverageTable(data: data, tableOffset: tableOffset + italicsCorrectionCoverageOffset())
     }
-
+    
     /// Return italics correction for glyphID in design units
     public func getItalicsCorrection(glyphID: UInt16) -> Int32? {
         let coverageTable = self.coverageTable()
@@ -121,7 +121,7 @@ public class MathItalicsCorrectionInfoTable {
 public class MathTopAccentAttachmentTable {
     let data: CFData
     let tableOffset: Offset16 /// offset from the beginning of MATH table
-
+    
     init(data: CFData, tableOffset: Offset16) {
         self.data = data
         self.tableOffset = tableOffset
@@ -131,13 +131,13 @@ public class MathTopAccentAttachmentTable {
     public func topAccentCoverageOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 0)
     }
-
+    
     /// Number of top accent attachment point values. Must be the same as the number of
     /// glyph IDs referenced in the Coverage table.
     public func topAccentAttachmentCount() -> UInt16 {
         data.readUInt16(parentOffset: tableOffset, offset: 2)
     }
-        
+    
     /// Array of MathValueRecords defining top accent attachment points for each covered glyph.
     public func topAccentAttachment(index: Int) -> MathValueRecord {
         data.readMathValueRecord(parentOffset: tableOffset, offset: 4 + index * MathValueRecord.byteSize)
@@ -146,7 +146,7 @@ public class MathTopAccentAttachmentTable {
     public func coverageTable() -> CoverageTable {
         CoverageTable(data: data, tableOffset: tableOffset + topAccentCoverageOffset())
     }
-
+    
     /// Return top accent attachment for glyphID in design units
     public func getTopAccentAttachment(glyphID: UInt16) -> Int32? {
         let coverageTable = self.coverageTable()
@@ -184,7 +184,8 @@ public class MathKernInfoTable {
     
     /// Array of MathKernInfoRecords, one for each covered glyph.
     public func mathKernInfoRecords(index: Int) -> MathKernInfoRecord {
-        data.readMathKernInfoRecord(parentOffset: tableOffset, offset: 4 + index * MathKernInfoRecord.byteSize)
+        let offset = Int(tableOffset) + 4 + index * MathKernInfoRecord.byteSize
+        return MathKernInfoRecord.read(data: data, offset: offset)
     }
     
     // MARK: - optimization
@@ -235,7 +236,7 @@ public class MathKernTable {
     }
     
     // MARK: - table fields
-
+    
     /// Number of heights at which the kern value changes.
     public func heightCount() -> UInt16 {
         data.readUInt16(parentOffset: tableOffset, offset: 0)
@@ -292,8 +293,7 @@ public class MathKernTable {
             it += step
             
             if !(height < getCorrectionHeight(index: it)) {
-                it += 1
-                first = it
+                first = it + 1
                 count -= step + 1
             }
             else {
@@ -368,5 +368,16 @@ public struct MathKernInfoRecord {
         case .BottomLeft:
             return bottomLeftMathKernOffset
         }
+    }
+    
+    static func read(data: CFData, offset: Int) -> MathKernInfoRecord {
+        let topRightMathKernOffset = data.readOffset16(offset)
+        let topLeftMathKernOffset = data.readOffset16(offset + 2)
+        let bottomRightMathKernOffset = data.readOffset16(offset + 4)
+        let bottomLeftMathKernOffset = data.readOffset16(offset + 6)
+        return MathKernInfoRecord(topRightMathKernOffset: topRightMathKernOffset,
+                                  topLeftMathKernOffset: topLeftMathKernOffset,
+                                  bottomRightMathKernOffset: bottomRightMathKernOffset,
+                                  bottomLeftMathKernOffset: bottomLeftMathKernOffset)
     }
 }

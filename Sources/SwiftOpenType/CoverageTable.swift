@@ -16,6 +16,15 @@ public struct RangeRecord {
         self.endGlyphID = endGlyphID
         self.startCoverageIndex = startCoverageIndex
     }
+    
+    static func read(data: CFData, offset: Int) -> RangeRecord {
+        let startGlyphID = data.readUInt16(offset)
+        let endGlyphID = data.readUInt16(offset + 2)
+        let startCoverageIndex = data.readUInt16(offset + 4)
+        return RangeRecord(startGlyphID: startGlyphID,
+                           endGlyphID: endGlyphID,
+                           startCoverageIndex: startCoverageIndex)
+    }
 }
 
 public class CoverageTable {
@@ -23,6 +32,8 @@ public class CoverageTable {
     let tableOffset: Offset16 /// offset of coverage table - from the beginning of data
 
     init(data: CFData, tableOffset: Offset16) {
+        precondition(tableOffset != 0)
+        
         self.data = data
         self.tableOffset = tableOffset
     }
@@ -52,7 +63,8 @@ public class CoverageTable {
     /// Array of glyph ranges — ordered by startGlyphID.
     /// Coverage Format 2
     public func rangeRecords(index: Int) -> RangeRecord {
-        data.readRangeRecord(parentOffset: tableOffset, offset: 4 + index * RangeRecord.byteSize)
+        let offset = Int(tableOffset) + 4 + index * RangeRecord.byteSize
+        return RangeRecord.read(data: data, offset: offset)
     }
 
     public func getCoverageIndex(glyphID: UInt16) -> Int? {

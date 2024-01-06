@@ -1,4 +1,4 @@
-import CoreText
+import CoreFoundation
 
 /// The MATH table
 public class MathTable {
