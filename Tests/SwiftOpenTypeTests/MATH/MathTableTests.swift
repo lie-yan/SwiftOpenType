@@ -93,7 +93,7 @@ final class MathTableTests: XCTestCase {
         let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
         
         let glyph = CTFontGetGlyphWithName(font, "f" as CFString)
-        let italicsCorrection = table.getItalicsCorrection(glyph)
+        let italicsCorrection = table.getItalicsCorrection(glyphID: glyph)
         
         XCTAssertEqual(italicsCorrection, 79)
     }
@@ -105,7 +105,7 @@ final class MathTableTests: XCTestCase {
         var glyph: CGGlyph
         
         glyph = CTFontGetGlyphWithName(font, "f" as CFString)
-        XCTAssertEqual(table.getTopAccentAttachment(glyph), 262)
+        XCTAssertEqual(table.getTopAccentAttachment(glyphID: glyph), 262)
     }
     
     func testMathConstants_2() {
@@ -192,7 +192,7 @@ final class MathTableTests: XCTestCase {
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable != nil)
             let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
             let glyph = CTFontGetGlyphWithName(font, "space" as CFString)
-            XCTAssertEqual(table.getItalicsCorrection(glyph), nil)
+            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), nil)
         }
         
         do {
@@ -202,16 +202,16 @@ final class MathTableTests: XCTestCase {
             var glyph: CGGlyph
             
             glyph = CTFontGetGlyphWithName(font, "space" as CFString)
-            XCTAssertEqual(table.getItalicsCorrection(glyph), nil) // Glyph without italic correction.
+            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), nil) // Glyph without italic correction.
             
             glyph = CTFontGetGlyphWithName(font, "A" as CFString)
-            XCTAssertEqual(table.getItalicsCorrection(glyph), 197)
+            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 197)
             
             glyph = CTFontGetGlyphWithName(font, "B" as CFString)
-            XCTAssertEqual(table.getItalicsCorrection(glyph), 150)
+            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 150)
             
             glyph = CTFontGetGlyphWithName(font, "C" as CFString)
-            XCTAssertEqual(table.getItalicsCorrection(glyph), 452)
+            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 452)
         }
     }
     
@@ -235,7 +235,7 @@ final class MathTableTests: XCTestCase {
             let table = font.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
         
             let glyph = CTFontGetGlyphWithName(font, "space" as CFString)
-            XCTAssertEqual(table.getTopAccentAttachment(glyph), nil)
+            XCTAssertEqual(table.getTopAccentAttachment(glyphID: glyph), nil)
         }
         
         do {
@@ -245,7 +245,7 @@ final class MathTableTests: XCTestCase {
             var glyph: CGGlyph
             
             glyph = CTFontGetGlyphWithName(font, "space" as CFString)
-            XCTAssertEqual(table.getTopAccentAttachment(glyph), nil)
+            XCTAssertEqual(table.getTopAccentAttachment(glyphID: glyph), nil)
             
             var advance: CGSize = CGSize()
             CTFontGetAdvancesForGlyphs(font, .horizontal, &glyph, &advance, 1)
@@ -253,13 +253,13 @@ final class MathTableTests: XCTestCase {
             XCTAssertEqual(topAccentAttachment, 500)
             
             glyph = CTFontGetGlyphWithName(font, "D" as CFString)
-            XCTAssertEqual(table.getTopAccentAttachment(glyph), 374)
+            XCTAssertEqual(table.getTopAccentAttachment(glyphID: glyph), 374)
             
             glyph = CTFontGetGlyphWithName(font, "E" as CFString)
-            XCTAssertEqual(table.getTopAccentAttachment(glyph), 346)
+            XCTAssertEqual(table.getTopAccentAttachment(glyphID: glyph), 346)
             
             glyph = CTFontGetGlyphWithName(font, "F" as CFString)
-            XCTAssertEqual(table.getTopAccentAttachment(glyph), 318)
+            XCTAssertEqual(table.getTopAccentAttachment(glyphID: glyph), 318)
         }
     }
     
@@ -283,10 +283,10 @@ final class MathTableTests: XCTestCase {
             var glyph: CGGlyph
             
             glyph = CTFontGetGlyphWithName(font, "G" as CFString)
-            XCTAssert(table?.getCoverageIndex(glyph) == nil)
+            XCTAssert(table?.getCoverageIndex(glyphID: glyph) == nil)
             
             glyph = CTFontGetGlyphWithName(font, "H" as CFString)
-            XCTAssert(table?.getCoverageIndex(glyph) != nil)
+            XCTAssert(table?.getCoverageIndex(glyphID: glyph) != nil)
         }
     }
     
