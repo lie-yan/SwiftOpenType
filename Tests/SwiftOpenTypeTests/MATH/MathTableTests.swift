@@ -232,6 +232,10 @@ final class MathTableTests: XCTestCase {
         do {
             let font = openFont(path: "fonts/MathTestFontPartial2.otf", size: 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathTopAccentAttachmentTable != nil)
+            let table = font.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
+        
+            let glyph = CTFontGetGlyphWithName(font, "space" as CFString)
+            XCTAssertEqual(table.getTopAccentAttachment(glyph), nil)
         }
         
         do {
@@ -244,7 +248,7 @@ final class MathTableTests: XCTestCase {
             XCTAssertEqual(table.getTopAccentAttachment(glyph), nil)
             
             var advance: CGSize = CGSize()
-            CTFontGetAdvancesForGlyphs(font, CTFontOrientation.default, &glyph, &advance, 1)
+            CTFontGetAdvancesForGlyphs(font, .horizontal, &glyph, &advance, 1)
             let topAccentAttachment = advance.width / font.sizePerUnit() * 0.5
             XCTAssertEqual(topAccentAttachment, 500)
             

@@ -98,8 +98,7 @@ public class MathConstantsTable {
         self.tableOffset = tableOffset
     }
     
-    /// Return the value of the math constant specified by the argument whose value
-    /// should be taken from ``MathConstant``.
+    /// Return the value of the math constant specified by the argument.
     public func getMathConstant(_ index: MathConstant) -> Int32 {
         if (index <= MathConstant.scriptScriptPercentScaleDown) {
             return getPercent(index)
