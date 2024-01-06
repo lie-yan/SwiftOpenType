@@ -280,41 +280,39 @@ public class MathKernTable {
     
     /// Return the kern value for the given height in design units
     public func getKernValue(height: Int32) -> Int32 {
-        if let index = upper_bound(height: height) {
-            return self.getKernValue(index: index)
-        }
-        return self.getKernValue(index: 0)
+        let index = upper_bound(height: height)
+        return self.getKernValue(index: index)
     }
     
     // MARK: - helper functions
     
     /// Return the index of the first element greater than the given height.
-    /// We borrow the implementation of `std::upper_bound()` from C++ STL.
-    private func upper_bound(height: Int32) -> Int? {
+    /// We adapt the implementation of `std::upper_bound()` from C++ STL.
+    private func upper_bound(height: Int32) -> Int {
         var count = Int(self.heightCount())
-        var first = 0
-        let last = count
+        var i = 0
         
+        // Assume:
+        //      correctionHeight[-1] = -infty
+        //      correctionHeight[heightCount()] = +infty
+        // Loop invariant:
+        //      0 <= i+count <= heightCount()
+        //      correctionHeight[i-1] <= height < correctionHeight[i+count]
+        // Termination:
+        //      count is decreasing in each iteration, and reaches 0 on loop end
         while (count > 0) {
-            var it = first
-            let step = count / 2
-            it += step
+            let half = count / 2
+            let correctionHeight = getCorrectionHeight(index: i + half)
             
-            if !(height < getCorrectionHeight(index: it)) {
-                first = it + 1
-                count -= step + 1
+            if !(height < correctionHeight) {
+                i += half + 1
+                count -= half + 1
             }
             else {
-                count = step
+                count = half
             }
         }
-        
-        if first != last {
-            return first
-        }
-        else {
-            return height < getCorrectionHeight(index: 0) ? nil : last
-        }
+        return i
     }
 }
 
