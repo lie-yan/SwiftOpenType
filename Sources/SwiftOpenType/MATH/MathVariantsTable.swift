@@ -74,6 +74,21 @@ public class MathVariantsTable {
     
     // MARK: - Query functions
     
+    public func getVertGlyphConstructionTable(glyphID: UInt16) -> MathGlyphConstructionTable? {
+        let coverageTable = self.vertGlyphCoverageTable
+        if let coverageIndex = coverageTable.getCoverageIndex(glyphID: glyphID) {
+            return self.vertGlyphConstructionTable(index: coverageIndex)
+        }
+        return nil
+    }
+    
+    public func getHorizGlyphConstructionTable(glyphID: UInt16) -> MathGlyphConstructionTable? {
+        let coverageTable = self.horizGlyphCoverageTable
+        if let coverageIndex = coverageTable.getCoverageIndex(glyphID: glyphID) {
+            return self.horizGlyphConstructionTable(index: coverageIndex)
+        }
+        return nil
+    }
 }
 
 public class MathGlyphConstructionTable {
