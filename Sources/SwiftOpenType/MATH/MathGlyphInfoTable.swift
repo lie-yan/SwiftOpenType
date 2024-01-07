@@ -299,7 +299,7 @@ public class MathKernTable {
         //      0 <= i+count <= heightCount()
         //      correctionHeight[i-1] <= height < correctionHeight[i+count]
         // Termination:
-        //      count is decreasing in each iteration, and reaches 0 on loop end
+        //      count is decreased in each iteration, and reaches 0 on loop end
         while (count > 0) {
             let half = count / 2
             let correctionHeight = getCorrectionHeight(index: i + half)
