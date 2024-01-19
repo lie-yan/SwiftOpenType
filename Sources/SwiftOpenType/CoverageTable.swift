@@ -1,4 +1,4 @@
-import CoreText
+import CoreFoundation
 
 public struct RangeRecord {
     static let byteSize = 6

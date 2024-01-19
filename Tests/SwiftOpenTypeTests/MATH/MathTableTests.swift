@@ -343,6 +343,20 @@ final class MathTableTests: XCTestCase {
         }
     }
     
+    func testDecodeDeltaValue() {
+        XCTAssertEqual(DeviceTable.decodeDeltaValue(word: 0x123F, index: 0, bitsPerItem: 4), 1)
+        XCTAssertEqual(DeviceTable.decodeDeltaValue(word: 0x123F, index: 1, bitsPerItem: 4), 2)
+        XCTAssertEqual(DeviceTable.decodeDeltaValue(word: 0x123F, index: 2, bitsPerItem: 4), 3)
+        XCTAssertEqual(DeviceTable.decodeDeltaValue(word: 0x123F, index: 3, bitsPerItem: 4), -1)
+        
+        XCTAssertEqual(DeviceTable.decodeDeltaValue(word: 0x5540, index: 0, bitsPerItem: 2), 1)
+        XCTAssertEqual(DeviceTable.decodeDeltaValue(word: 0x5540, index: 1, bitsPerItem: 2), 1)
+        XCTAssertEqual(DeviceTable.decodeDeltaValue(word: 0x5540, index: 2, bitsPerItem: 2), 1)
+        XCTAssertEqual(DeviceTable.decodeDeltaValue(word: 0x5540, index: 3, bitsPerItem: 2), 1)
+        XCTAssertEqual(DeviceTable.decodeDeltaValue(word: 0x5540, index: 4, bitsPerItem: 2), 1)
+
+    }
+    
     func openFont(path : String, size: CGFloat) -> CTFont {
         let resourcePath = Bundle.module.resourcePath!
         let path = resourcePath + "/" + path
