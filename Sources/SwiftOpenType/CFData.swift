@@ -1,8 +1,11 @@
 import CoreFoundation
 
-public typealias FWORD = Int16     // int16 that describes a quantity in font design units.
-public typealias UFWORD = UInt16   // uint16 that describes a quantity in font design units.
-public typealias Offset16 = UInt16 // Short offset to a table, same as uint16, NULL offset = 0x0000
+/// int16 that describes a quantity in font design units.
+public typealias FWORD = Int16
+/// uint16 that describes a quantity in font design units.
+public typealias UFWORD = UInt16
+/// Short offset to a table, same as uint16, NULL offset = 0x0000
+public typealias Offset16 = UInt16
 
 /// Extend CFData for internal use.
 ///
@@ -38,36 +41,7 @@ internal extension CFData {
     func readUFWORD(_ offset: Int) -> UFWORD {
         readUInt16(offset)
     }
-    
-    /// Read MathValueRecord at the given (byte) offset
-    func readMathValueRecord(_ offset: Int) -> MathValueRecord {
-        let value = readFWORD(offset)
-        let deviceOffset = readOffset16(offset + 2)
-        return MathValueRecord(value: value, deviceOffset: deviceOffset)
-    }
-    
-    /// Read RangeRecord at the given (byte) offset
-    func readRangeRecord(_ offset: Int) -> RangeRecord {
-        let startGlyphID = readUInt16(offset)
-        let endGlyphID = readUInt16(offset + 2)
-        let startCoverageIndex = readUInt16(offset + 4)
-        return RangeRecord(startGlyphID: startGlyphID,
-                           endGlyphID: endGlyphID,
-                           startCoverageIndex: startCoverageIndex)
-    }
-    
-    /// Read MathKernInfoRecord at the given (byte) offset
-    func readMathKernInfoRecord(_ offset: Int) -> MathKernInfoRecord {
-        let topRightMathKernOffset = readOffset16(offset)
-        let topLeftMathKernOffset = readOffset16(offset + 2)
-        let bottomRightMathKernOffset = readOffset16(offset + 4)
-        let bottomLeftMathKernOffset = readOffset16(offset + 6)
-        return MathKernInfoRecord(topRightMathKernOffset: topRightMathKernOffset,
-                                  topLeftMathKernOffset: topLeftMathKernOffset,
-                                  bottomRightMathKernOffset: bottomRightMathKernOffset,
-                                  bottomLeftMathKernOffset: bottomLeftMathKernOffset)
-    }
-    
+                    
     /// Read Int16 at the given (byte) offset
     func readInt16(parentOffset: Offset16, offset: Int) -> Int16 {
         readInt16(Int(parentOffset) + offset)
@@ -92,22 +66,7 @@ internal extension CFData {
     func readUFWORD(parentOffset: Offset16, offset: Int) -> UFWORD {
         readUFWORD(Int(parentOffset) + offset)
     }
-    
-    /// Read MathValueRecord at the given (byte) offset
-    func readMathValueRecord(parentOffset: Offset16, offset: Int) -> MathValueRecord {
-        readMathValueRecord(Int(parentOffset) + offset)
-    }
-    
-    /// Read RangeRecord at the given (byte) offset
-    func readRangeRecord(parentOffset: Offset16, offset: Int) -> RangeRecord {
-        readRangeRecord(Int(parentOffset) + offset)
-    }
-    
-    /// Read MathKernInfoRecord at the given (byte) offset
-    func readMathKernInfoRecord(parentOffset: Offset16, offset: Int) -> MathKernInfoRecord {
-        readMathKernInfoRecord(Int(parentOffset) + offset)
-    }
-    
+                    
     /// Read adjustment from device table
     func readDeviceDelta(parentOffset: Offset16, deviceOffset: Offset16) -> Int16 {
         // TODO: add device delta

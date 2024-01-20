@@ -15,7 +15,7 @@ extension CTFont {
         CTFontGetSize(self) / CGFloat(CTFontGetUnitsPerEm(self))
     }
 
-    func getMathTableData() -> CFData? {
+    private func getMathTableData() -> CFData? {
         CTFontCopyTable(self,
                         CTFontTableTag(kCTFontTableMATH),
                         CTFontTableOptions(rawValue: 0))

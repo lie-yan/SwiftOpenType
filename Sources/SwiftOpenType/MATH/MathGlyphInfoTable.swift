@@ -1,26 +1,26 @@
-import CoreText
+import CoreFoundation
 
 public class MathGlyphInfoTable {
     let data: CFData
-    let tableOffset: Offset16 /// offset from beginning of data
-
+    let tableOffset: Offset16 // offset from beginning of data
+    
     init(data: CFData, tableOffset: Offset16) {
         self.data = data
         self.tableOffset = tableOffset
     }
-
+    
     // MARK: - Header fields
-
+    
     /// Offset to MathItalicsCorrectionInfo table, from the beginning of the MathGlyphInfo table.
     public func mathItalicsCorrectionInfoOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 0)
     }
-
+    
     /// Offset to MathTopAccentAttachment table, from the beginning of the MathGlyphInfo table.
     public func mathTopAccentAttachmentOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 2)
     }
-
+    
     /// Offset to ExtendedShapes coverage table, from the beginning of the MathGlyphInfo table.
     /// When the glyph to the left or right of a box is an extended shape variant, the (ink) box
     /// should be used for vertical positioning purposes, not the default position defined by
@@ -28,14 +28,14 @@ public class MathGlyphInfoTable {
     public func extendedShapeCoverageOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 4)
     }
-
+    
     /// Offset to MathKernInfo table, from the beginning of the MathGlyphInfo table.
     public func mathKernInfoOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 6)
     }
-
+    
     // MARK: - Sub-tables
-
+    
     public var mathItalicsCorrectionInfoTable: MathItalicsCorrectionInfoTable? {
         let subtableOffset = mathItalicsCorrectionInfoOffset()
         
@@ -85,31 +85,33 @@ public class MathItalicsCorrectionInfoTable {
         self.data = data
         self.tableOffset = tableOffset
     }
-
+    
     /// Offset to Coverage table - from the beginning of MathItalicsCorrectionInfo table.
     public func italicsCorrectionCoverageOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 0)
     }
-
+    
     /// Number of italics correction values. Should coincide with the number of covered glyphs.
     public func italicsCorrectionCount() -> UInt16 {
         data.readUInt16(parentOffset: tableOffset, offset: 2)
     }
-
+    
     /// Array of MathValueRecords defining italics correction values for each covered glyph.
-    public func italicsCorrection(_ index: Int) -> MathValueRecord {
-        data.readMathValueRecord(parentOffset: tableOffset, offset: 4 + index * MathValueRecord.byteSize)
+    public func italicsCorrection(index: Int) -> MathValueRecord {
+        MathValueRecord.read(data: data, 
+                             parentOffset: tableOffset,
+                             offset: 4 + index * MathValueRecord.byteSize)
     }
-
+    
     public func coverageTable() -> CoverageTable {
         CoverageTable(data: data, tableOffset: tableOffset + italicsCorrectionCoverageOffset())
     }
-
+    
     /// Return italics correction for glyphID in design units
-    public func getItalicsCorrection(_ glyphID: UInt16) -> Int32? {
+    public func getItalicsCorrection(glyphID: UInt16) -> Int32? {
         let coverageTable = self.coverageTable()
-        if let coverageIndex = coverageTable.getCoverageIndex(glyphID) {
-            let mathValueRecord = italicsCorrection(coverageIndex)
+        if let coverageIndex = coverageTable.getCoverageIndex(glyphID: glyphID) {
+            let mathValueRecord = italicsCorrection(index: coverageIndex)
             let value = data.evalMathValueRecord(parentOffset: tableOffset,
                                                  mathValueRecord: mathValueRecord)
             return value
@@ -121,7 +123,7 @@ public class MathItalicsCorrectionInfoTable {
 public class MathTopAccentAttachmentTable {
     let data: CFData
     let tableOffset: Offset16 /// offset from the beginning of MATH table
-
+    
     init(data: CFData, tableOffset: Offset16) {
         self.data = data
         self.tableOffset = tableOffset
@@ -131,27 +133,29 @@ public class MathTopAccentAttachmentTable {
     public func topAccentCoverageOffset() -> Offset16 {
         data.readOffset16(parentOffset: tableOffset, offset: 0)
     }
-
+    
     /// Number of top accent attachment point values. Must be the same as the number of
     /// glyph IDs referenced in the Coverage table.
     public func topAccentAttachmentCount() -> UInt16 {
         data.readUInt16(parentOffset: tableOffset, offset: 2)
     }
-        
+    
     /// Array of MathValueRecords defining top accent attachment points for each covered glyph.
-    public func topAccentAttachment(_ index: Int) -> MathValueRecord {
-        data.readMathValueRecord(parentOffset: tableOffset, offset: 4 + index * MathValueRecord.byteSize)
+    public func topAccentAttachment(index: Int) -> MathValueRecord {
+        MathValueRecord.read(data: data,
+                             parentOffset: tableOffset,
+                             offset: 4 + index * MathValueRecord.byteSize)
     }
     
     public func coverageTable() -> CoverageTable {
         CoverageTable(data: data, tableOffset: tableOffset + topAccentCoverageOffset())
     }
-
+    
     /// Return top accent attachment for glyphID in design units
-    public func getTopAccentAttachment(_ glyphID: UInt16) -> Int32? {
+    public func getTopAccentAttachment(glyphID: UInt16) -> Int32? {
         let coverageTable = self.coverageTable()
-        if let coverageIndex = coverageTable.getCoverageIndex(glyphID) {
-            let mathValueRecord = topAccentAttachment(coverageIndex)
+        if let coverageIndex = coverageTable.getCoverageIndex(glyphID: glyphID) {
+            let mathValueRecord = self.topAccentAttachment(index: coverageIndex)
             let value = data.evalMathValueRecord(parentOffset: tableOffset,
                                                  mathValueRecord: mathValueRecord)
             return value
@@ -183,8 +187,9 @@ public class MathKernInfoTable {
     }
     
     /// Array of MathKernInfoRecords, one for each covered glyph.
-    public func mathKernInfoRecords(_ index: Int) -> MathKernInfoRecord {
-        data.readMathKernInfoRecord(parentOffset: tableOffset, offset: 4 + index * MathKernInfoRecord.byteSize)
+    public func mathKernInfoRecords(index: Int) -> MathKernInfoRecord {
+        let offset = Int(tableOffset) + 4 + index * MathKernInfoRecord.byteSize
+        return MathKernInfoRecord.read(data: data, offset: offset)
     }
     
     // MARK: - optimization
@@ -196,22 +201,24 @@ public class MathKernInfoTable {
     
     private func getMathKernOffset(glyphID: UInt16, corner: MathKernCorner) -> Offset16? {
         let coverageTable = self.coverageTable()
-        if let coverageIndex = coverageTable.getCoverageIndex(glyphID) {
+        if let coverageIndex = coverageTable.getCoverageIndex(glyphID: glyphID) {
             return mathKernOffset(index: coverageIndex, corner: corner)
         }
         return nil
     }
     
-    // MARK: - query functions
+    // MARK: - Sub-tables
     
     public func coverageTable() -> CoverageTable {
         CoverageTable(data: data, tableOffset: tableOffset + mathKernCoverageOffset())
     }
     
-    public func getMathKernInfoRecord(_ glyphID: UInt16) -> MathKernInfoRecord? {
+    // MARK: - query functions
+
+    public func getMathKernInfoRecord(glyphID: UInt16) -> MathKernInfoRecord? {
         let coverageTable = self.coverageTable()
-        if let coverageIndex = coverageTable.getCoverageIndex(glyphID) {
-            return mathKernInfoRecords(coverageIndex)
+        if let coverageIndex = coverageTable.getCoverageIndex(glyphID: glyphID) {
+            return self.mathKernInfoRecords(index: coverageIndex)
         }
         return nil
     }
@@ -235,105 +242,77 @@ public class MathKernTable {
     }
     
     // MARK: - table fields
-
+    
     /// Number of heights at which the kern value changes.
     public func heightCount() -> UInt16 {
         data.readUInt16(parentOffset: tableOffset, offset: 0)
     }
     
     /// Array of correction heights, in design units, sorted from lowest to highest.
-    public func correctionHeight(_ index: Int) -> MathValueRecord {
-        data.readMathValueRecord(parentOffset: tableOffset, offset: 2 + index * MathValueRecord.byteSize)
+    public func correctionHeight(index: Int) -> MathValueRecord {
+        MathValueRecord.read(data: data,
+                             parentOffset: tableOffset,
+                             offset: 2 + index * MathValueRecord.byteSize)
     }
     
     /// Array of kerning values for different height ranges.
     /// Negative values are used to move glyphs closer to each other.
-    public func kernValues(_ index: Int) -> MathValueRecord {
+    public func kernValues(index: Int) -> MathValueRecord {
         let offset = 2 + Int(heightCount()) * MathValueRecord.byteSize + index * MathValueRecord.byteSize
-        return data.readMathValueRecord(parentOffset: tableOffset, offset: offset)
+        return MathValueRecord.read(data: data, parentOffset: tableOffset, offset: offset)
     }
     
     // MARK: - query functions
     
     /// Return the correction height at the given index in design units
-    public func getCorrectionHeight(_ index: Int) -> Int32 {
-        let mathValueRecord = self.correctionHeight(index)
+    public func getCorrectionHeight(index: Int) -> Int32 {
+        let mathValueRecord = self.correctionHeight(index: index)
         let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
         return value
     }
     
     /// Return the kern value at the given index in design units
-    public func getKernValue(_ index: Int) -> Int32 {
-        let mathValueRecord = self.kernValues(index)
+    public func getKernValue(index: Int) -> Int32 {
+        let mathValueRecord = self.kernValues(index: index)
         let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
         return value
     }
     
     /// Return the kern value for the given height in design units
     public func getKernValue(height: Int32) -> Int32 {
-        if let index = upper_bound(height: height) {
-            return self.getKernValue(index)
-        }
-        return self.getKernValue(0)
+        let index = upper_bound(height: height)
+        return self.getKernValue(index: index)
     }
     
     // MARK: - helper functions
-
-    /// Return the index of the first element not less than the given height.
-    /// We borrow the implementation of `std::lower_bound()` from C++ STL.
-    private func lower_bound(height: Int32) -> Int? {
-        var count = Int(self.heightCount())
-        var first = 0
-        let last = count
-        
-        while (count > 0) {
-            var it = first
-            let step = count / 2
-            it += step
-            
-            if (getCorrectionHeight(it) < height) {
-                it += 1
-                first = it
-                count -= step + 1
-            }
-            else {
-                count = step
-            }
-        }
-        return first == last ? nil : first
-    }
     
     /// Return the index of the first element greater than the given height.
-    /// We borrow the implementation of `std::upper_bound()` from C++ STL.
-    private func upper_bound(height: Int32) -> Int? {
+    /// We adapt the implementation of `std::upper_bound()` from C++ STL.
+    private func upper_bound(height: Int32) -> Int {
         var count = Int(self.heightCount())
-        var first = 0
-        let last = count
+        var i = 0
         
+        // Assume:
+        //      correctionHeight[-1] = -infty
+        //      correctionHeight[heightCount()] = +infty
+        // Loop invariant:
+        //      0 <= i+count <= heightCount()
+        //      correctionHeight[i-1] <= height < correctionHeight[i+count]
+        // Termination:
+        //      count is decreased in each iteration, and reaches 0 on loop end
         while (count > 0) {
-            var it = first
-            let step = count / 2
-            it += step
+            let half = count / 2
+            let correctionHeight = getCorrectionHeight(index: i + half)
             
-            if !(height < getCorrectionHeight(it)) {
-                it += 1
-                first = it
-                count -= step + 1
+            if !(height < correctionHeight) {
+                i += half + 1
+                count -= half + 1
             }
             else {
-                count = step
+                count = half
             }
         }
-        
-        if first != last {
-            return first
-        }
-        else if height < getCorrectionHeight(0) {
-            return nil
-        }
-        else {
-            return last
-        }
+        return i
     }
 }
 
@@ -395,5 +374,16 @@ public struct MathKernInfoRecord {
         case .BottomLeft:
             return bottomLeftMathKernOffset
         }
+    }
+    
+    static func read(data: CFData, offset: Int) -> MathKernInfoRecord {
+        let topRightMathKernOffset = data.readOffset16(offset)
+        let topLeftMathKernOffset = data.readOffset16(offset + 2)
+        let bottomRightMathKernOffset = data.readOffset16(offset + 4)
+        let bottomLeftMathKernOffset = data.readOffset16(offset + 6)
+        return MathKernInfoRecord(topRightMathKernOffset: topRightMathKernOffset,
+                                  topLeftMathKernOffset: topLeftMathKernOffset,
+                                  bottomRightMathKernOffset: bottomRightMathKernOffset,
+                                  bottomLeftMathKernOffset: bottomLeftMathKernOffset)
     }
 }
