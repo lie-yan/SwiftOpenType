@@ -23,11 +23,11 @@ print("axis height, in pts: \(mathTable.axisHeight)")
 
 ## Tests
 
-The Latin Modern Math font is required to run the tests. It can be downloaded from [GUST](https://www.gust.org.pl/projects/e-foundry/lm-math).
+See `MathTableTests`
 
 ## Status
 
-Currently we focus on `MATH` table. 
+`MATH` table is fully supported.
 
 
 ## See also
