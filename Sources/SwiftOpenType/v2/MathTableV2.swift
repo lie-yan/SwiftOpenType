@@ -34,4 +34,14 @@ public class MathTableV2 {
     public func mathVariantsOffset() -> Offset16 {
         readOffset16(base + 8)
     }
+    
+    // MARK: - sub-tables
+    public var mathConstantsTable: MathConstantsTableV2? {
+        self._mathConstantsTable
+    }
+    
+    // MARK: - lazy variables
+    private lazy var _mathConstantsTable: MathConstantsTableV2? = {
+        MathConstantsTableV2(parentBase: self.base, offset: self.mathConstantsOffset())
+    }()
 }

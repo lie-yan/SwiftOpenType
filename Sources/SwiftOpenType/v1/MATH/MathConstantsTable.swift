@@ -118,21 +118,21 @@ public class MathConstantsTable {
     
     /// for {scriptPercentScaleDown, scriptScriptPercentScaleDown, radicalDegreeBottomRaisePercent}
     private func getPercent(_ index: MathConstant) -> Int32 {
-        let byteOffset = index.getByteOffset()
+        let byteOffset = index.getOffset()
         let value = data.readInt16(parentOffset: tableOffset, offset: byteOffset)
         return Int32(value)
     }
     
     /// for {delimitedSubFormulaMinHeight, displayOperatorMinHeight}
     private func getMinHeight(_ index: MathConstant) -> Int32 {
-        let byteOffset = index.getByteOffset()
+        let byteOffset = index.getOffset()
         let value = data.readUFWORD(parentOffset: tableOffset, offset: byteOffset)
         return Int32(value)
     }
     
     /// for the remaining
     private func getMathValue(_ index: MathConstant) -> Int32 {
-        let byteOffset = index.getByteOffset()
+        let byteOffset = index.getOffset()
         let mathValueRecord = MathValueRecord.read(data: data, parentOffset: tableOffset, offset: byteOffset)
         let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
         return Int32(value)
@@ -422,7 +422,8 @@ public enum MathConstant : Int, Comparable {
     case radicalKernAfterDegree = 54
     case radicalDegreeBottomRaisePercent = 55
     
-    func getByteOffset() -> Int {
+    // Return the byte offset of math constant
+    func getOffset() -> Int {
         let mathLeading = MathConstant.mathLeading.rawValue
         if (rawValue < mathLeading) {
             return rawValue * 2

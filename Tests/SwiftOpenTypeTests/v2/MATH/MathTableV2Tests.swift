@@ -4,19 +4,18 @@ import XCTest
 final class MathTableV2Tests: XCTestCase {
     
     func testMathTableHeader() {
-        let helvetica = CTFontCreateWithName("Helvetica" as CFString, 12, nil)
-        XCTAssert(OTFont(font: helvetica).mathTable == nil)
+        do {
+            let helvetica = OTFont(font: CTFontCreateWithName("Helvetica" as CFString, 12, nil))
+            XCTAssert(helvetica.mathTable == nil)
+        }
         
-        let lmmath = openOTFont(path: "fonts/latinmodern-math.otf")
-        XCTAssert(lmmath.mathTable != nil)
-        
-        let mathTable = lmmath.mathTable!
-        XCTAssertEqual(mathTable.majorVersion(), 1)
-        XCTAssertEqual(mathTable.minorVersion(), 0)
-    }
-    
-    private func openOTFont(path: String) -> OTFont {
-        OTFont(font: openFont(path: path, size: 12.0))
+        do {
+            let lmmath = OTFont(font: openFont(path: "fonts/latinmodern-math.otf", size: 12))
+            XCTAssert(lmmath.mathTable != nil)
+            let mathTable = lmmath.mathTable!
+            XCTAssertEqual(mathTable.majorVersion(), 1)
+            XCTAssertEqual(mathTable.minorVersion(), 0)
+        }
     }
     
     func openFont(path: String, size: CGFloat) -> CTFont {
