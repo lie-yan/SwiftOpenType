@@ -14,6 +14,10 @@ public class OTFont {
         self.ppem = ppem
     }
     
+    public func unitsPerEm() -> UInt32 {
+        CTFontGetUnitsPerEm(font)
+    }
+    
     public var mathTable: MathTableV2? {
         self._mathTable
     }

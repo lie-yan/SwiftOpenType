@@ -1,36 +1,5 @@
 import CoreFoundation
 
-
-public enum DeltaFormat : UInt16 {
-    /// Signed 2-bit value, 8 values per uint16
-    case LOCAL_2_BIT_DELTAS = 0x0001
-    
-    /// Signed 4-bit value, 4 values per uint16
-    case LOCAL_4_BIT_DELTAS = 0x0002
-    
-    /// Signed 8-bit value, 2 values per uint16
-    case LOCAL_8_BIT_DELTAS = 0x0003
-    
-    /// VariationIndex table, contains a delta-set index pair.
-    case VARIATION_INDEX = 0x8000
-    
-    /// For future use — set to 0
-    case Reserved = 0x7FFC
-    
-    public func getBitsPerItem() -> Int? {
-        switch self {
-        case .LOCAL_2_BIT_DELTAS:
-            return 2
-        case .LOCAL_4_BIT_DELTAS:
-            return 4
-        case .LOCAL_8_BIT_DELTAS:
-            return 8
-        default:
-            return nil
-        }
-    }
-}
-
 public class DeviceTable {
     let data: CFData
     let tableOffset: Offset16 /// offset of device table - from the beginning of data

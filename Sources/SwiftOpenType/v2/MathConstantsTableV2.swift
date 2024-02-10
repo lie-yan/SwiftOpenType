@@ -116,7 +116,8 @@ public class MathConstantsTableV2 {
     
     /// for the remaining
     private func getMathValue(_ index: MathConstant) -> Int32 {
-        // TODO: implement this function
-        return 0
+        let offset = index.getOffset()
+        let mathValueRecord = MathValueRecord.read(ptr: base + offset)
+        return MathValueRecord.eval(parentBase: self.base, mathValueRecord: mathValueRecord)
     }
 }

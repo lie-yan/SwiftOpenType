@@ -81,4 +81,15 @@ public struct MathValueRecord {
     static func read(data: CFData, parentOffset: Offset16, offset: Int) -> MathValueRecord {
         read(data: data, offset: Int(parentOffset) + offset)
     }
+    
+    static func read(ptr: UnsafePointer<UInt8>) -> MathValueRecord {
+        let value = readFWORD(ptr + 0)
+        let deviceOffset = readOffset16(ptr + 2)
+        return MathValueRecord(value: value, deviceOffset: deviceOffset)
+    }
+    
+    static func eval(parentBase: UnsafePointer<UInt8>, mathValueRecord: MathValueRecord) -> Int32 {
+        // TODO: implement this
+        return 0
+    }
 }
