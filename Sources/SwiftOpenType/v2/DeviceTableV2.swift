@@ -39,7 +39,7 @@ public class DeviceTableV2 {
     
     /// Return delta value for given ppem.
     /// Return 0 if not available.
-    public func getDeltaValue(ppem: Int32, unitsPerEm: Int32) -> Int32 {
+    public func getDeltaValue(ppem: UInt32, unitsPerEm: UInt32) -> Int32 {
         if ppem == 0 {
             return 0
         }
@@ -53,13 +53,12 @@ public class DeviceTableV2 {
         return Int32(Int64(pixels) * Int64(unitsPerEm) / Int64(ppem))
     }
     
-    private func getDeltaPixels(ppem: Int32) -> Int32 {
+    private func getDeltaPixels(ppem: UInt32) -> Int32 {
         let f = self.deltaFormat().rawValue
-        assert(f >= 0x0001 && f <= 0x0003)
         // harfbuzz checks the range of f. We skip this step.
         
-        let startSize = Int32(self.startSize())
-        let endSize = Int32(self.endSize())
+        let startSize = UInt32(self.startSize())
+        let endSize = UInt32(self.endSize())
         
         if ppem < startSize || ppem > endSize {
             return 0
@@ -68,8 +67,8 @@ public class DeviceTableV2 {
         let s = Int(ppem - startSize)
         
         // Implementation note:
-        //  For the sake of performance, we replace multiplications and
-        //  divisions with bit manipulations.
+        //  For the sake of performance, we avoid multiplications and
+        //  divisions, and use bit manipulations instead.
         
         let bitsPerItem = 1 << f
         // itemsPerWord = 16 / bitsPerItem

@@ -3,13 +3,13 @@ import CoreText
 /// A wrapper of CTFont, extended with some contexts
 public class OTFont {
     let font: CTFont
-    let ppem: UInt /// pixels-per-em
+    let ppem: UInt32 /// pixels-per-em
     
     convenience init(font: CTFont) {
         self.init(font: font, ppem: 0)
     }
     
-    init(font: CTFont, ppem: UInt) {
+    init(font: CTFont, ppem: UInt32) {
         self.font = font
         self.ppem = ppem
     }
@@ -18,19 +18,34 @@ public class OTFont {
         CTFontGetUnitsPerEm(font)
     }
     
+    func getContextData() -> ContextData {
+        ContextData(ppem: self.ppem, unitsPerEm: self.unitsPerEm())
+    }
+    
     public var mathTable: MathTableV2? {
         self._mathTable
     }
     
     private lazy var _mathTable : MathTableV2? = {
         if let data = self.font.getMathTableData() {
-            let table = MathTableV2(base: CFDataGetBytePtr(data))
+            let table = MathTableV2(base: CFDataGetBytePtr(data),
+                                    context: self.getContextData())
             if table.majorVersion() == 1 {
                 return table
             }
         }
         return nil
     }()
+}
+
+struct ContextData {
+    let ppem: UInt32
+    let unitsPerEm: UInt32
+    
+    init(ppem: UInt32, unitsPerEm: UInt32) {
+        self.ppem = ppem
+        self.unitsPerEm = unitsPerEm
+    }
 }
 
 /// int16 that describes a quantity in font design units.

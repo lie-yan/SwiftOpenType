@@ -364,7 +364,7 @@ public class MathConstantsTable {
 }
 
 /// The math constant index
-public enum MathConstant : Int, Comparable {
+public enum MathConstant : Int, Comparable, CaseIterable {
     case scriptPercentScaleDown = 0
     case scriptScriptPercentScaleDown = 1
     case delimitedSubFormulaMinHeight = 2

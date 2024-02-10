@@ -72,12 +72,14 @@ public struct MathValueRecord {
         self.deviceOffset = deviceOffset
     }
     
+    // TODO: remove this
     static func read(data: CFData, offset: Int) -> MathValueRecord {
         let value = data.readFWORD(offset)
         let deviceOffset = data.readOffset16(offset + 2)
         return MathValueRecord(value: value, deviceOffset: deviceOffset)
     }
     
+    // TODO: remove this
     static func read(data: CFData, parentOffset: Offset16, offset: Int) -> MathValueRecord {
         read(data: data, offset: Int(parentOffset) + offset)
     }
@@ -88,8 +90,15 @@ public struct MathValueRecord {
         return MathValueRecord(value: value, deviceOffset: deviceOffset)
     }
     
-    static func eval(parentBase: UnsafePointer<UInt8>, mathValueRecord: MathValueRecord) -> Int32 {
-        // TODO: implement this
-        return 0
+    static func eval(parentBase: UnsafePointer<UInt8>, 
+                     mathValueRecord: MathValueRecord,
+                     context: ContextData) -> Int32 {
+        if mathValueRecord.deviceOffset == 0 {
+            return Int32(mathValueRecord.value)
+        }
+        
+        let deviceTable = DeviceTableV2(base: parentBase + Int(mathValueRecord.deviceOffset))
+        let deltaValue = deviceTable.getDeltaValue(ppem: context.ppem, unitsPerEm: context.unitsPerEm)
+        return Int32(mathValueRecord.value) + deltaValue
     }
 }
