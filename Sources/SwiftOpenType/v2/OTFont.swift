@@ -17,7 +17,11 @@ public class OTFont {
     public func unitsPerEm() -> UInt32 {
         CTFontGetUnitsPerEm(font)
     }
-    
+
+    public func sizePerUnit() -> CGFloat {
+        CTFontGetSize(font) / CGFloat(CTFontGetUnitsPerEm(font))
+    }
+
     func getContextData() -> ContextData {
         ContextData(ppem: self.ppem, unitsPerEm: self.unitsPerEm())
     }
