@@ -25,12 +25,6 @@ public class DeviceTableV2 {
     }
     
     /// Array of compressed data
-    /// The Device table includes an array of uint16 values (deltaValue[])
-    /// that stores the adjustment delta values in a packed representation.
-    /// The 2-, 4-, or 8-bit signed values are packed into uint16 values
-    /// starting with the most significant bits first. For example, using
-    /// a DeltaFormat of 2 (4-bit values), an array of values equal to {1, 2, 3, -1}
-    /// would be represented by the DeltaValue 0x123F.
     public func deltaValue(_ index: Int) -> UInt16 {
         readUInt16(base + 6 + index * 2);
     }
@@ -54,9 +48,6 @@ public class DeviceTableV2 {
     }
     
     private func getDeltaPixels(ppem: UInt32) -> Int32 {
-        let f = self.deltaFormat().rawValue
-        // harfbuzz checks the range of f. We skip this step.
-        
         let startSize = UInt32(self.startSize())
         let endSize = UInt32(self.endSize())
         
@@ -64,12 +55,13 @@ public class DeviceTableV2 {
             return 0
         }
         
+        let f = self.deltaFormat().rawValue
         let s = Int(ppem - startSize)
-        
+
         // Implementation note:
         //  For the sake of performance, we avoid multiplications and
         //  divisions, and use bit manipulations instead.
-        
+
         let bitsPerItem = 1 << f
         // itemsPerWord = 16 / bitsPerItem
         let itemsPerWord = 1 << (4 - f)

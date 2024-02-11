@@ -55,7 +55,6 @@ public class MathTableV2 {
     }()
 }
 
-
 /// The Device and VariationIndex tables contain a DeltaFormat field that
 /// identifies the format of data contained. Format values 0x0001 to 0x0003
 /// are used for Device tables, and indicate the format of delta adjustment

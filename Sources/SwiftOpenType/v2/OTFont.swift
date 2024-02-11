@@ -4,6 +4,7 @@ import CoreText
 public class OTFont {
     let font: CTFont
     let ppem: UInt32 /// pixels-per-em
+    let sizePerUnit: CGFloat
     
     convenience init(font: CTFont) {
         self.init(font: font, ppem: 0)
@@ -12,18 +13,15 @@ public class OTFont {
     init(font: CTFont, ppem: UInt32) {
         self.font = font
         self.ppem = ppem
+        self.sizePerUnit = CTFontGetSize(font) / CGFloat(CTFontGetUnitsPerEm(font))
     }
     
-    public func unitsPerEm() -> UInt32 {
+    public var unitsPerEm: UInt32 {
         CTFontGetUnitsPerEm(font)
     }
-
-    public func sizePerUnit() -> CGFloat {
-        CTFontGetSize(font) / CGFloat(CTFontGetUnitsPerEm(font))
-    }
-
+    
     func getContextData() -> ContextData {
-        ContextData(ppem: self.ppem, unitsPerEm: self.unitsPerEm())
+        ContextData(ppem: self.ppem, unitsPerEm: self.unitsPerEm)
     }
     
     public var mathTable: MathTableV2? {
@@ -60,7 +58,7 @@ public typealias UFWORD = UInt16
 public typealias Offset16 = UInt16
 
 /// Read UInt16 at ptr.
-@inline(__always) 
+@inline(__always)
 func readUInt16(_ ptr: UnsafePointer<UInt8>) -> UInt16 {
     // All OpenType fonts use Motorola-style byte ordering (Big Endian).
     ptr.withMemoryRebound(to: UInt16.self, capacity: 1) {
@@ -69,7 +67,7 @@ func readUInt16(_ ptr: UnsafePointer<UInt8>) -> UInt16 {
 }
 
 /// Read Int16 at ptr.
-@inline(__always) 
+@inline(__always)
 func readInt16(_ ptr: UnsafePointer<UInt8>) -> Int16 {
     // All OpenType fonts use Motorola-style byte ordering (Big Endian).
     ptr.withMemoryRebound(to: Int16.self, capacity: 1) {
