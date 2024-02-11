@@ -1,45 +1,40 @@
 import CoreFoundation
 
-public class CoverageTable {
-    let data: CFData
-    let tableOffset: Offset16 /// offset of coverage table - from the beginning of data
-
-    init(data: CFData, tableOffset: Offset16) {
-        precondition(tableOffset != 0)
-        
-        self.data = data
-        self.tableOffset = tableOffset
+public class CoverageTableV2 {
+    let base: UnsafePointer<UInt8>
+    
+    init(base: UnsafePointer<UInt8>) {
+        self.base = base
+        self.coverageFormat = readUInt16(base + 0)
     }
 
     // MARK: - Table fields
     
-    public func coverageFormat() -> UInt16 {
-        data.readUInt16(parentOffset: tableOffset, offset: 0)
-    }
+    /// Format identifier
+    public let coverageFormat: UInt16
 
     /// Number of glyphs in the glyph array.
     /// For Coverage Format 1
     public func glyphCount() -> UInt16 {
-        data.readUInt16(parentOffset: tableOffset, offset: 2)
+        readUInt16(base + 2)
     }
 
     /// Array of glyph IDs — in numerical order.
     /// For Coverage Format 1
     public func glyphArray(index: Int) -> UInt16 {
-        data.readUInt16(parentOffset: tableOffset, offset: 4 + index * 2)
+        readUInt16(base + 4 + index * 2)
     }
 
     /// Number of RangeRecords.
     /// For Coverage Format 2
     public func rangeCount() -> UInt16 {
-        data.readUInt16(parentOffset: tableOffset, offset: 2)
+        readUInt16(base + 2)
     }
 
     /// Array of glyph ranges — ordered by startGlyphID.
     /// For Coverage Format 2
     public func rangeRecords(index: Int) -> RangeRecord {
-        let offset = Int(tableOffset) + 4 + index * RangeRecord.byteSize
-        return RangeRecord.read(data: data, offset: offset)
+        RangeRecord.read(ptr: base + 4 + index * RangeRecord.byteSize)
     }
 
     // MARK: - Query functions
@@ -47,7 +42,7 @@ public class CoverageTable {
     /// Given glyph id, return the coverage index for it.
     /// If not found, return nil.
     public func getCoverageIndex(glyphID: UInt16) -> Int? {
-        let coverageFormat = self.coverageFormat()
+        let coverageFormat = self.coverageFormat
         if (coverageFormat == 1) {
             return binarySearch_1(target: glyphID)
         }
@@ -102,5 +97,43 @@ public class CoverageTable {
             }
         }
         return nil
+    }
+}
+
+public struct RangeRecord {
+    static let byteSize = 6
+    
+    public let startGlyphID: UInt16 /// First glyph ID in the range
+    public let endGlyphID: UInt16   /// Last glyph ID in the range
+    public let startCoverageIndex: UInt16 /// Coverage Index of first glyph ID in range
+
+    init() {
+        self.init(startGlyphID: 0, endGlyphID: 0, startCoverageIndex: 0)
+    }
+
+    init(startGlyphID: UInt16, endGlyphID: UInt16, startCoverageIndex: UInt16) {
+        self.startGlyphID = startGlyphID
+        self.endGlyphID = endGlyphID
+        self.startCoverageIndex = startCoverageIndex
+    }
+    
+    // deprecated
+    static func read(data: CFData, offset: Int) -> RangeRecord {
+        let startGlyphID = data.readUInt16(offset)
+        let endGlyphID = data.readUInt16(offset + 2)
+        let startCoverageIndex = data.readUInt16(offset + 4)
+        return RangeRecord(startGlyphID: startGlyphID,
+                           endGlyphID: endGlyphID,
+                           startCoverageIndex: startCoverageIndex)
+    }
+    
+    static func read(ptr: UnsafePointer<UInt8>) -> RangeRecord {
+        let startGlyphID = readUInt16(ptr + 0)
+        let endGlyphID = readUInt16(ptr + 2)
+        let startCoverageIndex = readUInt16(ptr + 4)
+
+        return RangeRecord(startGlyphID: startGlyphID,
+                           endGlyphID: endGlyphID,
+                           startCoverageIndex: startCoverageIndex)
     }
 }
