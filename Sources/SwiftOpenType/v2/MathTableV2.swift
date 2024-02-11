@@ -37,16 +37,33 @@ public class MathTableV2 {
         readOffset16(base + 8)
     }
     
-    // MARK: - sub-tables
+    // MARK: - Sub-tables
+    
     public var mathConstantsTable: MathConstantsTableV2? {
         self._mathConstantsTable
     }
     
+    public var mathGlyphInfoTable: MathGlyphInfoTableV2? {
+        self._mathGlyphInfoTable
+    }
+    
     // MARK: - lazy variables
+    
     private lazy var _mathConstantsTable: MathConstantsTableV2? = {
         let offset = self.mathConstantsOffset()
         if offset != 0 {
             return MathConstantsTableV2(base: self.base + Int(offset),
+                                        context: self.context)
+        }
+        else {
+            return nil
+        }
+    }()
+    
+    private lazy var _mathGlyphInfoTable: MathGlyphInfoTableV2? = {
+        let offset = self.mathGlyphInfoOffset()
+        if offset != 0 {
+            return MathGlyphInfoTableV2(base: self.base + Int(offset),
                                         context: self.context)
         }
         else {

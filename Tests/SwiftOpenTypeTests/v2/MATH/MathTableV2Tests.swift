@@ -149,6 +149,73 @@ final class MathTableV2Tests: XCTestCase {
         XCTAssertEqual(table.radicalDegreeBottomRaisePercent, 65)
     }
     
+    func testMathItalicsCorrection() {
+        let font = openFont(path: "fonts/latinmodern-math.otf", size: 12)
+        let otFont = OTFont(font: font)
+        let glyph = CTFontGetGlyphWithName(font, "f" as CFString)
+        
+        // table
+        do {
+            let table = otFont.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
+            let italicsCorrection = table.getItalicsCorrection(glyphID: glyph)
+            XCTAssertEqual(italicsCorrection, 79)
+        }
+        
+        // API
+        do {
+            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 79 * otFont.sizePerUnit)
+        }
+    }
+
+    func testMathItalicsCorrection_2() {
+        // MathGlyphInfo not available
+        do {
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontEmpty.otf", size: 10))
+            XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable == nil)
+        }
+        
+        // MathGlyphInfo empty
+        do {
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontPartial1.otf", size: 10))
+            XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable == nil)
+        }
+        
+        // MathItalicsCorrectionInfo empty
+        do {
+            let font = openFont(path: "fonts/MathTestFontPartial2.otf", size: 10)
+            let otFont = OTFont(font: font)
+            XCTAssert(otFont.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable != nil)
+            let table = otFont.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
+            let glyph = CTFontGetGlyphWithName(font, "space" as CFString)
+            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 0)
+            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 0)
+        }
+        
+        do {
+            let font = openFont(path: "fonts/MathTestFontFull.otf", size: 10)
+            let otFont = OTFont(font: font)
+            let table = otFont.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
+            
+            var glyph: CGGlyph
+            
+            glyph = CTFontGetGlyphWithName(font, "space" as CFString)
+            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 0) // Glyph without italic correction.
+            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 0)
+            
+            glyph = CTFontGetGlyphWithName(font, "A" as CFString)
+            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 197)
+            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 197 * otFont.sizePerUnit)
+
+            glyph = CTFontGetGlyphWithName(font, "B" as CFString)
+            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 150)
+            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 150 * otFont.sizePerUnit)
+            
+            glyph = CTFontGetGlyphWithName(font, "C" as CFString)
+            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 452)
+            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 452 * otFont.sizePerUnit)
+        }
+    }
+    
     func openFont(path: String, size: CGFloat) -> CTFont {
         let resourcePath = Bundle.module.resourcePath!
         let path = resourcePath + "/" + path
