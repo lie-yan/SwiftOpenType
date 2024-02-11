@@ -157,7 +157,7 @@ final class MathTableV2Tests: XCTestCase {
         // table
         do {
             let table = otFont.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
-            let italicsCorrection = table.getItalicsCorrection(glyphID: glyph)
+            let italicsCorrection = table.getItalicsCorrection(glyph: glyph)
             XCTAssertEqual(italicsCorrection, 79)
         }
         
@@ -187,7 +187,7 @@ final class MathTableV2Tests: XCTestCase {
             XCTAssert(otFont.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable != nil)
             let table = otFont.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
             let glyph = CTFontGetGlyphWithName(font, "space" as CFString)
-            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 0)
+            XCTAssertEqual(table.getItalicsCorrection(glyph: glyph), 0)
             XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 0)
         }
         
@@ -199,19 +199,19 @@ final class MathTableV2Tests: XCTestCase {
             var glyph: CGGlyph
             
             glyph = CTFontGetGlyphWithName(font, "space" as CFString)
-            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 0) // Glyph without italic correction.
+            XCTAssertEqual(table.getItalicsCorrection(glyph: glyph), 0) // Glyph without italic correction.
             XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 0)
             
             glyph = CTFontGetGlyphWithName(font, "A" as CFString)
-            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 197)
+            XCTAssertEqual(table.getItalicsCorrection(glyph: glyph), 197)
             XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 197 * otFont.sizePerUnit)
 
             glyph = CTFontGetGlyphWithName(font, "B" as CFString)
-            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 150)
+            XCTAssertEqual(table.getItalicsCorrection(glyph: glyph), 150)
             XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 150 * otFont.sizePerUnit)
             
             glyph = CTFontGetGlyphWithName(font, "C" as CFString)
-            XCTAssertEqual(table.getItalicsCorrection(glyphID: glyph), 452)
+            XCTAssertEqual(table.getItalicsCorrection(glyph: glyph), 452)
             XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 452 * otFont.sizePerUnit)
         }
     }

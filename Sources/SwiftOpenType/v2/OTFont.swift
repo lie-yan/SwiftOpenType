@@ -287,7 +287,7 @@ extension OTFont {
 
 extension OTFont {
     public func getGlyphItalicsCorrection(glyph: UInt16) -> CGFloat {
-        let value = self.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable?.getItalicsCorrection(glyphID: glyph)
+        let value = self.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable?.getItalicsCorrection(glyph: glyph)
         if let value = value {
             return CGFloat(value) * self.sizePerUnit
         }
