@@ -5,13 +5,14 @@ public class CoverageTableV2 {
     
     init(base: UnsafePointer<UInt8>) {
         self.base = base
-        self.coverageFormat = readUInt16(base + 0)
     }
 
     // MARK: - Table fields
     
     /// Format identifier
-    public let coverageFormat: UInt16
+    public func coverageFormat() -> UInt16 {
+        readUInt16(base + 0)
+    }
 
     /// Number of glyphs in the glyph array.
     /// For Coverage Format 1
@@ -42,7 +43,7 @@ public class CoverageTableV2 {
     /// Given glyph id, return the coverage index for it.
     /// If not found, return nil.
     public func getCoverageIndex(glyph: UInt16) -> Int? {
-        let f = self.coverageFormat
+        let f = self.coverageFormat()
         if (f == 1) {
             return binarySearch_1(target: glyph)
         }

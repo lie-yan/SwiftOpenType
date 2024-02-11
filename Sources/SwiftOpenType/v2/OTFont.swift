@@ -579,6 +579,12 @@ extension OTFont {
             return 0
         }
     }
+    
+    /// Returns the top accent attachment of the glyph or 0.5 * the advance width of glyph
+    public func getGlyphTopAccentAttachment(glyph: UInt16) -> CGFloat {
+        // TODO: implement this
+        0
+    }
 }
 
 internal class ContextData {
