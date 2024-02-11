@@ -41,257 +41,543 @@ public class OTFont {
 }
 
 extension OTFont {
+    /// Return the requested constant or zero
     public func getMathConstant(_ index: MathConstant) -> CGFloat {
-        let table = self.mathTable!.mathConstantsTable!
-        
-        if (index <= MathConstant.scriptScriptPercentScaleDown) {
-            return CGFloat(table.getPercent(index)) / 100.0
+        if let table = self.mathTable?.mathConstantsTable {
+            if (index <= MathConstant.scriptScriptPercentScaleDown) {
+                return CGFloat(table.getPercent(index)) / 100
+            }
+            else if (index <= MathConstant.displayOperatorMinHeight) {
+                return CGFloat(table.getMinHeight(index)) * self.sizePerUnit
+            }
+            else if (index <= MathConstant.radicalKernAfterDegree) {
+                return CGFloat(table.getMathValue(index)) * self.sizePerUnit
+            }
+            else if (index == MathConstant.radicalDegreeBottomRaisePercent) {
+                return CGFloat(table.getPercent(index)) / 100
+            }
+            fatalError("Unreachable")
         }
-        else if (index <= MathConstant.displayOperatorMinHeight) {
-            return CGFloat(table.getMinHeight(index)) * self.sizePerUnit
+        else {
+            return 0
         }
-        else if (index <= MathConstant.radicalKernAfterDegree) {
-            return CGFloat(table.getMathValue(index)) * self.sizePerUnit
-        }
-        else if (index == MathConstant.radicalDegreeBottomRaisePercent) {
-            return CGFloat(table.getPercent(index)) / 100.0
-        }
-        
-        fatalError("Unreachable")
     }
     
     public func scriptPercentScaleDown() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.scriptPercentScaleDown) / 100.0
+        if let value = self.mathTable?.mathConstantsTable?.scriptPercentScaleDown {
+            return CGFloat(value) / 100
+        }
+        else {
+            return 0
+        }
     }
     
     public func scriptScriptPercentScaleDown() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.scriptScriptPercentScaleDown) / 100.0
+        if let value = self.mathTable?.mathConstantsTable?.scriptScriptPercentScaleDown {
+            return CGFloat(value) / 100
+        }
+        else {
+            return 0
+        }
     }
     
     public func delimitedSubFormulaMinHeight() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.delimitedSubFormulaMinHeight) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.delimitedSubFormulaMinHeight {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func displayOperatorMinHeight() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.displayOperatorMinHeight) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.displayOperatorMinHeight {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func mathLeading() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.mathLeading) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.mathLeading {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func axisHeight() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.axisHeight) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.axisHeight {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func accentBaseHeight() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.accentBaseHeight) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.accentBaseHeight {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func flattenedAccentBaseHeight() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.flattenedAccentBaseHeight) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.flattenedAccentBaseHeight {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func subscriptShiftDown() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.subscriptShiftDown) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.subscriptShiftDown {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func subscriptTopMax() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.subscriptTopMax) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.subscriptTopMax {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func subscriptBaselineDropMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.subscriptBaselineDropMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.subscriptBaselineDropMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func superscriptShiftUp() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.superscriptShiftUp) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.superscriptShiftUp {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func superscriptShiftUpCramped() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.superscriptShiftUpCramped) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.superscriptShiftUpCramped {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func superscriptBottomMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.superscriptBottomMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.superscriptBottomMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func superscriptBaselineDropMax() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.superscriptBaselineDropMax) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.superscriptBaselineDropMax {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func subSuperscriptGapMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.subSuperscriptGapMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.subSuperscriptGapMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func superscriptBottomMaxWithSubscript() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.superscriptBottomMaxWithSubscript) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.superscriptBottomMaxWithSubscript {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func spaceAfterScript() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.spaceAfterScript) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.spaceAfterScript {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func upperLimitGapMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.upperLimitGapMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.upperLimitGapMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func upperLimitBaselineRiseMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.upperLimitBaselineRiseMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.upperLimitBaselineRiseMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func lowerLimitGapMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.lowerLimitGapMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.lowerLimitGapMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func lowerLimitBaselineDropMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.lowerLimitBaselineDropMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.lowerLimitBaselineDropMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func stackTopShiftUp() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.stackTopShiftUp) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.stackTopShiftUp {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func stackTopDisplayStyleShiftUp() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.stackTopDisplayStyleShiftUp) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.stackTopDisplayStyleShiftUp {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func stackBottomShiftDown() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.stackBottomShiftDown) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.stackBottomShiftDown {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func stackBottomDisplayStyleShiftDown() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.stackBottomDisplayStyleShiftDown) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.stackBottomDisplayStyleShiftDown {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func stackGapMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.stackGapMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.stackGapMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func stackDisplayStyleGapMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.stackDisplayStyleGapMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.stackDisplayStyleGapMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func stretchStackTopShiftUp() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.stretchStackTopShiftUp) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.stretchStackTopShiftUp {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func stretchStackBottomShiftDown() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.stretchStackBottomShiftDown) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.stretchStackBottomShiftDown {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func stretchStackGapAboveMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.stretchStackGapAboveMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.stretchStackGapAboveMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func stretchStackGapBelowMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.stretchStackGapBelowMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.stretchStackGapBelowMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func fractionNumeratorShiftUp() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.fractionNumeratorShiftUp) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.fractionNumeratorShiftUp {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func fractionNumeratorDisplayStyleShiftUp() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.fractionNumeratorDisplayStyleShiftUp) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.fractionNumeratorDisplayStyleShiftUp {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func fractionDenominatorShiftDown() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.fractionDenominatorShiftDown) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.fractionDenominatorShiftDown {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func fractionDenominatorDisplayStyleShiftDown() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.fractionDenominatorDisplayStyleShiftDown) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.fractionDenominatorDisplayStyleShiftDown {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func fractionNumeratorGapMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.fractionNumeratorGapMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.fractionNumeratorGapMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func fractionNumDisplayStyleGapMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.fractionNumDisplayStyleGapMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.fractionNumDisplayStyleGapMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func fractionRuleThickness() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.fractionRuleThickness) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.fractionRuleThickness {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func fractionDenominatorGapMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.fractionDenominatorGapMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.fractionDenominatorGapMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func fractionDenomDisplayStyleGapMin() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.fractionDenomDisplayStyleGapMin) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.fractionDenomDisplayStyleGapMin {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func skewedFractionHorizontalGap() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.skewedFractionHorizontalGap) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.skewedFractionHorizontalGap {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func skewedFractionVerticalGap() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.skewedFractionVerticalGap) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.skewedFractionVerticalGap {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func overbarVerticalGap() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.overbarVerticalGap) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.overbarVerticalGap {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func overbarRuleThickness() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.overbarRuleThickness) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.overbarRuleThickness {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func overbarExtraAscender() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.overbarExtraAscender) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.overbarExtraAscender {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func underbarVerticalGap() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.underbarVerticalGap) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.underbarVerticalGap {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func underbarRuleThickness() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.underbarRuleThickness) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.underbarRuleThickness {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func underbarExtraDescender() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.underbarExtraDescender) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.underbarExtraDescender {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func radicalVerticalGap() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.radicalVerticalGap) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.radicalVerticalGap {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func radicalDisplayStyleVerticalGap() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.radicalDisplayStyleVerticalGap) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.radicalDisplayStyleVerticalGap {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func radicalRuleThickness() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.radicalRuleThickness) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.radicalRuleThickness {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func radicalExtraAscender() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.radicalExtraAscender) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.radicalExtraAscender {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func radicalKernBeforeDegree() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.radicalKernBeforeDegree) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.radicalKernBeforeDegree {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func radicalKernAfterDegree() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.radicalKernAfterDegree) * self.sizePerUnit
+        if let value = self.mathTable?.mathConstantsTable?.radicalKernAfterDegree {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     public func radicalDegreeBottomRaisePercent() -> CGFloat {
-        CGFloat(self.mathTable!.mathConstantsTable!.radicalDegreeBottomRaisePercent) / 100.0
+        if let value = self.mathTable?.mathConstantsTable?.radicalDegreeBottomRaisePercent {
+            return CGFloat(value) / 100
+        }
+        else {
+            return 0
+        }
     }
 }
 
 extension OTFont {
+    /// Returns the italics correction of the glyph or zero
     public func getGlyphItalicsCorrection(glyph: UInt16) -> CGFloat {
         let value = self.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable?.getItalicsCorrection(glyph: glyph)
         if let value = value {
             return CGFloat(value) * self.sizePerUnit
         }
-        return 0
+        else {
+            return 0
+        }
     }
 }
 
