@@ -39,12 +39,27 @@ public class MathGlyphInfoTableV2 {
         self._mathItalicsCorrectionInfoTable
     }
     
+    public var mathTopAccentAttachmentTable: MathTopAccentAttachmentTableV2? {
+        self._mathTopAccentAttachmentTable
+    }
+    
     // MARK: - lazy variables
     private lazy var _mathItalicsCorrectionInfoTable: MathItalicsCorrectionInfoTableV2? = {
         let offset = mathItalicsCorrectionInfoOffset()
         if offset != 0 {
             return MathItalicsCorrectionInfoTableV2(base: self.base + Int(offset),
                                                     context: self.context)
+        }
+        else {
+            return nil
+        }
+    }()
+    
+    private lazy var _mathTopAccentAttachmentTable: MathTopAccentAttachmentTableV2? = {
+        let offset = mathTopAccentAttachmentOffset()
+        if offset != 0 {
+            return MathTopAccentAttachmentTableV2(base: self.base + Int(offset),
+                                                  context: self.context)
         }
         else {
             return nil

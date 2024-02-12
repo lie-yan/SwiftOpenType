@@ -195,7 +195,7 @@ public class MathKernInfoTable {
     // MARK: - optimization
     
     private func mathKernOffset(index: Int, corner: MathKernCorner) -> Offset16 {
-        let offset = 4 + index * MathKernInfoRecord.byteSize + corner.getByteOffset()
+        let offset = 4 + index * MathKernInfoRecord.byteSize + corner.getOffset()
         return data.readOffset16(parentOffset: tableOffset, offset: offset)
     }
     
@@ -322,7 +322,7 @@ public enum MathKernCorner : Int {
     case BottomRight = 2
     case BottomLeft = 3
     
-    func getByteOffset() -> Int {
+    func getOffset() -> Int {
         rawValue * 2
     }
 }

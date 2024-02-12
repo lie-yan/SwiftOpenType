@@ -582,8 +582,16 @@ extension OTFont {
     
     /// Returns the top accent attachment of the glyph or 0.5 * the advance width of glyph
     public func getGlyphTopAccentAttachment(glyph: UInt16) -> CGFloat {
-        // TODO: implement this
-        0
+        let value = self.mathTable?.mathGlyphInfoTable?.mathTopAccentAttachmentTable?.getTopAccentAttachment(glyph: glyph)
+        if let value = value {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            var glyph = glyph
+            var advance = CGSize()
+            CTFontGetAdvancesForGlyphs(self.font, CTFontOrientation.horizontal, &glyph, &advance, 1)
+            return advance.width / 2
+        }
     }
 }
 
