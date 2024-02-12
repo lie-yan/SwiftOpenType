@@ -32,3 +32,5 @@ See `MathTableTests`
 ## See also
 
 [OpenTypeSwift](https://github.com/mossprescott/OpenTypeSwift) is the repository that this codebase evolved from, which supports math constants.
+
+[OpenType Specification](https://learn.microsoft.com/en-us/typography/opentype/spec/) is the best reference. 
