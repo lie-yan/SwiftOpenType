@@ -3,8 +3,8 @@ import CoreText
 /// A wrapper of CTFont, extended with some contexts
 public class OTFont {
     let font: CTFont
-    let ppem: UInt32 /// pixels-per-em
-    let sizePerUnit: CGFloat
+    public let ppem: UInt32 /// pixels-per-em
+    public let sizePerUnit: CGFloat
     
     convenience init(font: CTFont) {
         self.init(font: font, ppem: 0)
@@ -15,15 +15,13 @@ public class OTFont {
         self.ppem = ppem
         self.sizePerUnit = CTFontGetSize(font) / CGFloat(CTFontGetUnitsPerEm(font))
     }
+
+    // MARK: - Generic API
     
     public var unitsPerEm: UInt32 {
         CTFontGetUnitsPerEm(font)
     }
-    
-    func getContextData() -> ContextData {
-        ContextData(ppem: self.ppem, unitsPerEm: self.unitsPerEm)
-    }
-    
+        
     public func getGlyphWithName(_ glyphName: CFString) -> CGGlyph {
         CTFontGetGlyphWithName(font, glyphName)
     }
@@ -32,9 +30,10 @@ public class OTFont {
         CTFontGetGlyphWithName(font, glyphName as! CFString)
     }
     
+    /// Return advance for glyph in points
     public func getAdvanceForGlyph(orientation: CTFontOrientation, glyph: CGGlyph) -> CGFloat {
         var glyph = glyph
-        return CTFontGetAdvancesForGlyphs(self.font, orientation, &glyph, nil, 1)
+        return CTFontGetAdvancesForGlyphs(font, orientation, &glyph, nil, 1)
     }
 
     // MARK: - tables
@@ -44,7 +43,7 @@ public class OTFont {
     }
     
     private lazy var _mathTable : MathTableV2? = {
-        if let data = self.font.getMathTableData() {
+        if let data = self.getMathTableData() {
             let table = MathTableV2(base: CFDataGetBytePtr(data),
                                     context: self.getContextData())
             if table.majorVersion() == 1 {
@@ -53,6 +52,18 @@ public class OTFont {
         }
         return nil
     }()
+    
+    // MARK: - for internal use
+    
+    internal func getContextData() -> ContextData {
+        ContextData(ppem: self.ppem, unitsPerEm: self.unitsPerEm)
+    }
+    
+    internal func getMathTableData() -> CFData? {
+        CTFontCopyTable(font,
+                        CTFontTableTag(kCTFontTableMATH),
+                        CTFontTableOptions(rawValue: 0))
+    }
 }
 
 extension OTFont {
@@ -602,10 +613,7 @@ extension OTFont {
             return CGFloat(value) * self.sizePerUnit
         }
         else {
-            var glyph = glyph
-            var advance = CGSize()
-            CTFontGetAdvancesForGlyphs(self.font, CTFontOrientation.horizontal, &glyph, &advance, 1)
-            return advance.width / 2
+            return self.getAdvanceForGlyph(orientation: .horizontal, glyph: glyph) / 2
         }
     }
 }
