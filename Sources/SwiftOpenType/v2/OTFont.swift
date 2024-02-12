@@ -24,6 +24,21 @@ public class OTFont {
         ContextData(ppem: self.ppem, unitsPerEm: self.unitsPerEm)
     }
     
+    public func getGlyphWithName(_ glyphName: CFString) -> CGGlyph {
+        CTFontGetGlyphWithName(font, glyphName)
+    }
+
+    public func getGlyphWithName(_ glyphName: String) -> CGGlyph {
+        CTFontGetGlyphWithName(font, glyphName as! CFString)
+    }
+    
+    public func getAdvanceForGlyph(orientation: CTFontOrientation, glyph: CGGlyph) -> CGFloat {
+        var glyph = glyph
+        return CTFontGetAdvancesForGlyphs(self.font, orientation, &glyph, nil, 1)
+    }
+
+    // MARK: - tables
+    
     public var mathTable: MathTableV2? {
         self._mathTable
     }

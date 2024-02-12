@@ -150,20 +150,19 @@ final class MathTableV2Tests: XCTestCase {
     }
     
     func testMathItalicsCorrection() {
-        let font = openFont(path: "fonts/latinmodern-math.otf", size: 12)
-        let otFont = OTFont(font: font)
-        let glyph = CTFontGetGlyphWithName(font, "f" as CFString)
+        let font = OTFont(font: openFont(path: "fonts/latinmodern-math.otf", size: 12))
+        let glyph = font.getGlyphWithName("f" as CFString)
         
         // table
         do {
-            let table = otFont.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
+            let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
             let italicsCorrection = table.getItalicsCorrection(glyph: glyph)
             XCTAssertEqual(italicsCorrection, 79)
         }
         
         // API
         do {
-            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 79 * otFont.sizePerUnit)
+            XCTAssertEqual(font.getGlyphItalicsCorrection(glyph: glyph), 79 * font.sizePerUnit)
         }
     }
 
@@ -182,50 +181,47 @@ final class MathTableV2Tests: XCTestCase {
         
         // MathItalicsCorrectionInfo empty
         do {
-            let font = openFont(path: "fonts/MathTestFontPartial2.otf", size: 10)
-            let otFont = OTFont(font: font)
-            XCTAssert(otFont.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable != nil)
-            let table = otFont.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
-            let glyph = CTFontGetGlyphWithName(font, "space" as CFString)
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontPartial2.otf", size: 10))
+            XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable != nil)
+            let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
+            let glyph = font.getGlyphWithName("space")
             XCTAssertEqual(table.getItalicsCorrection(glyph: glyph), 0)
-            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 0)
+            XCTAssertEqual(font.getGlyphItalicsCorrection(glyph: glyph), 0)
         }
         
         do {
-            let font = openFont(path: "fonts/MathTestFontFull.otf", size: 10)
-            let otFont = OTFont(font: font)
-            let table = otFont.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontFull.otf", size: 10))
+            let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
             
             var glyph: CGGlyph
             
-            glyph = CTFontGetGlyphWithName(font, "space" as CFString)
+            glyph = font.getGlyphWithName("space")
             XCTAssertEqual(table.getItalicsCorrection(glyph: glyph), 0) // Glyph without italic correction.
-            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 0)
+            XCTAssertEqual(font.getGlyphItalicsCorrection(glyph: glyph), 0)
             
-            glyph = CTFontGetGlyphWithName(font, "A" as CFString)
+            glyph = font.getGlyphWithName("A")
             XCTAssertEqual(table.getItalicsCorrection(glyph: glyph), 197)
-            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 197 * otFont.sizePerUnit)
+            XCTAssertEqual(font.getGlyphItalicsCorrection(glyph: glyph), 197 * font.sizePerUnit)
 
-            glyph = CTFontGetGlyphWithName(font, "B" as CFString)
+            glyph = font.getGlyphWithName("B")
             XCTAssertEqual(table.getItalicsCorrection(glyph: glyph), 150)
-            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 150 * otFont.sizePerUnit)
+            XCTAssertEqual(font.getGlyphItalicsCorrection(glyph: glyph), 150 * font.sizePerUnit)
             
-            glyph = CTFontGetGlyphWithName(font, "C" as CFString)
+            glyph = font.getGlyphWithName("C")
             XCTAssertEqual(table.getItalicsCorrection(glyph: glyph), 452)
-            XCTAssertEqual(otFont.getGlyphItalicsCorrection(glyph: glyph), 452 * otFont.sizePerUnit)
+            XCTAssertEqual(font.getGlyphItalicsCorrection(glyph: glyph), 452 * font.sizePerUnit)
         }
     }
     
     func testMathTopAccentAttachment() {
-        let font = openFont(path: "fonts/latinmodern-math.otf", size: 12)
-        let otFont = OTFont(font: font)
-        let table = otFont.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
+        let font = OTFont(font: openFont(path: "fonts/latinmodern-math.otf", size: 12))
+        let table = font.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
         
         var glyph: CGGlyph
         
-        glyph = CTFontGetGlyphWithName(font, "f" as CFString)
+        glyph = font.getGlyphWithName("f")
         XCTAssertEqual(table.getTopAccentAttachment(glyph: glyph), 262)
-        XCTAssertEqual(otFont.getGlyphTopAccentAttachment(glyph: glyph), 262 * otFont.sizePerUnit)
+        XCTAssertEqual(font.getGlyphTopAccentAttachment(glyph: glyph), 262 * font.sizePerUnit)
     }
     
     func testMathTopAccentAttachment_2() {
@@ -243,42 +239,39 @@ final class MathTableV2Tests: XCTestCase {
         
         // MathTopAccentAttachment empty
         do {
-            let font = openFont(path: "fonts/MathTestFontPartial2.otf", size: 10)
-            let otFont = OTFont(font: font)
-            XCTAssert(otFont.mathTable?.mathGlyphInfoTable?.mathTopAccentAttachmentTable != nil)
-            let table = otFont.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontPartial2.otf", size: 10))
+            XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathTopAccentAttachmentTable != nil)
+            let table = font.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
         
-            let glyph = CTFontGetGlyphWithName(font, "space" as CFString)
+            let glyph = font.getGlyphWithName("space")
             XCTAssertEqual(table.getTopAccentAttachment(glyph: glyph), nil)
         }
         
         do {
-            let font = openFont(path: "fonts/MathTestFontFull.otf", size: 10)
-            let otFont = OTFont(font: font)
-            let table = otFont.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontFull.otf", size: 10))
+            let table = font.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
             
             var glyph: CGGlyph
             
-            glyph = CTFontGetGlyphWithName(font, "space" as CFString)
+            glyph = font.getGlyphWithName("space")
             XCTAssertEqual(table.getTopAccentAttachment(glyph: glyph), nil)
             
-            var advance: CGSize = CGSize()
-            CTFontGetAdvancesForGlyphs(font, .horizontal, &glyph, &advance, 1)
-            let topAccentAttachment = advance.width / font.sizePerUnit() * 0.5
+            let advance = font.getAdvanceForGlyph(orientation: .default, glyph: glyph)
+            let topAccentAttachment = advance / font.sizePerUnit * 0.5
             XCTAssertEqual(topAccentAttachment, 500)
-            XCTAssertEqual(otFont.getGlyphTopAccentAttachment(glyph: glyph), 500 * otFont.sizePerUnit)
+            XCTAssertEqual(font.getGlyphTopAccentAttachment(glyph: glyph), 500 * font.sizePerUnit)
             
-            glyph = CTFontGetGlyphWithName(font, "D" as CFString)
+            glyph = font.getGlyphWithName("D")
             XCTAssertEqual(table.getTopAccentAttachment(glyph: glyph), 374)
-            XCTAssertEqual(otFont.getGlyphTopAccentAttachment(glyph: glyph), 374 * otFont.sizePerUnit)
+            XCTAssertEqual(font.getGlyphTopAccentAttachment(glyph: glyph), 374 * font.sizePerUnit)
 
-            glyph = CTFontGetGlyphWithName(font, "E" as CFString)
+            glyph = font.getGlyphWithName("E")
             XCTAssertEqual(table.getTopAccentAttachment(glyph: glyph), 346)
-            XCTAssertEqual(otFont.getGlyphTopAccentAttachment(glyph: glyph), 346 * otFont.sizePerUnit)
+            XCTAssertEqual(font.getGlyphTopAccentAttachment(glyph: glyph), 346 * font.sizePerUnit)
 
-            glyph = CTFontGetGlyphWithName(font, "F" as CFString)
+            glyph = font.getGlyphWithName("F")
             XCTAssertEqual(table.getTopAccentAttachment(glyph: glyph), 318)
-            XCTAssertEqual(otFont.getGlyphTopAccentAttachment(glyph: glyph), 318 * otFont.sizePerUnit)
+            XCTAssertEqual(font.getGlyphTopAccentAttachment(glyph: glyph), 318 * font.sizePerUnit)
         }
     }
     
