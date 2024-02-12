@@ -290,4 +290,15 @@ final class MathTableV2Tests: XCTestCase {
         let fontDesc = CTFontManagerCreateFontDescriptorsFromURL(fileURL as CFURL) as! [CTFontDescriptor]
         return CTFontCreateWithFontDescriptor(fontDesc[0], size, nil)
     }
+    
+    func testExample() {
+        let helvetica = OTFont(font: CTFontCreateWithName("Helvetica" as CFString, 12.0, nil))
+        if helvetica.mathTable == nil {
+            print("no MATH table")
+        }
+        
+        let lmmath = OTFont(font: CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil))
+        print("axis height, in pts: \(lmmath.axisHeight())")
+
+    }
 }

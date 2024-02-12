@@ -1,24 +1,23 @@
 # SwiftOpenType
 
-Simple API for OpenType tables, extending `CTFont`. 
+Simple API for OpenType tables. 
 
 ## Example
 
 Check if the MATH table is present:
 
 ```swift
-let helvetica = CTFontCreateWithName("Helvetica" as CFString, 12.0, nil)
+let helvetica = OTFont(font: CTFontCreateWithName("Helvetica" as CFString, 12.0, nil))
 if helvetica.mathTable == nil {
     print("no MATH table")
 }
 ```
 
-Access a constant, scaled to the font size:
+Access a math constant, in points:
 
 ```swift
-let lmmath = CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil)
-let mathTable = lmmath.mathTable!
-print("axis height, in pts: \(mathTable.axisHeight)")
+let lmmath = OTFont(font: CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil))
+print("axis height, in pts: \(lmmath.axisHeight())")
 ```
 
 ## Tests
@@ -32,6 +31,4 @@ See `MathTableTests`
 
 ## See also
 
-[OpenTypeSwift](https://github.com/mossprescott/OpenTypeSwift) is the repository that this codebase evolved from.
-
-Microsoft's [OpenType spec](https://learn.microsoft.com/en-us/typography/opentype/spec/) is the best reference. 
+[OpenTypeSwift](https://github.com/mossprescott/OpenTypeSwift) is the repository that this codebase evolved from, which supports math constants.
