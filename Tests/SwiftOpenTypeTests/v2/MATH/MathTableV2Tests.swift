@@ -275,6 +275,35 @@ final class MathTableV2Tests: XCTestCase {
         }
     }
     
+    func testMathExtendedShape_2() {
+        // MathGlyphInfo not available
+        do {
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontEmpty.otf", size: 10))
+            XCTAssert(font.mathTable?.mathGlyphInfoTable?.extendedShapeCoverageTable == nil)
+        }
+        
+        // MathGlyphInfo empty
+        do {
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontPartial1.otf", size: 10))
+            XCTAssert(font.mathTable?.mathGlyphInfoTable?.extendedShapeCoverageTable == nil)
+        }
+        
+        do {
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontFull.otf", size: 10))
+            let table = font.mathTable!.mathGlyphInfoTable!.extendedShapeCoverageTable
+            
+            var glyph: CGGlyph
+            
+            glyph = font.getGlyphWithName("G")
+            XCTAssert(table?.getCoverageIndex(glyph: glyph) == nil)
+            XCTAssertFalse(font.isGlyphExtendedShape(glyph: glyph))
+            
+            glyph = font.getGlyphWithName("H")
+            XCTAssert(table?.getCoverageIndex(glyph: glyph) != nil)
+            XCTAssertTrue(font.isGlyphExtendedShape(glyph: glyph))
+        }
+    }
+    
     func openFont(path: String, size: CGFloat) -> CTFont {
         let resourcePath = Bundle.module.resourcePath!
         let path = resourcePath + "/" + path

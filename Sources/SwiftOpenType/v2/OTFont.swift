@@ -616,6 +616,21 @@ extension OTFont {
             return self.getAdvanceForGlyph(orientation: .horizontal, glyph: glyph) / 2
         }
     }
+    
+    /// Returns requested kerning value or zero
+    public func getGlyphKerning(glyph: UInt16,
+                                corner: MathKernCorner,
+                                correctionHeight: CGFloat) -> CGFloat {
+        // TODO: implement this
+        let h = Int32(correctionHeight / self.sizePerUnit) // correction height in design units
+        return 0
+    }
+    
+    /// Returns true if the glyph is an extended shape, false otherwise
+    public func isGlyphExtendedShape(glyph: UInt16) -> Bool {
+        let value = self.mathTable?.mathGlyphInfoTable?.extendedShapeCoverageTable?.getCoverageIndex(glyph: glyph)
+        return value != nil
+    }
 }
 
 internal class ContextData {

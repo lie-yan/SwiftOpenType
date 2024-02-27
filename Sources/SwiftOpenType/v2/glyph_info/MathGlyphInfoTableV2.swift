@@ -43,6 +43,10 @@ public class MathGlyphInfoTableV2 {
         self._mathTopAccentAttachmentTable
     }
     
+    public var extendedShapeCoverageTable: CoverageTableV2? {
+        self._extendedShapeCoverageTable
+    }
+    
     // MARK: - lazy variables
     private lazy var _mathItalicsCorrectionInfoTable: MathItalicsCorrectionInfoTableV2? = {
         let offset = mathItalicsCorrectionInfoOffset()
@@ -60,6 +64,16 @@ public class MathGlyphInfoTableV2 {
         if offset != 0 {
             return MathTopAccentAttachmentTableV2(base: self.base + Int(offset),
                                                   context: self.context)
+        }
+        else {
+            return nil
+        }
+    }()
+    
+    private lazy var _extendedShapeCoverageTable: CoverageTableV2? = {
+        let offset = extendedShapeCoverageOffset()
+        if offset != 0 {
+            return CoverageTableV2(base: self.base + Int(offset))
         }
         else {
             return nil
