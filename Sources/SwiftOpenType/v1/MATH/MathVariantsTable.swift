@@ -256,3 +256,9 @@ public enum PartFlags: UInt16 {
     case EXTENDER_FLAG = 0x0001
     case RESERVED = 0xFFFE
 }
+
+public enum Orientation: UInt32 {
+    case `default` = 0
+    case horizontal = 1
+    case vertical = 2
+}
