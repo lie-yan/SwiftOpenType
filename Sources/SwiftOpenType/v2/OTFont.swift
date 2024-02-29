@@ -355,8 +355,13 @@ extension OTFont {
     
     /// Returns requested minimum connector overlap or zero
     public func getMinConnectorOverlap(orientation: Orientation) -> CGFloat {
-        // TODO: implement this
-        return 0
+        let value = self.mathTable?.mathVariantsTable?.minConnectorOverlap()
+        if let value = value {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
 }
 

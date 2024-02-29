@@ -47,6 +47,10 @@ public class MathTableV2 {
         self._mathGlyphInfoTable
     }
     
+    public var mathVariantsTable: MathVariantsTableV2? {
+        self._mathVariantsTable
+    }
+    
     // MARK: - lazy variables
     
     private lazy var _mathConstantsTable: MathConstantsTableV2? = {
@@ -65,6 +69,16 @@ public class MathTableV2 {
         if offset != 0 {
             return MathGlyphInfoTableV2(base: self.base + Int(offset),
                                         context: self.context)
+        }
+        else {
+            return nil
+        }
+    }()
+    
+    private lazy var _mathVariantsTable: MathVariantsTableV2? = {
+        let offset = self.mathVariantsOffset()
+        if offset != 0 {
+            return MathVariantsTableV2(base: self.base + Int(offset))
         }
         else {
             return nil
