@@ -304,6 +304,103 @@ final class MathTableV2Tests: XCTestCase {
         }
     }
     
+    func testMathKernInfo_2() {
+        // MathGlyphInfo not available
+        do {
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontEmpty.otf", size: 10))
+            XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathKernInfoTable == nil)
+        }
+        
+        // MathKernInfo empty
+        do {
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontPartial2.otf", size: 10))
+            XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathKernInfoTable != nil)
+            let table = font.mathTable!.mathGlyphInfoTable!.mathKernInfoTable!
+            let glyph = font.getGlyphWithName("space")
+            
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 0), nil)
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopLeft, height: 0), nil)
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .BottomRight, height: 0), nil)
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .BottomLeft, height: 0), nil)
+            
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: 0), 0)
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopLeft, correctionHeight: 0), 0)
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .BottomRight, correctionHeight: 0), 0)
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .BottomLeft, correctionHeight: 0), 0)
+        }
+        
+        // MathKernInfoRecords empty
+        do {
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontPartial3.otf", size: 10))
+            XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathKernInfoTable != nil)
+            let table = font.mathTable!.mathGlyphInfoTable!.mathKernInfoTable!
+            let glyph = font.getGlyphWithName("space")
+            
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 0), 0)
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopLeft, height: 0), 0)
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .BottomRight, height: 0), 0)
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .BottomLeft, height: 0), 0)
+
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: 0), 0)
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopLeft, correctionHeight: 0), 0)
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .BottomRight, correctionHeight: 0), 0)
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .BottomLeft, correctionHeight: 0), 0)
+        }
+        
+        do {
+            let font = OTFont(font: openFont(path: "fonts/MathTestFontFull.otf", size: 10.0))
+            let table = font.mathTable!.mathGlyphInfoTable!.mathKernInfoTable!
+            
+            let glyph = font.getGlyphWithName("I")
+            
+            let toPoints = { (du: Int32) -> CGFloat in return CGFloat(du) * font.sizePerUnit }
+            
+            // less than min height
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 7), 31)
+            // equal to min height
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 14), 52)
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 20), 52)
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 23), 73)
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 31), 73)
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 32), 94)
+            // equal to max height
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 86), 220)
+            // larger than max height
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 91), 220)
+            // larger than max height
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 96), 220)
+            
+            // less than min correctionHeight
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: toPoints(7)), toPoints(31))
+            // equal to min correctionHeight
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: toPoints(14)), toPoints(52))
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: toPoints(20)), toPoints(52))
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: toPoints(23)), toPoints(73))
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: toPoints(31)), toPoints(73))
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: toPoints(32)), toPoints(94))
+            // equal to max correctionHeight
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: toPoints(86)), toPoints(220))
+            // larger than max correctionHeight
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: toPoints(91)), toPoints(220))
+            // larger than max correctionHeight
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: toPoints(96)), toPoints(220))
+
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopRight, height: 39), 94) // top right
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .TopLeft, height: 39), 55)  // top left
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .BottomRight, height: 39), 22) // bottom right
+            XCTAssertEqual(table.getKernValue(glyph: glyph, corner: .BottomLeft, height: 39), 50) // bottom left
+
+            // top right
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopRight, correctionHeight: toPoints(39)), toPoints(94))
+            // top left
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .TopLeft, correctionHeight: toPoints(39)), toPoints(55))
+            // bottom right
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .BottomRight, correctionHeight: toPoints(39)), toPoints(22))
+            // bottom left
+            XCTAssertEqual(font.getGlyphKerning(glyph: glyph, corner: .BottomLeft, correctionHeight: toPoints(39)), toPoints(50))
+        }
+    }
+    
     func openFont(path: String, size: CGFloat) -> CTFont {
         let resourcePath = Bundle.module.resourcePath!
         let path = resourcePath + "/" + path

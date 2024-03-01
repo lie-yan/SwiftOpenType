@@ -89,7 +89,6 @@ extension OTFont {
         }
     }
     
-    
     public func scriptPercentScaleDown() -> CGFloat {
         CGFloat(self.mathTable?.mathConstantsTable?.scriptPercentScaleDown ?? 0) / 100
     }
@@ -342,9 +341,16 @@ extension OTFont {
     public func getGlyphKerning(glyph: UInt16,
                                 corner: MathKernCorner,
                                 correctionHeight: CGFloat) -> CGFloat {
-        // TODO: implement this
         let h = Int32(correctionHeight / self.sizePerUnit) // correction height in design units
-        return 0
+        let value = self.mathTable?.mathGlyphInfoTable?.mathKernInfoTable?.getKernValue(glyph: glyph,
+                                                                                        corner: corner,
+                                                                                        height: h)
+        if let value = value {
+            return CGFloat(value) * self.sizePerUnit
+        }
+        else {
+            return 0
+        }
     }
     
     /// Returns true if the glyph is an extended shape, false otherwise

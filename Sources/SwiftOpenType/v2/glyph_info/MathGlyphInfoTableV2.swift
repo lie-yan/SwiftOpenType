@@ -47,6 +47,10 @@ public class MathGlyphInfoTableV2 {
         self._extendedShapeCoverageTable
     }
     
+    public var mathKernInfoTable: MathKernInfoTableV2? {
+        self._mathKernInfoTable
+    }
+    
     // MARK: - lazy variables
     private lazy var _mathItalicsCorrectionInfoTable: MathItalicsCorrectionInfoTableV2? = {
         let offset = mathItalicsCorrectionInfoOffset()
@@ -74,6 +78,16 @@ public class MathGlyphInfoTableV2 {
         let offset = extendedShapeCoverageOffset()
         if offset != 0 {
             return CoverageTableV2(base: self.base + Int(offset))
+        }
+        else {
+            return nil
+        }
+    }()
+    
+    private lazy var _mathKernInfoTable: MathKernInfoTableV2? = {
+        let offset = mathKernInfoOffset()
+        if offset != 0 {
+            return MathKernInfoTableV2(base: self.base + Int(offset), context: context)
         }
         else {
             return nil
