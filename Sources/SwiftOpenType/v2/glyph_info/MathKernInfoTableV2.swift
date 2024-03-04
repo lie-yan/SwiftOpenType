@@ -29,11 +29,13 @@ public class MathKernInfoTableV2 {
     
     // MARK: - optimization
     
+    /// Return the offset for given glyph index and corner
     private func mathKernOffset(index: Int, corner: MathKernCorner) -> Offset16 {
         let offset = 4 + index * MathKernInfoRecord.byteSize + corner.getOffset()
         return readOffset16(base + offset)
     }
     
+    /// Return the offset for given glyph id and corner
     private func getMathKernOffset(glyph: UInt16, corner: MathKernCorner) -> Offset16? {
         let coverageTable = self.coverageTable()
         if let coverageIndex = coverageTable.getCoverageIndex(glyph: glyph) {
@@ -48,6 +50,13 @@ public class MathKernInfoTableV2 {
         CoverageTableV2(base: base + Int(mathKernCoverageOffset()))
     }
     
+    public func getMathKernTable(glyph: UInt16, corner: MathKernCorner) -> MathKernTableV2? {
+        if let offset = getMathKernOffset(glyph: glyph, corner: corner) {
+            return MathKernTableV2(base: base + Int(offset), context: context)
+        }
+        return nil
+    }
+
     // MARK: - query functions
 
     public func getMathKernInfoRecord(glyph: UInt16) -> MathKernInfoRecord? {
@@ -59,11 +68,7 @@ public class MathKernInfoTableV2 {
     }
     
     public func getKernValue(glyph: UInt16, corner: MathKernCorner, height: Int32) -> Int32? {
-        if let mathKernOffset = getMathKernOffset(glyph: glyph, corner: corner) {
-            let mathKernTable = MathKernTableV2(base: base + Int(mathKernOffset), context: context)
-            return mathKernTable.getKernValue(height: height)
-        }
-        return nil
+        self.getMathKernTable(glyph: glyph, corner: corner)?.getKernValue(height: height)
     }
 }
 
