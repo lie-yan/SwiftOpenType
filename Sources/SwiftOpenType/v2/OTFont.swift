@@ -358,6 +358,10 @@ extension OTFont {
                                  startOffset: Int,
                                  entriesCount: inout Int,
                                  kernEntries: inout [KernEntry]) -> Int {
+        precondition(startOffset >= 0)
+        precondition(entriesCount >= 0)
+        precondition(kernEntries.count >= entriesCount)
+        
         if let kernInfoTable = self.mathTable?.mathGlyphInfoTable?.mathKernInfoTable {
             if let kernTable = kernInfoTable.getMathKernTable(glyph: glyph, corner: corner) {
                 let heightCount = Int(kernTable.heightCount())
@@ -378,8 +382,9 @@ extension OTFont {
                             maxHeight = kernTable.getCorrectionHeight(index: j)
                         }
                         
+                        let kernValue = kernTable.getKernValue(index: j)
                         kernEntries[i] = KernEntry(maxCorrectionHeight: CGFloat(maxHeight) * sizePerUnit,
-                                                   kernValue: CGFloat(kernTable.getKernValue(index: j)) * sizePerUnit)
+                                                   kernValue: CGFloat(kernValue) * sizePerUnit)
                     }
                 }
                 return entriesCount
@@ -460,8 +465,8 @@ func readOffset16(_ ptr: UnsafePointer<UInt8>) -> Offset16 {
 }
 
 public struct KernEntry {
-    var maxCorrectionHeight: CGFloat
-    var kernValue: CGFloat
+    let maxCorrectionHeight: CGFloat
+    let kernValue: CGFloat
     
     init(maxCorrectionHeight: CGFloat, kernValue: CGFloat) {
         self.maxCorrectionHeight = maxCorrectionHeight

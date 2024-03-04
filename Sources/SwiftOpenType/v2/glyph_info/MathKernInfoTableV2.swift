@@ -56,9 +56,9 @@ public class MathKernInfoTableV2 {
         }
         return nil
     }
-
+    
     // MARK: - query functions
-
+    
     public func getMathKernInfoRecord(glyph: UInt16) -> MathKernInfoRecord? {
         let coverageTable = self.coverageTable()
         if let coverageIndex = coverageTable.getCoverageIndex(glyph: glyph) {
@@ -124,6 +124,38 @@ public class MathKernTableV2 {
         return self.getKernValue(index: index)
     }
     
+    public func getKernEntries(startOffset: Int,
+                               entriesCount: inout Int,
+                               kernEntries: inout [KernEntryDU]) -> Int {
+        precondition(entriesCount >= 0)
+        precondition(kernEntries.count >= entriesCount)
+        
+        let heightCount = Int(self.heightCount())
+        let count = heightCount + 1
+        if (entriesCount > 0) {
+            let start = min(startOffset, count)
+            let end = min(start + entriesCount, count)
+            entriesCount = end - start
+            
+            for i in 0..<entriesCount {
+                let j = start + i
+                
+                var maxHeight: Int32
+                if (j == heightCount) {
+                    maxHeight = INT32_MAX
+                }
+                else {
+                    maxHeight = self.getCorrectionHeight(index: j)
+                }
+                
+                let kernValue = self.getKernValue(index: j)
+                kernEntries[i] = KernEntryDU(maxCorrectionHeight: maxHeight,
+                                             kernValue: kernValue)
+            }
+        }
+        return entriesCount
+    }
+    
     // MARK: - helper functions
     
     /// Return the index of the first element greater than the given height.
@@ -153,5 +185,20 @@ public class MathKernTableV2 {
             }
         }
         return i
+    }
+}
+
+/// KernEntry in design units
+public struct KernEntryDU {
+    let maxCorrectionHeight: Int32
+    let kernValue: Int32
+    
+    init(maxCorrectionHeight: Int32, kernValue: Int32) {
+        self.maxCorrectionHeight = maxCorrectionHeight
+        self.kernValue = kernValue
+    }
+    
+    init() {
+        self.init(maxCorrectionHeight: 0, kernValue: 0)
     }
 }
