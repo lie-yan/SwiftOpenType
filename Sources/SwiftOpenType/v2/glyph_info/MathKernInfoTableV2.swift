@@ -132,28 +132,35 @@ public class MathKernTableV2 {
         
         let heightCount = Int(self.heightCount())
         let count = heightCount + 1
-        if (entriesCount > 0) {
-            let start = min(startOffset, count)
-            let end = min(start + entriesCount, count)
-            entriesCount = end - start
+        let start = min(startOffset, count)
+        let end = min(start + entriesCount, count)
+        entriesCount = end - start
+        
+        for i in 0..<entriesCount {
+            let j = start + i
             
-            for i in 0..<entriesCount {
-                let j = start + i
-                
-                var maxHeight: Int32
-                if (j == heightCount) {
-                    maxHeight = INT32_MAX
-                }
-                else {
-                    maxHeight = self.getCorrectionHeight(index: j)
-                }
-                
-                let kernValue = self.getKernValue(index: j)
-                kernEntries[i] = KernEntryDU(maxCorrectionHeight: maxHeight,
-                                             kernValue: kernValue)
+            var maxHeight: Int32
+            if (j == heightCount) {
+                maxHeight = INT32_MAX
             }
+            else {
+                maxHeight = self.getCorrectionHeight(index: j)
+            }
+            
+            let kernValue = self.getKernValue(index: j)
+            kernEntries[i] = KernEntryDU(maxCorrectionHeight: maxHeight,
+                                         kernValue: kernValue)
         }
         return entriesCount
+    }
+    
+    public func getKernEntryCount(startOffset: Int) -> Int {
+        precondition(startOffset >= 0)
+        
+        let heightCount = Int(self.heightCount())
+        let count = heightCount + 1
+        let start = min(startOffset, count)
+        return count - start
     }
     
     // MARK: - helper functions
@@ -190,15 +197,11 @@ public class MathKernTableV2 {
 
 /// KernEntry in design units
 public struct KernEntryDU {
-    let maxCorrectionHeight: Int32
-    let kernValue: Int32
+    public let maxCorrectionHeight: Int32
+    public let kernValue: Int32
     
     init(maxCorrectionHeight: Int32, kernValue: Int32) {
         self.maxCorrectionHeight = maxCorrectionHeight
         self.kernValue = kernValue
-    }
-    
-    init() {
-        self.init(maxCorrectionHeight: 0, kernValue: 0)
     }
 }

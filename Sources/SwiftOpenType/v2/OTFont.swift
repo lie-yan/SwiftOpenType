@@ -353,6 +353,17 @@ extension OTFont {
         }
     }
     
+    /// Fetches the raw MathKern (cut-in) data for glyph index, and corner.
+    ///
+    /// - Parameters:
+    ///   - glyph: The glyph index from which to retrieve the kernings
+    ///   - corner: The corner for which to retrieve the kernings
+    ///   - start_offset: offset of the first kern entry to retrieve
+    ///   - entries_count: Input = the maximum number of kern entries to return; 
+    ///     Output = the actual number of kern entries returned.
+    ///   - kern_entries: array of kern entries returned.
+    ///
+    /// - Returns: the total number of kern values available or zero
     public func getGlyphKernings(glyph: UInt16,
                                  corner: MathKernCorner,
                                  startOffset: Int,
@@ -362,38 +373,49 @@ extension OTFont {
         precondition(entriesCount >= 0)
         precondition(kernEntries.count >= entriesCount)
         
-        if let kernInfoTable = self.mathTable?.mathGlyphInfoTable?.mathKernInfoTable {
-            if let kernTable = kernInfoTable.getMathKernTable(glyph: glyph, corner: corner) {
-                let heightCount = Int(kernTable.heightCount())
-                let count = heightCount + 1
-                if (entriesCount > 0) {
-                    let start = min(startOffset, count)
-                    let end = min(start + entriesCount, count)
-                    entriesCount = end - start
-                    
-                    for i in 0..<entriesCount {
-                        let j = start + i
-                        
-                        var maxHeight: Int32
-                        if (j == heightCount) {
-                            maxHeight = INT32_MAX
-                        }
-                        else {
-                            maxHeight = kernTable.getCorrectionHeight(index: j)
-                        }
-                        
-                        let kernValue = kernTable.getKernValue(index: j)
-                        kernEntries[i] = KernEntry(maxCorrectionHeight: CGFloat(maxHeight) * sizePerUnit,
-                                                   kernValue: CGFloat(kernValue) * sizePerUnit)
-                    }
+        if let kernTable = self.mathTable?
+            .mathGlyphInfoTable?
+            .mathKernInfoTable?
+            .getMathKernTable(glyph: glyph, corner: corner) {
+            
+            let heightCount = Int(kernTable.heightCount())
+            let count = heightCount + 1
+            let start = min(startOffset, count)
+            let end = min(start + entriesCount, count)
+            entriesCount = end - start
+            
+            for i in 0..<entriesCount {
+                let j = start + i
+                
+                var maxHeight: CGFloat
+                if (j == heightCount) {
+                    maxHeight = CGFloat.infinity
                 }
-                return entriesCount
+                else {
+                    maxHeight = CGFloat(kernTable.getCorrectionHeight(index: j)) * sizePerUnit
+                }
+                
+                let kernValue = CGFloat(kernTable.getKernValue(index: j)) * sizePerUnit
+                kernEntries[i] = KernEntry(maxCorrectionHeight: maxHeight,
+                                           kernValue: kernValue)
             }
+            return entriesCount
         }
         
         // FALL THRU
         entriesCount = 0
         return 0
+    }
+    
+    public func getKernEntryCount(glyph: UInt16,
+                                  corner: MathKernCorner,
+                                  startOffset: Int) -> Int {
+        precondition(startOffset >= 0)
+        return self.mathTable?
+            .mathGlyphInfoTable?
+            .mathKernInfoTable?
+            .getMathKernTable(glyph: glyph, corner: corner)?
+            .getKernEntryCount(startOffset: startOffset) ?? 0
     }
     
     /// Returns true if the glyph is an extended shape, false otherwise
