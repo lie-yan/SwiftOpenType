@@ -404,6 +404,12 @@ final class MathTableV2Tests: XCTestCase {
     func testGetGlyphKernings() {
         do {
             let font = OTFont(font: openFont(path: "fonts/MathTestFontFull.otf", size: 10.0))
+            let glyph = font.getGlyphWithName("I")
+            
+            XCTAssertEqual(font.getKernEntryCount(glyph: glyph, corner: .TopRight, startOffset: 0), 10)
+            XCTAssertEqual(font.getKernEntryCount(glyph: glyph, corner: .TopLeft, startOffset: 0), 3)
+            XCTAssertEqual(font.getKernEntryCount(glyph: glyph, corner: .BottomRight, startOffset: 0), 9)
+            XCTAssertEqual(font.getKernEntryCount(glyph: glyph, corner: .BottomLeft, startOffset: 0), 7)
         }
     }
     
