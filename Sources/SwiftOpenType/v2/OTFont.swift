@@ -395,9 +395,17 @@ public extension OTFont {
         return 0
     }
 
-    func getKernEntryCount(glyph: UInt16,
-                           corner: MathKernCorner,
-                           startOffset: Int) -> Int
+    /// Return the kern entries available for glyph index and corner, counting from given offset.
+    ///
+    /// - Parameters:
+    ///   - glyph: The glyph index from which to retrieve the kernings
+    ///   - corner: The corner for which to retrieve the kernings
+    ///   - start_offset: offset of the first kern entry to retrieve
+    ///
+    /// - Returns: the total number of kern values available or zero
+    func getGlyphKerningCount(glyph: UInt16,
+                              corner: MathKernCorner,
+                              startOffset: Int) -> Int
     {
         precondition(startOffset >= 0)
         return mathTable?.mathGlyphInfoTable?.mathKernInfoTable?
@@ -475,5 +483,9 @@ public struct KernEntry {
     init(maxCorrectionHeight: CGFloat, kernValue: CGFloat) {
         self.maxCorrectionHeight = maxCorrectionHeight
         self.kernValue = kernValue
+    }
+    
+    init() {
+        self.init(maxCorrectionHeight: 0, kernValue: 0)
     }
 }
