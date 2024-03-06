@@ -42,7 +42,7 @@ public class CoverageTableV2 {
 
     /// Given glyph id, return the coverage index for it.
     /// If not found, return nil.
-    public func getCoverageIndex(glyph: UInt16) -> Int? {
+    public func getCoverageIndex(_ glyph: UInt16) -> Int? {
         let f = coverageFormat()
         if f == 1 {
             return binarySearch_1(target: glyph)

@@ -145,21 +145,20 @@ public struct MathValueRecord {
     }
 
     static func read(ptr: UnsafePointer<UInt8>) -> MathValueRecord {
-        MathValueRecord(value: readFWORD(ptr + 0), 
+        MathValueRecord(value: readFWORD(ptr + 0),
                         deviceOffset: readOffset16(ptr + 2))
     }
 
-    static func eval(parentBase: UnsafePointer<UInt8>,
-                     record: MathValueRecord,
-                     context: ContextData) -> Int32
+    static func eval(_ parentBase: UnsafePointer<UInt8>,
+                     _ mathValueRecord: MathValueRecord,
+                     _ context: ContextData) -> Int32
     {
-        if record.deviceOffset == 0 {
-            return Int32(record.value)
+        if mathValueRecord.deviceOffset == 0 {
+            return Int32(mathValueRecord.value)
         }
 
-        let deviceTable = DeviceTableV2(base: parentBase + Int(record.deviceOffset))
-        let deltaValue = deviceTable.getDeltaValue(ppem: context.ppem, 
-                                                   unitsPerEm: context.unitsPerEm)
-        return Int32(record.value) + deltaValue
+        let deviceTable = DeviceTableV2(base: parentBase + Int(mathValueRecord.deviceOffset))
+        let deltaValue = deviceTable.getDeltaValue(context.ppem, unitsPerEm: context.unitsPerEm)
+        return Int32(mathValueRecord.value) + deltaValue
     }
 }

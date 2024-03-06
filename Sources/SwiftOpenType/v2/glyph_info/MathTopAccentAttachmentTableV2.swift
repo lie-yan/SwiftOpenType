@@ -30,12 +30,12 @@ public class MathTopAccentAttachmentTableV2 {
     // MARK: - Query function
     
     /// Return top accent attachment for glyphID in design units
-    public func getTopAccentAttachment(glyph: UInt16) -> Int32? {
-        if let coverageIndex = self.coverageTable.getCoverageIndex(glyph: glyph) {
+    public func getTopAccentAttachment(_ glyph: UInt16) -> Int32? {
+        if let coverageIndex = self.coverageTable.getCoverageIndex(glyph) {
             let mathValueRecord = self.topAccentAttachment(index: coverageIndex)
-            let value = MathValueRecord.eval(parentBase: base,
-                                             record: mathValueRecord,
-                                             context: context)
+            let value = MathValueRecord.eval(base,
+                                             mathValueRecord,
+                                             context)
             return value
         }
         return nil

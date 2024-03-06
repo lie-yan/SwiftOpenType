@@ -33,12 +33,12 @@ public class DeviceTableV2 {
     
     /// Return delta value for given ppem.
     /// Return 0 if not available.
-    public func getDeltaValue(ppem: UInt32, unitsPerEm: UInt32) -> Int32 {
+    public func getDeltaValue(_ ppem: UInt32, unitsPerEm: UInt32) -> Int32 {
         if ppem == 0 {
             return 0
         }
         
-        let pixels = getDeltaPixels(ppem: ppem)
+        let pixels = getDeltaPixels(ppem)
         
         if pixels == 0 {
             return 0
@@ -47,7 +47,7 @@ public class DeviceTableV2 {
         return Int32(Int64(pixels) * Int64(unitsPerEm) / Int64(ppem))
     }
     
-    private func getDeltaPixels(ppem: UInt32) -> Int32 {
+    private func getDeltaPixels(_ ppem: UInt32) -> Int32 {
         let startSize = UInt32(self.startSize())
         let endSize = UInt32(self.endSize())
         

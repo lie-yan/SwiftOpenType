@@ -38,7 +38,7 @@ public class MathKernInfoTableV2 {
     /// Return the offset for given glyph id and corner
     private func getMathKernOffset(glyph: UInt16, corner: MathKernCorner) -> Offset16? {
         let coverageTable = self.coverageTable()
-        if let coverageIndex = coverageTable.getCoverageIndex(glyph: glyph) {
+        if let coverageIndex = coverageTable.getCoverageIndex(glyph) {
             return mathKernOffset(index: coverageIndex, corner: corner)
         }
         return nil
@@ -61,13 +61,15 @@ public class MathKernInfoTableV2 {
 
     public func getMathKernInfoRecord(glyph: UInt16) -> MathKernInfoRecord? {
         let coverageTable = self.coverageTable()
-        if let coverageIndex = coverageTable.getCoverageIndex(glyph: glyph) {
+        if let coverageIndex = coverageTable.getCoverageIndex(glyph) {
             return mathKernInfoRecords(index: coverageIndex)
         }
         return nil
     }
 
-    public func getKernValue(glyph: UInt16, corner: MathKernCorner, height: Int32) -> Int32? {
+    public func getKernValue(_ glyph: UInt16,
+                             _ corner: MathKernCorner,
+                             _ height: Int32) -> Int32? {
         getMathKernTable(glyph: glyph, corner: corner)?.getKernValue(height: height)
     }
 }
@@ -104,16 +106,16 @@ public class MathKernTableV2 {
 
     /// Return the correction height at the given index in design units
     public func getCorrectionHeight(index: Int) -> Int32 {
-        MathValueRecord.eval(parentBase: base,
-                             record: self.correctionHeight(index: index),
-                             context: context)
+        MathValueRecord.eval(base,
+                             self.correctionHeight(index: index),
+                             context)
     }
 
     /// Return the kern value at the given index in design units
     public func getKernValue(index: Int) -> Int32 {
-        MathValueRecord.eval(parentBase: base,
-                             record: self.kernValues(index: index),
-                             context: context)
+        MathValueRecord.eval(base,
+                             self.kernValues(index: index),
+                             context)
     }
 
     /// Return the kern value for the given height in design units
