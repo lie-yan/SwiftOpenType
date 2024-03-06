@@ -358,10 +358,10 @@ public extension OTFont {
     /// - Parameters:
     ///   - glyph: The glyph index from which to retrieve the kernings
     ///   - corner: The corner for which to retrieve the kernings
-    ///   - start_offset: offset of the first kern entry to retrieve
-    ///   - entries_count: Input = the maximum number of kern entries to return;
+    ///   - startOffset: offset of the first kern entry to retrieve
+    ///   - entriesCount: Input = the maximum number of kern entries to return;
     ///     Output = the actual number of kern entries returned.
-    ///   - kern_entries: array of kern entries returned.
+    ///   - kernEntries: array of kern entries returned.
     ///
     /// - Returns: the total number of kern values available or zero
     func getGlyphKernings(glyph: UInt16,
@@ -405,12 +405,12 @@ public extension OTFont {
         return 0
     }
 
-    /// Return the kern entries available for glyph index and corner, counting from given offset.
+    /// Return the count of kern entries available for glyph index and corner, counting from given offset.
     ///
     /// - Parameters:
     ///   - glyph: The glyph index from which to retrieve the kernings
     ///   - corner: The corner for which to retrieve the kernings
-    ///   - start_offset: offset of the first kern entry to retrieve
+    ///   - startOffset: offset of the first kern entry to retrieve
     ///
     /// - Returns: the total number of kern values available or zero
     func getGlyphKerningCount(glyph: UInt16,

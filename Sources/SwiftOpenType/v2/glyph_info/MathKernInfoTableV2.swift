@@ -154,8 +154,7 @@ public class MathKernTableV2 {
     public func getKernEntryCount(startOffset: Int) -> Int {
         precondition(startOffset >= 0)
 
-        let heightCount = Int(self.heightCount())
-        let count = heightCount + 1
+        let count = Int(self.heightCount()) + 1
         let start = min(startOffset, count)
         return count - start
     }
