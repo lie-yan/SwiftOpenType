@@ -353,8 +353,7 @@ public class MathConstantsTableV2 {
         return values[i]!
     }
     private func fetchPercent(_ index: MathConstant) -> Int32 {
-        let offset = index.getOffset()
-        let value = readInt16(base + offset)
+        let value = readInt16(base + index.getOffset())
         return Int32(value)
     }
     
@@ -367,8 +366,7 @@ public class MathConstantsTableV2 {
         return values[i]!
     }
     private func fetchMinHeight(_ index: MathConstant) -> Int32 {
-        let offset = index.getOffset()
-        let value = readUFWORD(base + offset)
+        let value = readUFWORD(base + index.getOffset())
         return Int32(value)
     }
     
@@ -381,10 +379,9 @@ public class MathConstantsTableV2 {
         return values[i]!
     }
     private func fetchMathValue(_ index: MathConstant) -> Int32 {
-        let offset = index.getOffset()
-        let mathValueRecord = MathValueRecord.read(ptr: base + offset)
-        return MathValueRecord.eval(parentBase: self.base, 
-                                    mathValueRecord: mathValueRecord,
+        let record = MathValueRecord.read(ptr: base + index.getOffset())
+        return MathValueRecord.eval(parentBase: self.base,
+                                    record: record,
                                     context: context)
     }
 }

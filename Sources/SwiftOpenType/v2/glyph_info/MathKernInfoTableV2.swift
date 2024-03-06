@@ -104,24 +104,21 @@ public class MathKernTableV2 {
 
     /// Return the correction height at the given index in design units
     public func getCorrectionHeight(index: Int) -> Int32 {
-        let mathValueRecord = correctionHeight(index: index)
-        return MathValueRecord.eval(parentBase: base,
-                                    mathValueRecord: mathValueRecord,
-                                    context: context)
+        MathValueRecord.eval(parentBase: base,
+                             record: self.correctionHeight(index: index),
+                             context: context)
     }
 
     /// Return the kern value at the given index in design units
     public func getKernValue(index: Int) -> Int32 {
-        let mathValueRecord = kernValues(index: index)
-        return MathValueRecord.eval(parentBase: base,
-                                    mathValueRecord: mathValueRecord,
-                                    context: context)
+        MathValueRecord.eval(parentBase: base,
+                             record: self.kernValues(index: index),
+                             context: context)
     }
 
     /// Return the kern value for the given height in design units
     public func getKernValue(height: Int32) -> Int32 {
-        let index = upper_bound(height: height)
-        return getKernValue(index: index)
+        self.getKernValue(index: self.upper_bound(height: height))
     }
 
     public func getKernEntries(startOffset: Int,

@@ -13,7 +13,7 @@ public class OTFont {
     init(font: CTFont, ppem: UInt32) {
         self.font = font
         self.ppem = ppem
-        sizePerUnit = CTFontGetSize(font) / CGFloat(CTFontGetUnitsPerEm(font))
+        self.sizePerUnit = CTFontGetSize(font) / CGFloat(CTFontGetUnitsPerEm(font))
     }
 
     // MARK: - Generic API

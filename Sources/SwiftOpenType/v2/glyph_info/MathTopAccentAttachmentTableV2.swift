@@ -34,7 +34,7 @@ public class MathTopAccentAttachmentTableV2 {
         if let coverageIndex = self.coverageTable.getCoverageIndex(glyph: glyph) {
             let mathValueRecord = self.topAccentAttachment(index: coverageIndex)
             let value = MathValueRecord.eval(parentBase: base,
-                                             mathValueRecord: mathValueRecord,
+                                             record: mathValueRecord,
                                              context: context)
             return value
         }

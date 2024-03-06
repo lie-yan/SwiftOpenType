@@ -30,12 +30,10 @@ public class MathItalicsCorrectionInfoTableV2 {
             
     /// Return italics correction for glyphID in design units
     public func getItalicsCorrection(glyph: UInt16) -> Int32 {
-        if let coverageIndex = self.coverageTable.getCoverageIndex(glyph: glyph) {
-            let mathValueRecord = self.italicsCorrection(index: coverageIndex)
-            let value = MathValueRecord.eval(parentBase: base,
-                                             mathValueRecord: mathValueRecord,
-                                             context: context)
-            return value
+        if let index = self.coverageTable.getCoverageIndex(glyph: glyph) {
+            return MathValueRecord.eval(parentBase: base,
+                                        record: self.italicsCorrection(index: index),
+                                        context: context)
         }
         return 0
     }

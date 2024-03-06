@@ -2,13 +2,13 @@ import CoreFoundation
 
 public class CoverageTableV2 {
     let base: UnsafePointer<UInt8>
-    
+
     init(base: UnsafePointer<UInt8>) {
         self.base = base
     }
 
     // MARK: - Table fields
-    
+
     /// Format identifier
     public func coverageFormat() -> UInt16 {
         readUInt16(base + 0)
@@ -39,21 +39,20 @@ public class CoverageTableV2 {
     }
 
     // MARK: - Query functions
-    
+
     /// Given glyph id, return the coverage index for it.
     /// If not found, return nil.
     public func getCoverageIndex(glyph: UInt16) -> Int? {
-        let f = self.coverageFormat()
-        if (f == 1) {
+        let f = coverageFormat()
+        if f == 1 {
             return binarySearch_1(target: glyph)
-        }
-        else if (f == 2) {
+        } else if f == 2 {
             return binarySearch_2(target: glyph)
         }
 
         return nil
     }
-    
+
     // MARK: - helper functions
 
     /// binary search for Coverage Format 1
@@ -61,17 +60,15 @@ public class CoverageTableV2 {
         var left = 0
         var right = Int(glyphCount()) - 1
 
-        while (left <= right) {
+        while left <= right {
             let mid = left + (right - left) / 2
             let value = glyphArray(index: mid)
 
-            if (value == target) {
+            if value == target {
                 return mid
-            }
-            else if (value < target) {
+            } else if value < target {
                 left = mid + 1
-            }
-            else {
+            } else {
                 right = mid - 1
             }
         }
@@ -83,17 +80,15 @@ public class CoverageTableV2 {
         var left = 0
         var right = Int(rangeCount()) - 1
 
-        while (left <= right) {
+        while left <= right {
             let mid = left + (right - left) / 2
             let value = rangeRecords(index: mid)
 
-            if (target >= value.startGlyphID && target <= value.endGlyphID) {
+            if target >= value.startGlyphID, target <= value.endGlyphID {
                 return Int(value.startCoverageIndex + (target - value.startGlyphID))
-            }
-            else if (value.endGlyphID < target) {
+            } else if value.endGlyphID < target {
                 left = mid + 1
-            }
-            else {
+            } else {
                 right = mid - 1
             }
         }
@@ -103,9 +98,9 @@ public class CoverageTableV2 {
 
 public struct RangeRecord {
     static let byteSize = 6
-    
+
     public let startGlyphID: UInt16 /// First glyph ID in the range
-    public let endGlyphID: UInt16   /// Last glyph ID in the range
+    public let endGlyphID: UInt16 /// Last glyph ID in the range
     public let startCoverageIndex: UInt16 /// Coverage Index of first glyph ID in range
 
     init() {
@@ -117,7 +112,7 @@ public struct RangeRecord {
         self.endGlyphID = endGlyphID
         self.startCoverageIndex = startCoverageIndex
     }
-    
+
     // deprecated
     static func read(data: CFData, offset: Int) -> RangeRecord {
         let startGlyphID = data.readUInt16(offset)
@@ -127,14 +122,10 @@ public struct RangeRecord {
                            endGlyphID: endGlyphID,
                            startCoverageIndex: startCoverageIndex)
     }
-    
-    static func read(ptr: UnsafePointer<UInt8>) -> RangeRecord {
-        let startGlyphID = readUInt16(ptr + 0)
-        let endGlyphID = readUInt16(ptr + 2)
-        let startCoverageIndex = readUInt16(ptr + 4)
 
-        return RangeRecord(startGlyphID: startGlyphID,
-                           endGlyphID: endGlyphID,
-                           startCoverageIndex: startCoverageIndex)
+    static func read(ptr: UnsafePointer<UInt8>) -> RangeRecord {
+        RangeRecord(startGlyphID: readUInt16(ptr + 0),
+                    endGlyphID: readUInt16(ptr + 2),
+                    startCoverageIndex: readUInt16(ptr + 4))
     }
 }
