@@ -13,10 +13,15 @@ public class OTFont {
     init(font: CTFont, ppem: UInt32) {
         self.font = font
         self.ppem = ppem
-        self.sizePerUnit = CTFontGetSize(font) / CGFloat(CTFontGetUnitsPerEm(font))
+        sizePerUnit = CTFontGetSize(font) / CGFloat(CTFontGetUnitsPerEm(font))
     }
 
     // MARK: - Generic API
+
+    /// Return a lambda that converts design units to points
+    public func toPoints() -> ((Int32) -> CGFloat) {
+        { CGFloat($0) * self.sizePerUnit }
+    }
 
     public var unitsPerEm: UInt32 {
         CTFontGetUnitsPerEm(font)
@@ -484,7 +489,7 @@ public struct KernEntry {
         self.maxCorrectionHeight = maxCorrectionHeight
         self.kernValue = kernValue
     }
-    
+
     init() {
         self.init(maxCorrectionHeight: 0, kernValue: 0)
     }
