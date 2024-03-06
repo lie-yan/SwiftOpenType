@@ -139,7 +139,7 @@ public class MathKernTableV2 {
 
             var maxHeight: Int32
             if j == heightCount {
-                maxHeight = INT32_MAX
+                maxHeight = Int32.max
             } else {
                 maxHeight = getCorrectionHeight(index: j)
             }

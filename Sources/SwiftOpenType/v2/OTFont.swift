@@ -19,8 +19,13 @@ public class OTFont {
     // MARK: - Generic API
 
     /// Return a lambda that converts design units to points
-    public func toPoints() -> ((Int32) -> CGFloat) {
+    public func toPointsClosure() -> ((Int32) -> CGFloat) {
         { CGFloat($0) * self.sizePerUnit }
+    }
+    
+    /// Return a lambda that converts points to design units
+    public func toDesignUnitsClosure() -> ((CGFloat) -> Int32) {
+        { Int32($0 / self.sizePerUnit) }
     }
 
     public var unitsPerEm: UInt32 {
