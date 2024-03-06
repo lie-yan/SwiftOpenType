@@ -6,11 +6,11 @@ public class OTFont {
     public let ppem: UInt32 /// pixels-per-em
     public let sizePerUnit: CGFloat
 
-    convenience init(font: CTFont) {
-        self.init(font: font, ppem: 0)
+    convenience init(_ font: CTFont) {
+        self.init(font, 0)
     }
 
-    init(font: CTFont, ppem: UInt32) {
+    init(_ font: CTFont, _ ppem: UInt32) {
         self.font = font
         self.ppem = ppem
         sizePerUnit = CTFontGetSize(font) / CGFloat(CTFontGetUnitsPerEm(font))

@@ -34,8 +34,8 @@ public class CoverageTableV2 {
 
     /// Array of glyph ranges — ordered by startGlyphID.
     /// For Coverage Format 2
-    public func rangeRecords(index: Int) -> RangeRecord {
-        RangeRecord.read(ptr: base + 4 + index * RangeRecord.byteSize)
+    public func rangeRecords(_ index: Int) -> RangeRecord {
+        RangeRecord.read(base + 4 + index * RangeRecord.byteSize)
     }
 
     // MARK: - Query functions
@@ -45,9 +45,9 @@ public class CoverageTableV2 {
     public func getCoverageIndex(_ glyph: UInt16) -> Int? {
         let f = coverageFormat()
         if f == 1 {
-            return binarySearch_1(target: glyph)
+            return binarySearch_1(glyph)
         } else if f == 2 {
-            return binarySearch_2(target: glyph)
+            return binarySearch_2(glyph)
         }
 
         return nil
@@ -56,7 +56,7 @@ public class CoverageTableV2 {
     // MARK: - helper functions
 
     /// binary search for Coverage Format 1
-    private func binarySearch_1(target: UInt16) -> Int? {
+    private func binarySearch_1(_ target: UInt16) -> Int? {
         var left = 0
         var right = Int(glyphCount()) - 1
 
@@ -76,13 +76,13 @@ public class CoverageTableV2 {
     }
 
     /// binary search for Coverage Format 2
-    private func binarySearch_2(target: UInt16) -> Int? {
+    private func binarySearch_2(_ target: UInt16) -> Int? {
         var left = 0
         var right = Int(rangeCount()) - 1
 
         while left <= right {
             let mid = left + (right - left) / 2
-            let value = rangeRecords(index: mid)
+            let value = self.rangeRecords(mid)
 
             if target >= value.startGlyphID, target <= value.endGlyphID {
                 return Int(value.startCoverageIndex + (target - value.startGlyphID))
@@ -123,7 +123,7 @@ public struct RangeRecord {
                            startCoverageIndex: startCoverageIndex)
     }
 
-    static func read(ptr: UnsafePointer<UInt8>) -> RangeRecord {
+    static func read(_ ptr: UnsafePointer<UInt8>) -> RangeRecord {
         RangeRecord(startGlyphID: readUInt16(ptr + 0),
                     endGlyphID: readUInt16(ptr + 2),
                     startCoverageIndex: readUInt16(ptr + 4))

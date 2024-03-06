@@ -4,12 +4,12 @@ import XCTest
 final class MathTableV2Tests: XCTestCase {
     func testMathTableHeader() {
         do {
-            let helvetica = OTFont(font: CTFontCreateWithName("Helvetica" as CFString, 12, nil))
+            let helvetica = OTFont(CTFontCreateWithName("Helvetica" as CFString, 12, nil))
             XCTAssert(helvetica.mathTable == nil)
         }
 
         do {
-            let lmmath = OTFont(font: openFont("fonts/latinmodern-math.otf", 12))
+            let lmmath = openOTFont("fonts/latinmodern-math.otf", 12)
             XCTAssert(lmmath.mathTable != nil)
             let mathTable = lmmath.mathTable!
             XCTAssertEqual(mathTable.majorVersion(), 1)
@@ -18,7 +18,7 @@ final class MathTableV2Tests: XCTestCase {
     }
 
     func testMathConstants() {
-        let font = OTFont(font: openFont("fonts/latinmodern-math.otf", 12))
+        let font = openOTFont("fonts/latinmodern-math.otf", 12)
         XCTAssertTrue(font.mathTable != nil)
 
         let ruleThickness: CGFloat = 0.48
@@ -84,10 +84,10 @@ final class MathTableV2Tests: XCTestCase {
     }
 
     func testMathConstants_2() {
-        var font = OTFont(font: openFont("fonts/MathTestFontEmpty.otf", 10.0))
+        var font = openOTFont("fonts/MathTestFontEmpty.otf", 10.0)
         XCTAssert(font.mathTable?.mathConstantsTable == nil) // MathConstants not available
 
-        font = OTFont(font: openFont("fonts/MathTestFontFull.otf", 10.0))
+        font = openOTFont("fonts/MathTestFontFull.otf", 10.0)
         let table = font.mathTable!.mathConstantsTable!
 
         XCTAssertEqual(table.scriptPercentScaleDown(), 87)
@@ -149,7 +149,7 @@ final class MathTableV2Tests: XCTestCase {
     }
 
     func testMathItalicsCorrection() {
-        let font = OTFont(font: openFont("fonts/latinmodern-math.otf", 12))
+        let font = openOTFont("fonts/latinmodern-math.otf", 12)
         let glyph = font.getGlyphWithName("f" as CFString)
 
         // table
@@ -169,19 +169,19 @@ final class MathTableV2Tests: XCTestCase {
     func testMathItalicsCorrection_2() {
         // MathGlyphInfo not available
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontEmpty.otf", 10))
+            let font = openOTFont("fonts/MathTestFontEmpty.otf", 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable == nil)
         }
 
         // MathGlyphInfo empty
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontPartial1.otf", 10))
+            let font = openOTFont("fonts/MathTestFontPartial1.otf", 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable == nil)
         }
 
         // MathItalicsCorrectionInfo empty
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontPartial2.otf", 10))
+            let font = openOTFont("fonts/MathTestFontPartial2.otf", 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathItalicsCorrectionInfoTable != nil)
             let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
             let glyph = font.getGlyphWithName("space")
@@ -190,7 +190,7 @@ final class MathTableV2Tests: XCTestCase {
         }
 
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontFull.otf", 10))
+            let font = openOTFont("fonts/MathTestFontFull.otf", 10)
             let table = font.mathTable!.mathGlyphInfoTable!.mathItalicsCorrectionInfoTable!
 
             var glyph: CGGlyph
@@ -215,7 +215,7 @@ final class MathTableV2Tests: XCTestCase {
     }
 
     func testMathTopAccentAttachment() {
-        let font = OTFont(font: openFont("fonts/latinmodern-math.otf", 12))
+        let font = openOTFont("fonts/latinmodern-math.otf", 12)
         let table = font.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
 
         var glyph: CGGlyph
@@ -229,19 +229,19 @@ final class MathTableV2Tests: XCTestCase {
     func testMathTopAccentAttachment_2() {
         // MathGlyphInfo not available
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontEmpty.otf", 10))
+            let font = openOTFont("fonts/MathTestFontEmpty.otf", 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathTopAccentAttachmentTable == nil)
         }
 
         // MathGlyphInfo empty
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontPartial1.otf", 10))
+            let font = openOTFont("fonts/MathTestFontPartial1.otf", 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathTopAccentAttachmentTable == nil)
         }
 
         // MathTopAccentAttachment empty
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontPartial2.otf", 10))
+            let font = openOTFont("fonts/MathTestFontPartial2.otf", 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathTopAccentAttachmentTable != nil)
             let table = font.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
 
@@ -250,7 +250,7 @@ final class MathTableV2Tests: XCTestCase {
         }
 
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontFull.otf", 10))
+            let font = openOTFont("fonts/MathTestFontFull.otf", 10)
             let table = font.mathTable!.mathGlyphInfoTable!.mathTopAccentAttachmentTable!
 
             var glyph: CGGlyph
@@ -281,18 +281,18 @@ final class MathTableV2Tests: XCTestCase {
     func testMathExtendedShape_2() {
         // MathGlyphInfo not available
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontEmpty.otf", 10))
+            let font = openOTFont("fonts/MathTestFontEmpty.otf", 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.extendedShapeCoverageTable == nil)
         }
 
         // MathGlyphInfo empty
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontPartial1.otf", 10))
+            let font = openOTFont("fonts/MathTestFontPartial1.otf", 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.extendedShapeCoverageTable == nil)
         }
 
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontFull.otf", 10))
+            let font = openOTFont("fonts/MathTestFontFull.otf", 10)
             let table = font.mathTable!.mathGlyphInfoTable!.extendedShapeCoverageTable
 
             var glyph: CGGlyph
@@ -310,13 +310,13 @@ final class MathTableV2Tests: XCTestCase {
     func testMathKernInfo_2() {
         // MathGlyphInfo not available
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontEmpty.otf", 10))
+            let font = openOTFont("fonts/MathTestFontEmpty.otf", 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathKernInfoTable == nil)
         }
 
         // MathKernInfo empty
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontPartial2.otf", 10))
+            let font = openOTFont("fonts/MathTestFontPartial2.otf", 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathKernInfoTable != nil)
             let table = font.mathTable!.mathGlyphInfoTable!.mathKernInfoTable!
             let glyph = font.getGlyphWithName("space")
@@ -334,7 +334,7 @@ final class MathTableV2Tests: XCTestCase {
 
         // MathKernInfoRecords empty
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontPartial3.otf", 10))
+            let font = openOTFont("fonts/MathTestFontPartial3.otf", 10)
             XCTAssert(font.mathTable?.mathGlyphInfoTable?.mathKernInfoTable != nil)
             let table = font.mathTable!.mathGlyphInfoTable!.mathKernInfoTable!
             let glyph = font.getGlyphWithName("space")
@@ -351,7 +351,7 @@ final class MathTableV2Tests: XCTestCase {
         }
 
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontFull.otf", 10.0))
+            let font = openOTFont("fonts/MathTestFontFull.otf", 10.0)
             let table = font.mathTable!.mathGlyphInfoTable!.mathKernInfoTable!
 
             let glyph = font.getGlyphWithName("I")
@@ -367,6 +367,11 @@ final class MathTableV2Tests: XCTestCase {
             XCTAssertEqual(table.getKernValue(glyph, .TopRight, 91), 220) // larger than max height
             XCTAssertEqual(table.getKernValue(glyph, .TopRight, 96), 220) // larger than max height
 
+            XCTAssertEqual(table.getKernValue(glyph, .TopRight, 39), 94) // top right
+            XCTAssertEqual(table.getKernValue(glyph, .TopLeft, 39), 55) // top left
+            XCTAssertEqual(table.getKernValue(glyph, .BottomRight, 39), 22) // bottom right
+            XCTAssertEqual(table.getKernValue(glyph, .BottomLeft, 39), 50) // bottom left
+
             XCTAssertEqual(font.getGlyphKerning(glyph, .TopRight, pts(7)), pts(31)) // less than min height
             XCTAssertEqual(font.getGlyphKerning(glyph, .TopRight, pts(14)), pts(52)) // equal to min height
             XCTAssertEqual(font.getGlyphKerning(glyph, .TopRight, pts(20)), pts(52))
@@ -377,11 +382,6 @@ final class MathTableV2Tests: XCTestCase {
             XCTAssertEqual(font.getGlyphKerning(glyph, .TopRight, pts(91)), pts(220)) // larger than max height
             XCTAssertEqual(font.getGlyphKerning(glyph, .TopRight, pts(96)), pts(220)) // larger than max height
 
-            XCTAssertEqual(table.getKernValue(glyph, .TopRight, 39), 94) // top right
-            XCTAssertEqual(table.getKernValue(glyph, .TopLeft, 39), 55) // top left
-            XCTAssertEqual(table.getKernValue(glyph, .BottomRight, 39), 22) // bottom right
-            XCTAssertEqual(table.getKernValue(glyph, .BottomLeft, 39), 50) // bottom left
-
             XCTAssertEqual(font.getGlyphKerning(glyph, .TopRight, pts(39)), pts(94)) // top right
             XCTAssertEqual(font.getGlyphKerning(glyph, .TopLeft, pts(39)), pts(55)) // top left
             XCTAssertEqual(font.getGlyphKerning(glyph, .BottomRight, pts(39)), pts(22)) // bottom right
@@ -391,7 +391,7 @@ final class MathTableV2Tests: XCTestCase {
 
     func testGetGlyphKernings() {
         do {
-            let font = OTFont(font: openFont("fonts/MathTestFontFull.otf", 10.0))
+            let font = openOTFont("fonts/MathTestFontFull.otf", 10.0)
             let glyph = font.getGlyphWithName("I")
             let pts = font.toPointsClosure()
 
@@ -414,7 +414,11 @@ final class MathTableV2Tests: XCTestCase {
         }
     }
 
-    func openFont(_ path: String, _ size: CGFloat) -> CTFont {
+    func openOTFont(_ path: String, _ size: CGFloat) -> OTFont {
+        OTFont(openCTFont(path, size))
+    }
+    
+    func openCTFont(_ path: String, _ size: CGFloat) -> CTFont {
         let resourcePath = Bundle.module.resourcePath!
         let path = resourcePath + "/" + path
 
@@ -424,12 +428,12 @@ final class MathTableV2Tests: XCTestCase {
     }
 
     func testExample() {
-        let helvetica = OTFont(font: CTFontCreateWithName("Helvetica" as CFString, 12.0, nil))
+        let helvetica = OTFont(CTFontCreateWithName("Helvetica" as CFString, 12.0, nil))
         if helvetica.mathTable == nil {
             print("no MATH table")
         }
 
-        let lmmath = OTFont(font: CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil))
+        let lmmath = OTFont(CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil))
         print("axis height, in pts: \(lmmath.axisHeight())")
     }
 }
