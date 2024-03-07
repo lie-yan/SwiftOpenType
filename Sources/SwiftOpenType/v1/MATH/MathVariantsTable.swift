@@ -190,6 +190,11 @@ public struct MathGlyphVariantRecord {
         let advanceMeasurement = data.readUFWORD(offset + 2)
         return MathGlyphVariantRecord(variantGlyph: variantGlyph, advanceMeasurement: advanceMeasurement)
     }
+    
+    static func read(ptr: UnsafePointer<UInt8>) -> MathGlyphVariantRecord {
+        return MathGlyphVariantRecord(variantGlyph: readUInt16(ptr + 0),
+                                      advanceMeasurement: readUFWORD(ptr + 2))
+    }
 }
 
 public struct GlyphPartRecord {
@@ -250,9 +255,23 @@ public struct GlyphPartRecord {
                                fullAdvance: fullAdvance,
                                partFlags: partFlags)
     }
+    
+    static func read(ptr: UnsafePointer<UInt8>) -> GlyphPartRecord {
+        return GlyphPartRecord(glyphID: readUInt16(ptr),
+                               startConnectorLength: readUFWORD(ptr + 2),
+                               endConnectorLength: readUFWORD(ptr + 4),
+                               fullAdvance: readUFWORD(ptr + 6),
+                               partFlags: readUInt16(ptr + 8))
+    }
 }
 
 public enum PartFlags: UInt16 {
     case EXTENDER_FLAG = 0x0001
     case RESERVED = 0xFFFE
+}
+
+public enum Orientation: UInt32 {
+    case `default` = 0
+    case horizontal = 1
+    case vertical = 2
 }

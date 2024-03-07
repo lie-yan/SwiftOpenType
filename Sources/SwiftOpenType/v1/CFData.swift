@@ -1,12 +1,5 @@
 import CoreFoundation
 
-/// int16 that describes a quantity in font design units.
-public typealias FWORD = Int16
-/// uint16 that describes a quantity in font design units.
-public typealias UFWORD = UInt16
-/// Short offset to a table, same as uint16, NULL offset = 0x0000
-public typealias Offset16 = UInt16
-
 /// Extend CFData for internal use.
 ///
 /// All OpenType fonts use Motorola-style byte ordering (Big Endian).

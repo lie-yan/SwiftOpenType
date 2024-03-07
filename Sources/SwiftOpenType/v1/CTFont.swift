@@ -10,12 +10,12 @@ extension CTFont {
         }
         return nil
     }
-
+    
     public func sizePerUnit() -> CGFloat {
         CTFontGetSize(self) / CGFloat(CTFontGetUnitsPerEm(self))
     }
 
-    private func getMathTableData() -> CFData? {
+    func getMathTableData() -> CFData? {
         CTFontCopyTable(self,
                         CTFontTableTag(kCTFontTableMATH),
                         CTFontTableOptions(rawValue: 0))

@@ -54,31 +54,3 @@ public class MathTable {
     }
 }
 
-public struct MathValueRecord {
-    static let byteSize = 4
-
-    /// The X or Y value in design units
-    public let value: FWORD
-    /// Offset to the device table — from the beginning of parent table.
-    /// May be NULL. Suggested format for device table is 1.
-    public let deviceOffset: Offset16
-
-    init() {
-        self.init(value: 0, deviceOffset: 0)
-    }
-
-    init(value: FWORD, deviceOffset: Offset16) {
-        self.value = value
-        self.deviceOffset = deviceOffset
-    }
-    
-    static func read(data: CFData, offset: Int) -> MathValueRecord {
-        let value = data.readFWORD(offset)
-        let deviceOffset = data.readOffset16(offset + 2)
-        return MathValueRecord(value: value, deviceOffset: deviceOffset)
-    }
-    
-    static func read(data: CFData, parentOffset: Offset16, offset: Int) -> MathValueRecord {
-        read(data: data, offset: Int(parentOffset) + offset)
-    }
-}

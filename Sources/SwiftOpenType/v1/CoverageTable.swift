@@ -1,32 +1,5 @@
 import CoreFoundation
 
-public struct RangeRecord {
-    static let byteSize = 6
-    
-    public let startGlyphID: UInt16 /// First glyph ID in the range
-    public let endGlyphID: UInt16   /// Last glyph ID in the range
-    public let startCoverageIndex: UInt16 /// Coverage Index of first glyph ID in range
-
-    init() {
-        self.init(startGlyphID: 0, endGlyphID: 0, startCoverageIndex: 0)
-    }
-
-    init(startGlyphID: UInt16, endGlyphID: UInt16, startCoverageIndex: UInt16) {
-        self.startGlyphID = startGlyphID
-        self.endGlyphID = endGlyphID
-        self.startCoverageIndex = startCoverageIndex
-    }
-    
-    static func read(data: CFData, offset: Int) -> RangeRecord {
-        let startGlyphID = data.readUInt16(offset)
-        let endGlyphID = data.readUInt16(offset + 2)
-        let startCoverageIndex = data.readUInt16(offset + 4)
-        return RangeRecord(startGlyphID: startGlyphID,
-                           endGlyphID: endGlyphID,
-                           startCoverageIndex: startCoverageIndex)
-    }
-}
-
 public class CoverageTable {
     let data: CFData
     let tableOffset: Offset16 /// offset of coverage table - from the beginning of data

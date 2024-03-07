@@ -195,7 +195,7 @@ public class MathKernInfoTable {
     // MARK: - optimization
     
     private func mathKernOffset(index: Int, corner: MathKernCorner) -> Offset16 {
-        let offset = 4 + index * MathKernInfoRecord.byteSize + corner.getByteOffset()
+        let offset = 4 + index * MathKernInfoRecord.byteSize + corner.getOffset()
         return data.readOffset16(parentOffset: tableOffset, offset: offset)
     }
     
@@ -316,13 +316,14 @@ public class MathKernTable {
     }
 }
 
+/// The math kerning-table types defined for the four corners of a glyph.
 public enum MathKernCorner : Int {
     case TopRight = 0
     case TopLeft = 1
     case BottomRight = 2
     case BottomLeft = 3
     
-    func getByteOffset() -> Int {
+    func getOffset() -> Int {
         rawValue * 2
     }
 }
@@ -385,5 +386,12 @@ public struct MathKernInfoRecord {
                                   topLeftMathKernOffset: topLeftMathKernOffset,
                                   bottomRightMathKernOffset: bottomRightMathKernOffset,
                                   bottomLeftMathKernOffset: bottomLeftMathKernOffset)
+    }
+    
+    static func read(ptr: UnsafePointer<UInt8>) -> MathKernInfoRecord {
+        MathKernInfoRecord(topRightMathKernOffset: readOffset16(ptr + 0),
+                           topLeftMathKernOffset: readOffset16(ptr + 2),
+                           bottomRightMathKernOffset: readOffset16(ptr + 4),
+                           bottomLeftMathKernOffset: readOffset16(ptr + 6))
     }
 }
