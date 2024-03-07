@@ -22,7 +22,7 @@ public class MathItalicsCorrectionInfoTableV2 {
     }
     
     /// Array of MathValueRecords defining italics correction values for each covered glyph.
-    public func italicsCorrection(index: Int) -> MathValueRecord {
+    public func italicsCorrection(_ index: Int) -> MathValueRecord {
         MathValueRecord.read(ptr: base + 4 + index * MathValueRecord.byteSize)
     }
     
@@ -32,7 +32,7 @@ public class MathItalicsCorrectionInfoTableV2 {
     public func getItalicsCorrection(_ glyph: UInt16) -> Int32 {
         if let index = self.coverageTable.getCoverageIndex(glyph) {
             return MathValueRecord.eval(base,
-                                        self.italicsCorrection(index: index),
+                                        self.italicsCorrection(index),
                                         context)
         }
         return 0

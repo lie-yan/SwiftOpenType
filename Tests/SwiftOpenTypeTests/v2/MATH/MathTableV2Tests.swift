@@ -150,7 +150,7 @@ final class MathTableV2Tests: XCTestCase {
 
     func testMathItalicsCorrection() {
         let font = openOTFont("fonts/latinmodern-math.otf", 12)
-        let glyph = font.getGlyphWithName("f" as CFString)
+        let glyph = font.getGlyphWithName("f")
 
         // table
         do {

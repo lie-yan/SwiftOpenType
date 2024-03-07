@@ -22,7 +22,7 @@ public class CoverageTableV2 {
 
     /// Array of glyph IDs — in numerical order.
     /// For Coverage Format 1
-    public func glyphArray(index: Int) -> UInt16 {
+    public func glyphArray(_ index: Int) -> UInt16 {
         readUInt16(base + 4 + index * 2)
     }
 
@@ -62,7 +62,7 @@ public class CoverageTableV2 {
 
         while left <= right {
             let mid = left + (right - left) / 2
-            let value = glyphArray(index: mid)
+            let value = glyphArray(mid)
 
             if value == target {
                 return mid

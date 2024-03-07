@@ -23,25 +23,21 @@ public class MathKernInfoTableV2 {
     }
 
     /// Array of MathKernInfoRecords, one for each covered glyph.
-    public func mathKernInfoRecords(index: Int) -> MathKernInfoRecord {
+    public func mathKernInfoRecords(_ index: Int) -> MathKernInfoRecord {
         MathKernInfoRecord.read(ptr: base + 4 + index * MathKernInfoRecord.byteSize)
     }
 
     // MARK: - optimization
 
     /// Return the offset for given glyph index and corner
-    private func mathKernOffset(index: Int, corner: MathKernCorner) -> Offset16 {
+    private func mathKernOffset(_ index: Int, _ corner: MathKernCorner) -> Offset16 {
         let offset = 4 + index * MathKernInfoRecord.byteSize + corner.getOffset()
         return readOffset16(base + offset)
     }
 
     /// Return the offset for given glyph id and corner
-    private func getMathKernOffset(glyph: UInt16, corner: MathKernCorner) -> Offset16? {
-        let coverageTable = self.coverageTable()
-        if let coverageIndex = coverageTable.getCoverageIndex(glyph) {
-            return mathKernOffset(index: coverageIndex, corner: corner)
-        }
-        return nil
+    private func getMathKernOffset(_ glyph: UInt16, _ corner: MathKernCorner) -> Offset16? {
+        coverageTable().getCoverageIndex(glyph).map { self.mathKernOffset($0, corner) }
     }
 
     // MARK: - Sub-tables
@@ -50,27 +46,25 @@ public class MathKernInfoTableV2 {
         CoverageTableV2(base: base + Int(mathKernCoverageOffset()))
     }
 
-    public func getMathKernTable(glyph: UInt16, corner: MathKernCorner) -> MathKernTableV2? {
-        if let offset = getMathKernOffset(glyph: glyph, corner: corner) {
-            return MathKernTableV2(base: base + Int(offset), context: context)
+    public func getMathKernTable(_ glyph: UInt16, _ corner: MathKernCorner) -> MathKernTableV2? {
+        getMathKernOffset(glyph, corner).map {
+            MathKernTableV2(base: base + Int($0), context: self.context)
         }
-        return nil
     }
 
     // MARK: - query functions
 
-    public func getMathKernInfoRecord(glyph: UInt16) -> MathKernInfoRecord? {
-        let coverageTable = self.coverageTable()
-        if let coverageIndex = coverageTable.getCoverageIndex(glyph) {
-            return mathKernInfoRecords(index: coverageIndex)
+    public func getMathKernInfoRecord(_ glyph: UInt16) -> MathKernInfoRecord? {
+        coverageTable().getCoverageIndex(glyph).map {
+            self.mathKernInfoRecords($0)
         }
-        return nil
     }
 
     public func getKernValue(_ glyph: UInt16,
                              _ corner: MathKernCorner,
-                             _ height: Int32) -> Int32? {
-        getMathKernTable(glyph: glyph, corner: corner)?.getKernValue(height: height)
+                             _ height: Int32) -> Int32?
+    {
+        getMathKernTable(glyph, corner)?.getKernValue(height: height)
     }
 }
 
@@ -91,13 +85,13 @@ public class MathKernTableV2 {
     }
 
     /// Array of correction heights, in design units, sorted from lowest to highest.
-    public func correctionHeight(index: Int) -> MathValueRecord {
+    public func correctionHeight(_ index: Int) -> MathValueRecord {
         MathValueRecord.read(ptr: base + 2 + index * MathValueRecord.byteSize)
     }
 
     /// Array of kerning values for different height ranges.
     /// Negative values are used to move glyphs closer to each other.
-    public func kernValues(index: Int) -> MathValueRecord {
+    public func kernValues(_ index: Int) -> MathValueRecord {
         let offset = 2 + Int(heightCount()) * MathValueRecord.byteSize + index * MathValueRecord.byteSize
         return MathValueRecord.read(ptr: base + offset)
     }
@@ -105,27 +99,23 @@ public class MathKernTableV2 {
     // MARK: - query functions
 
     /// Return the correction height at the given index in design units
-    public func getCorrectionHeight(index: Int) -> Int32 {
-        MathValueRecord.eval(base,
-                             self.correctionHeight(index: index),
-                             context)
+    public func getCorrectionHeight(_ index: Int) -> Int32 {
+        MathValueRecord.eval(base, correctionHeight(index), context)
     }
 
     /// Return the kern value at the given index in design units
     public func getKernValue(index: Int) -> Int32 {
-        MathValueRecord.eval(base,
-                             self.kernValues(index: index),
-                             context)
+        MathValueRecord.eval(base, kernValues(index), context)
     }
 
     /// Return the kern value for the given height in design units
     public func getKernValue(height: Int32) -> Int32 {
-        self.getKernValue(index: self.upper_bound(height: height))
+        getKernValue(index: upper_bound(height: height))
     }
 
-    public func getKernEntries(startOffset: Int,
-                               entriesCount: inout Int,
-                               kernEntries: inout [KernEntryDU]) -> Int
+    public func getKernEntries(_ startOffset: Int,
+                               _ entriesCount: inout Int,
+                               _ kernEntries: inout [KernEntryDU]) -> Int
     {
         precondition(entriesCount >= 0)
         precondition(kernEntries.count >= entriesCount)
@@ -143,7 +133,7 @@ public class MathKernTableV2 {
             if j == heightCount {
                 maxHeight = Int32.max
             } else {
-                maxHeight = getCorrectionHeight(index: j)
+                maxHeight = getCorrectionHeight(j)
             }
 
             let kernValue = getKernValue(index: j)
@@ -156,7 +146,7 @@ public class MathKernTableV2 {
     public func getKernEntryCount(startOffset: Int) -> Int {
         precondition(startOffset >= 0)
 
-        let count = Int(self.heightCount()) + 1
+        let count = Int(heightCount()) + 1
         let start = min(startOffset, count)
         return count - start
     }
@@ -179,7 +169,7 @@ public class MathKernTableV2 {
         //      count is decreased in each iteration, and reaches 0 on loop end
         while count > 0 {
             let half = count / 2
-            let correctionHeight = getCorrectionHeight(index: i + half)
+            let correctionHeight = getCorrectionHeight(i + half)
 
             if !(height < correctionHeight) {
                 i += half + 1

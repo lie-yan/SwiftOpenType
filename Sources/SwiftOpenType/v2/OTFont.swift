@@ -366,7 +366,7 @@ public extension OTFont {
         precondition(kernEntries.count >= entriesCount)
 
         if let kernTable = mathTable?.mathGlyphInfoTable?.mathKernInfoTable?
-            .getMathKernTable(glyph: glyph, corner: corner)
+            .getMathKernTable(glyph, corner)
         {
             let heightCount = Int(kernTable.heightCount())
             let count = heightCount + 1
@@ -381,7 +381,7 @@ public extension OTFont {
                 if j == heightCount {
                     maxHeight = CGFloat.infinity
                 } else {
-                    maxHeight = CGFloat(kernTable.getCorrectionHeight(index: j)) * sizePerUnit
+                    maxHeight = CGFloat(kernTable.getCorrectionHeight(j)) * sizePerUnit
                 }
 
                 let kernValue = CGFloat(kernTable.getKernValue(index: j)) * sizePerUnit
@@ -409,7 +409,7 @@ public extension OTFont {
     {
         precondition(startOffset >= 0)
         return mathTable?.mathGlyphInfoTable?.mathKernInfoTable?
-            .getMathKernTable(glyph: glyph, corner: corner)?
+            .getMathKernTable(glyph, corner)?
             .getKernEntryCount(startOffset: startOffset) ?? 0
     }
 
