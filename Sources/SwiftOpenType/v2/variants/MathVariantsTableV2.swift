@@ -88,3 +88,15 @@ public class MathVariantsTableV2 {
 //        return nil
 //    }
 }
+
+public struct GlyphVariant {
+    /// The glyph index of the variant
+    public let glyph: UInt16
+    /// The advance width of the variant
+    public let advance: CGFloat
+    
+    init(glyph: UInt16, advance: CGFloat) {
+        self.glyph = glyph
+        self.advance = advance
+    }
+}

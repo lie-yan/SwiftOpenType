@@ -270,8 +270,16 @@ public enum PartFlags: UInt16 {
     case RESERVED = 0xFFFE
 }
 
-public enum Orientation: UInt32 {
+public enum TextOrientation: UInt32 {
     case `default` = 0
     case horizontal = 1
     case vertical = 2
+}
+
+public enum TextDirection: UInt32 {
+    case Invalid = 0
+    case LTR = 1
+    case RTL = 2
+    case TTB = 3
+    case BTT = 4
 }
