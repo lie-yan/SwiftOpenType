@@ -23,7 +23,7 @@ public class MathItalicsCorrectionInfoTableV2 {
     
     /// Array of MathValueRecords defining italics correction values for each covered glyph.
     public func italicsCorrection(_ index: Int) -> MathValueRecord {
-        MathValueRecord.read(ptr: base + 4 + index * MathValueRecord.byteSize)
+        MathValueRecord.read(base + 4 + index * MathValueRecord.byteSize)
     }
     
     // MARK: - Query function

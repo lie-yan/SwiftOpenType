@@ -377,7 +377,7 @@ public class MathConstantsTable {
     }
 
     private func fetchMathValue(_ index: MathConstant) -> Int32 {
-        let record = MathValueRecord.read(ptr: base + index.getOffset())
+        let record = MathValueRecord.read(base + index.getOffset())
         return MathValueRecord.eval(base, record, context)
     }
 }

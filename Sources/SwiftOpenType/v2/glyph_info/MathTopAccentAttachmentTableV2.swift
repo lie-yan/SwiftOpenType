@@ -24,7 +24,7 @@ public class MathTopAccentAttachmentTableV2 {
 
     /// Array of MathValueRecords defining top accent attachment points for each covered glyph.
     public func topAccentAttachment(_ index: Int) -> MathValueRecord {
-        MathValueRecord.read(ptr: base + 4 + index * MathValueRecord.byteSize)
+        MathValueRecord.read(base + 4 + index * MathValueRecord.byteSize)
     }
 
     // MARK: - Query function

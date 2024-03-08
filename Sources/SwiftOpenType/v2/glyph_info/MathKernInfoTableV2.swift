@@ -86,14 +86,14 @@ public class MathKernTableV2 {
 
     /// Array of correction heights, in design units, sorted from lowest to highest.
     public func correctionHeight(_ index: Int) -> MathValueRecord {
-        MathValueRecord.read(ptr: base + 2 + index * MathValueRecord.byteSize)
+        MathValueRecord.read(base + 2 + index * MathValueRecord.byteSize)
     }
 
     /// Array of kerning values for different height ranges.
     /// Negative values are used to move glyphs closer to each other.
     public func kernValues(_ index: Int) -> MathValueRecord {
         let offset = 2 + Int(heightCount()) * MathValueRecord.byteSize + index * MathValueRecord.byteSize
-        return MathValueRecord.read(ptr: base + offset)
+        return MathValueRecord.read(base + offset)
     }
 
     // MARK: - query functions
