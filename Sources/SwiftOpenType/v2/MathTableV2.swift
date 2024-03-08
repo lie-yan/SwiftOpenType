@@ -30,7 +30,7 @@ public class MathTableV2 {
 
     public var mathConstantsTable: MathConstantsTable? { _mathConstantsTable }
 
-    public var mathGlyphInfoTable: MathGlyphInfoTableV2? { _mathGlyphInfoTable }
+    public var mathGlyphInfoTable: MathGlyphInfoTable? { _mathGlyphInfoTable }
 
     public var mathVariantsTable: MathVariantsTableV2? { _mathVariantsTable }
 
@@ -46,10 +46,10 @@ public class MathTableV2 {
         }
     }()
 
-    private lazy var _mathGlyphInfoTable: MathGlyphInfoTableV2? = {
+    private lazy var _mathGlyphInfoTable: MathGlyphInfoTable? = {
         let offset = self.mathGlyphInfoOffset()
         if offset != 0 {
-            return MathGlyphInfoTableV2(base: self.base + Int(offset),
+            return MathGlyphInfoTable(base: self.base + Int(offset),
                                         context: self.context)
         } else {
             return nil

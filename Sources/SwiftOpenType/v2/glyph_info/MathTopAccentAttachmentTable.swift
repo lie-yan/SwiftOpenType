@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public class MathTopAccentAttachmentTableV2 {
+public class MathTopAccentAttachmentTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 

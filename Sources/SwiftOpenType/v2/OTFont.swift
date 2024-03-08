@@ -359,7 +359,7 @@ public extension OTFont {
                           _ corner: MathKernCorner,
                           _ startOffset: Int,
                           _ entriesCount: inout Int,
-                          _ kernEntries: inout [KernEntry]) -> Int
+                          _ kernEntries: inout [MathKernEntry]) -> Int
     {
         precondition(startOffset >= 0)
         precondition(entriesCount >= 0)
@@ -385,7 +385,7 @@ public extension OTFont {
                 }
 
                 let kernValue = CGFloat(kernTable.getKernValue(index: j)) * sizePerUnit
-                kernEntries[i] = KernEntry(maxCorrectionHeight: maxHeight, kernValue: kernValue)
+                kernEntries[i] = MathKernEntry(maxCorrectionHeight: maxHeight, kernValue: kernValue)
             }
             return entriesCount
         }
@@ -491,7 +491,7 @@ func readOffset16(_ ptr: UnsafePointer<UInt8>) -> Offset16 {
     readUInt16(ptr)
 }
 
-public struct KernEntry {
+public struct MathKernEntry {
     let maxCorrectionHeight: CGFloat
     let kernValue: CGFloat
 

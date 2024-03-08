@@ -45,12 +45,12 @@ public class MathTable {
 //        return nil
 //    }
 
-    public var mathGlyphInfoTable: MathGlyphInfoTable? {
-        let tableOffset = mathGlyphInfoOffset()
-        if tableOffset != 0 {
-            return MathGlyphInfoTable(data: data, tableOffset: tableOffset)
-        }
-        return nil
-    }
+//    public var mathGlyphInfoTable: MathGlyphInfoTable? {
+//        let tableOffset = mathGlyphInfoOffset()
+//        if tableOffset != 0 {
+//            return MathGlyphInfoTable(data: data, tableOffset: tableOffset)
+//        }
+//        return nil
+//    }
 }
 

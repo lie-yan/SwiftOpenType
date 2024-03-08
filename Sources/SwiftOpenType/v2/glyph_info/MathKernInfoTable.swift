@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public class MathKernInfoTableV2 {
+public class MathKernInfoTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
@@ -115,7 +115,7 @@ public class MathKernTableV2 {
 
     public func getKernEntries(_ startOffset: Int,
                                _ entriesCount: inout Int,
-                               _ kernEntries: inout [KernEntryDU]) -> Int
+                               _ kernEntries: inout [MathKernEntryDU]) -> Int
     {
         precondition(entriesCount >= 0)
         precondition(kernEntries.count >= entriesCount)
@@ -137,8 +137,8 @@ public class MathKernTableV2 {
             }
 
             let kernValue = getKernValue(index: j)
-            kernEntries[i] = KernEntryDU(maxCorrectionHeight: maxHeight,
-                                         kernValue: kernValue)
+            kernEntries[i] = MathKernEntryDU(maxCorrectionHeight: maxHeight,
+                                             kernValue: kernValue)
         }
         return entriesCount
     }
@@ -182,8 +182,8 @@ public class MathKernTableV2 {
     }
 }
 
-/// KernEntry in design units
-public struct KernEntryDU {
+/// MathKernEntry in design units
+public struct MathKernEntryDU {
     public let maxCorrectionHeight: Int32
     public let kernValue: Int32
 

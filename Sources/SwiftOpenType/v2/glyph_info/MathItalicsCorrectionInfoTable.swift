@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public class MathItalicsCorrectionInfoTableV2 {
+public class MathItalicsCorrectionInfoTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
     
