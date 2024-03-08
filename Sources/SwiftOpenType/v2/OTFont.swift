@@ -415,8 +415,7 @@ public extension OTFont {
 
     /// Returns true if the glyph is an extended shape, false otherwise
     func isGlyphExtendedShape(_ glyph: UInt16) -> Bool {
-        let value = mathTable?.mathGlyphInfoTable?.extendedShapeCoverageTable?.getCoverageIndex(glyph)
-        return value != nil
+        nil != mathTable?.mathGlyphInfoTable?.extendedShapeCoverageTable?.getCoverageIndex(glyph)
     }
 
     /// Returns requested minimum connector overlap or zero
