@@ -100,7 +100,7 @@ public class MathConstantsTable {
         values = [Int32?](repeating: nil, count: MathConstant.allCases.count)
     }
 
-    /// Return the math constant specified by the argument in design units.
+    /// Returns the math constant specified by the argument in design units.
     public func getMathConstant(_ index: MathConstant) -> Int32 {
         if index <= MathConstant.scriptScriptPercentScaleDown {
             return getPercent(index)
@@ -441,7 +441,7 @@ public enum MathConstant: Int, Comparable, CaseIterable {
     case radicalKernAfterDegree = 54
     case radicalDegreeBottomRaisePercent = 55
 
-    // Return the byte offset of math constant
+    // Returns the byte offset of math constant
     func getOffset() -> Int {
         let mathLeading = MathConstant.mathLeading.rawValue
         if rawValue < mathLeading {

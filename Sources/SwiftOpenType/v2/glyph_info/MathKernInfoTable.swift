@@ -29,13 +29,13 @@ public class MathKernInfoTable {
 
     // MARK: - optimization
 
-    /// Return the offset for given glyph index and corner
+    /// Returns the offset for given glyph index and corner
     private func mathKernOffset(_ index: Int, _ corner: MathKernCorner) -> Offset16 {
         let offset = 4 + index * MathKernInfoRecord.byteSize + corner.getOffset()
         return readOffset16(base + offset)
     }
 
-    /// Return the offset for given glyph id and corner
+    /// Returns the offset for given glyph id and corner
     private func getMathKernOffset(_ glyph: UInt16, _ corner: MathKernCorner) -> Offset16? {
         coverageTable().getCoverageIndex(glyph).map { self.mathKernOffset($0, corner) }
     }
@@ -98,17 +98,17 @@ public class MathKernTableV2 {
 
     // MARK: - query functions
 
-    /// Return the correction height at the given index in design units
+    /// Returns the correction height at the given index in design units
     public func getCorrectionHeight(_ index: Int) -> Int32 {
         MathValueRecord.eval(base, correctionHeight(index), context)
     }
 
-    /// Return the kern value at the given index in design units
+    /// Returns the kern value at the given index in design units
     public func getKernValue(index: Int) -> Int32 {
         MathValueRecord.eval(base, kernValues(index), context)
     }
 
-    /// Return the kern value for the given height in design units
+    /// Returns the kern value for the given height in design units
     public func getKernValue(height: Int32) -> Int32 {
         getKernValue(index: upper_bound(height: height))
     }
@@ -153,7 +153,7 @@ public class MathKernTableV2 {
 
     // MARK: - helper functions
 
-    /// Return the index of the first element greater than the given height.
+    /// Returns the index of the first element greater than the given height.
     /// We adapt the implementation of `std::upper_bound()` from C++ STL.
     private func upper_bound(height: Int32) -> Int {
         var count = Int(heightCount())

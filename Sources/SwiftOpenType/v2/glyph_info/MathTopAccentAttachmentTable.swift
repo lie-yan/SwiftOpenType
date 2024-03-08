@@ -29,7 +29,7 @@ public class MathTopAccentAttachmentTable {
 
     // MARK: - Query function
 
-    /// Return top accent attachment for glyphID in design units
+    /// Returns top accent attachment for glyphID in design units
     public func getTopAccentAttachment(_ glyph: UInt16) -> Int32? {
         coverageTable.getCoverageIndex(glyph).map {
             let record = self.topAccentAttachment($0)

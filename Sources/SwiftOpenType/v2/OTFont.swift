@@ -3,7 +3,9 @@ import CoreText
 /// A wrapper of CTFont, extended with some contexts
 public class OTFont {
     let font: CTFont
-    public let ppem: UInt32 /// pixels-per-em
+    /// pixels per em
+    public let ppem: UInt32
+    /// points per design unit
     public let sizePerUnit: CGFloat
 
     convenience init(_ font: CTFont) {
@@ -30,7 +32,7 @@ public class OTFont {
         CTFontGetGlyphWithName(font, glyphName)
     }
 
-    /// Return advance for glyph in points
+    /// Returns advance for glyph in points
     public func getAdvanceForGlyph(_ orientation: CTFontOrientation, _ glyph: CGGlyph) -> CGFloat {
         var glyph = glyph
         return CTFontGetAdvancesForGlyphs(font, orientation, &glyph, nil, 1)
@@ -38,12 +40,12 @@ public class OTFont {
 
     // MARK: - Auxilliary
 
-    /// Return a lambda that converts design units to points
+    /// Returns a lambda that converts design units to points
     public func toPointsClosure() -> ((Int32) -> CGFloat) {
         { CGFloat($0) * self.sizePerUnit }
     }
 
-    /// Return a lambda that converts points to design units
+    /// Returns a lambda that converts points to design units
     public func toDesignUnitsClosure() -> ((CGFloat) -> Int32) {
         { Int32($0 / self.sizePerUnit) }
     }
@@ -74,7 +76,7 @@ public class OTFont {
 }
 
 public extension OTFont {
-    /// Return the requested constant or zero
+    /// Returns the requested constant or zero
     func getMathConstant(_ index: MathConstant) -> CGFloat {
         if let table = mathTable?.mathConstantsTable {
             if index <= MathConstant.scriptScriptPercentScaleDown {
@@ -395,7 +397,7 @@ public extension OTFont {
         return 0
     }
 
-    /// Return the count of kern entries available for glyph index and corner, counting from given offset.
+    /// Returns the count of kern entries available for glyph index and corner, counting from given offset.
     ///
     /// - Parameters:
     ///   - glyph: The glyph index from which to retrieve the kernings

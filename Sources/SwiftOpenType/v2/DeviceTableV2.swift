@@ -31,8 +31,8 @@ public class DeviceTableV2 {
     
     // MARK: - query
     
-    /// Return delta value for given ppem.
-    /// Return 0 if not available.
+    /// Returns delta value for given ppem.
+    /// Returns 0 if not available.
     public func getDeltaValue(_ ppem: UInt32, unitsPerEm: UInt32) -> Int32 {
         if ppem == 0 {
             return 0

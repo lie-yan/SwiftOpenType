@@ -28,7 +28,7 @@ public class MathItalicsCorrectionInfoTable {
     
     // MARK: - Query function
             
-    /// Return italics correction for glyphID in design units
+    /// Returns italics correction for glyphID in design units
     public func getItalicsCorrection(_ glyph: UInt16) -> Int32 {
         if let index = self.coverageTable.getCoverageIndex(glyph) {
             return MathValueRecord.eval(base,
