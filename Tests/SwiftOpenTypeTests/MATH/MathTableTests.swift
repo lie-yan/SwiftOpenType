@@ -1,7 +1,7 @@
 @testable import SwiftOpenType
 import XCTest
 
-final class MathTableV2Tests: XCTestCase {
+final class MathTableTests: XCTestCase {
     func testMathTableHeader() {
         do {
             let helvetica = OTFont(CTFontCreateWithName("Helvetica" as CFString, 12, nil))
@@ -417,7 +417,7 @@ final class MathTableV2Tests: XCTestCase {
     func openOTFont(_ path: String, _ size: CGFloat) -> OTFont {
         OTFont(openCTFont(path, size))
     }
-    
+
     func openCTFont(_ path: String, _ size: CGFloat) -> CTFont {
         let resourcePath = Bundle.module.resourcePath!
         let path = resourcePath + "/" + path

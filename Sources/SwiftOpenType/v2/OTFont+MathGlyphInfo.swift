@@ -88,14 +88,14 @@ public extension OTFont {
     /// - Returns: the total number of kern values available or zero
     func getGlyphKerningCount(_ glyph: UInt16,
                               _ corner: MathKernCorner,
-                              _ startOffset: Int) -> Int
+                              _ startOffset: Int = 0) -> Int
     {
         precondition(startOffset >= 0)
         return mathTable?.mathGlyphInfoTable?.mathKernInfoTable?
             .getMathKernTable(glyph, corner)?
             .getKernEntryCount(startOffset: startOffset) ?? 0
     }
-
+    
     /// Returns true if the glyph is an extended shape, false otherwise
     func isGlyphExtendedShape(_ glyph: UInt16) -> Bool {
         mathTable?.mathGlyphInfoTable?.extendedShapeCoverageTable?.getCoverageIndex(glyph) != nil

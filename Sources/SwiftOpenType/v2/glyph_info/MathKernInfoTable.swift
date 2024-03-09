@@ -143,7 +143,7 @@ public class MathKernTableV2 {
         return entriesCount
     }
 
-    public func getKernEntryCount(startOffset: Int) -> Int {
+    public func getKernEntryCount(startOffset: Int = 0) -> Int {
         precondition(startOffset >= 0)
 
         let count = Int(heightCount()) + 1
