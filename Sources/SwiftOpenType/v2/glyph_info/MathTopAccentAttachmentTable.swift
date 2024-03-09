@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public class MathTopAccentAttachmentTableV2 {
+public class MathTopAccentAttachmentTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
@@ -24,12 +24,12 @@ public class MathTopAccentAttachmentTableV2 {
 
     /// Array of MathValueRecords defining top accent attachment points for each covered glyph.
     public func topAccentAttachment(_ index: Int) -> MathValueRecord {
-        MathValueRecord.read(ptr: base + 4 + index * MathValueRecord.byteSize)
+        MathValueRecord.read(base + 4 + index * MathValueRecord.byteSize)
     }
 
     // MARK: - Query function
 
-    /// Return top accent attachment for glyphID in design units
+    /// Returns top accent attachment for glyphID in design units
     public func getTopAccentAttachment(_ glyph: UInt16) -> Int32? {
         coverageTable.getCoverageIndex(glyph).map {
             let record = self.topAccentAttachment($0)

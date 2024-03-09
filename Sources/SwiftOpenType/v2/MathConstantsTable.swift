@@ -2,13 +2,13 @@ import CoreFoundation
 
 /**
  The MathConstants table
- 
+
  For more details, refer to [MathConstants Table](https://docs.microsoft.com/en-us/typography/opentype/spec/math#mathconstants-table)
  of the OpenType specification.
- 
+
  Below is the correspondence between OpenType parameters and TeX parameters.
  For an illustrated exposition, refer to _Ulrik Vieth (2009). OpenType math illuminated._
- 
+
  OpenType parameter                       | TeX parameter
  -----------------------------------------|----------------------------------
  scriptPercentScaleDown                   | e.g. 70-80 %
@@ -69,7 +69,7 @@ import CoreFoundation
  radicalKernBeforeDegree                  | e.g. 5/18 em
  radicalKernAfterDegree                   | e.g. 10/18 em
  radicalDegreeBottomRaisePercent          | e.g. 60 %
- 
+
  Parameter                                | Notation
  -----------------------------------------|----------------------------------
  x_height                                 | σ5
@@ -90,277 +90,368 @@ import CoreFoundation
  thick space                              | normally 5/18 σ6 (= 5mu)
  */
 public class MathConstantsTable {
-    let data: CFData
-    let tableOffset: Offset16
-    
-    init(data: CFData, tableOffset: Offset16) {
-        self.data = data
-        self.tableOffset = tableOffset
+    let base: UnsafePointer<UInt8>
+    let context: ContextData
+    private var values: [Int32?]
+
+    init(base: UnsafePointer<UInt8>, context: ContextData) {
+        self.base = base
+        self.context = context
+        values = [Int32?](repeating: nil, count: MathConstant.allCases.count)
     }
-    
-    /// Return the math constant specified by the argument in design units.
+
+    /// Returns the math constant specified by the argument in design units.
     public func getMathConstant(_ index: MathConstant) -> Int32 {
-        if (index <= MathConstant.scriptScriptPercentScaleDown) {
+        if index <= MathConstant.scriptScriptPercentScaleDown {
             return getPercent(index)
-        }
-        else if (index <= MathConstant.displayOperatorMinHeight) {
+        } else if index <= MathConstant.displayOperatorMinHeight {
             return getMinHeight(index)
-        }
-        else if (index <= MathConstant.radicalKernAfterDegree) {
+        } else if index <= MathConstant.radicalKernAfterDegree {
             return getMathValue(index)
-        }
-        else if (index == MathConstant.radicalDegreeBottomRaisePercent) {
+        } else if index == MathConstant.radicalDegreeBottomRaisePercent {
             return getPercent(index)
         }
-        
+
         fatalError("Unreachable")
     }
-    
-    /// for {scriptPercentScaleDown, scriptScriptPercentScaleDown, radicalDegreeBottomRaisePercent}
-    private func getPercent(_ index: MathConstant) -> Int32 {
-        let byteOffset = index.getOffset()
-        let value = data.readInt16(parentOffset: tableOffset, offset: byteOffset)
-        return Int32(value)
-    }
-    
-    /// for {delimitedSubFormulaMinHeight, displayOperatorMinHeight}
-    private func getMinHeight(_ index: MathConstant) -> Int32 {
-        let byteOffset = index.getOffset()
-        let value = data.readUFWORD(parentOffset: tableOffset, offset: byteOffset)
-        return Int32(value)
-    }
-    
-    /// for the remaining
-    private func getMathValue(_ index: MathConstant) -> Int32 {
-        let byteOffset = index.getOffset()
-        let mathValueRecord = MathValueRecord.read(data: data, parentOffset: tableOffset, offset: byteOffset)
-        let value = data.evalMathValueRecord(parentOffset: tableOffset, mathValueRecord: mathValueRecord)
-        return Int32(value)
-    }
-    
-    public var scriptPercentScaleDown: Int32 {
+
+    public func scriptPercentScaleDown() -> Int32 {
         getPercent(.scriptPercentScaleDown)
     }
-    
-    public var scriptScriptPercentScaleDown: Int32 {
+
+    public func scriptScriptPercentScaleDown() -> Int32 {
         getPercent(.scriptScriptPercentScaleDown)
     }
-    
-    public var delimitedSubFormulaMinHeight: Int32 {
+
+    public func delimitedSubFormulaMinHeight() -> Int32 {
         getMinHeight(.delimitedSubFormulaMinHeight)
     }
-    
-    public var displayOperatorMinHeight: Int32 {
+
+    public func displayOperatorMinHeight() -> Int32 {
         getMinHeight(.displayOperatorMinHeight)
     }
-    
-    public var mathLeading: Int32 {
+
+    public func mathLeading() -> Int32 {
         getMathValue(.mathLeading)
     }
-    
-    public var axisHeight: Int32 {
+
+    public func axisHeight() -> Int32 {
         getMathValue(.axisHeight)
     }
-    
-    public var accentBaseHeight: Int32 {
+
+    public func accentBaseHeight() -> Int32 {
         getMathValue(.accentBaseHeight)
     }
-    
-    public var flattenedAccentBaseHeight: Int32 {
+
+    public func flattenedAccentBaseHeight() -> Int32 {
         getMathValue(.flattenedAccentBaseHeight)
     }
-    
-    public var subscriptShiftDown: Int32 {
+
+    public func subscriptShiftDown() -> Int32 {
         getMathValue(.subscriptShiftDown)
     }
-    
-    public var subscriptTopMax: Int32 {
+
+    public func subscriptTopMax() -> Int32 {
         getMathValue(.subscriptTopMax)
     }
-    
-    public var subscriptBaselineDropMin: Int32 {
+
+    public func subscriptBaselineDropMin() -> Int32 {
         getMathValue(.subscriptBaselineDropMin)
     }
-    
-    public var superscriptShiftUp: Int32 {
+
+    public func superscriptShiftUp() -> Int32 {
         getMathValue(.superscriptShiftUp)
     }
-    
-    public var superscriptShiftUpCramped: Int32 {
+
+    public func superscriptShiftUpCramped() -> Int32 {
         getMathValue(.superscriptShiftUpCramped)
     }
-    
-    public var superscriptBottomMin: Int32 {
+
+    public func superscriptBottomMin() -> Int32 {
         getMathValue(.superscriptBottomMin)
     }
-    
-    public var superscriptBaselineDropMax: Int32 {
+
+    public func superscriptBaselineDropMax() -> Int32 {
         getMathValue(.superscriptBaselineDropMax)
     }
-    
-    public var subSuperscriptGapMin: Int32 {
+
+    public func subSuperscriptGapMin() -> Int32 {
         getMathValue(.subSuperscriptGapMin)
     }
-    
-    public var superscriptBottomMaxWithSubscript: Int32 {
+
+    public func superscriptBottomMaxWithSubscript() -> Int32 {
         getMathValue(.superscriptBottomMaxWithSubscript)
     }
-    
-    public var spaceAfterScript: Int32 {
+
+    public func spaceAfterScript() -> Int32 {
         getMathValue(.spaceAfterScript)
     }
-    
-    public var upperLimitGapMin: Int32 {
+
+    public func upperLimitGapMin() -> Int32 {
         getMathValue(.upperLimitGapMin)
     }
-    
-    public var upperLimitBaselineRiseMin: Int32 {
+
+    public func upperLimitBaselineRiseMin() -> Int32 {
         getMathValue(.upperLimitBaselineRiseMin)
     }
-    
-    public var lowerLimitGapMin: Int32 {
+
+    public func lowerLimitGapMin() -> Int32 {
         getMathValue(.lowerLimitGapMin)
     }
-    
-    public var lowerLimitBaselineDropMin: Int32 {
+
+    public func lowerLimitBaselineDropMin() -> Int32 {
         getMathValue(.lowerLimitBaselineDropMin)
     }
-    
-    public var stackTopShiftUp: Int32 {
+
+    public func stackTopShiftUp() -> Int32 {
         getMathValue(.stackTopShiftUp)
     }
-    
-    public var stackTopDisplayStyleShiftUp: Int32 {
+
+    public func stackTopDisplayStyleShiftUp() -> Int32 {
         getMathValue(.stackTopDisplayStyleShiftUp)
     }
-    
-    public var stackBottomShiftDown: Int32 {
+
+    public func stackBottomShiftDown() -> Int32 {
         getMathValue(.stackBottomShiftDown)
     }
-    
-    public var stackBottomDisplayStyleShiftDown: Int32 {
+
+    public func stackBottomDisplayStyleShiftDown() -> Int32 {
         getMathValue(.stackBottomDisplayStyleShiftDown)
     }
-    
-    public var stackGapMin: Int32 {
+
+    public func stackGapMin() -> Int32 {
         getMathValue(.stackGapMin)
     }
-    
-    public var stackDisplayStyleGapMin: Int32 {
+
+    public func stackDisplayStyleGapMin() -> Int32 {
         getMathValue(.stackDisplayStyleGapMin)
     }
-    
-    public var stretchStackTopShiftUp: Int32 {
+
+    public func stretchStackTopShiftUp() -> Int32 {
         getMathValue(.stretchStackTopShiftUp)
     }
-    
-    public var stretchStackBottomShiftDown: Int32 {
+
+    public func stretchStackBottomShiftDown() -> Int32 {
         getMathValue(.stretchStackBottomShiftDown)
     }
-    
-    public var stretchStackGapAboveMin: Int32 {
+
+    public func stretchStackGapAboveMin() -> Int32 {
         getMathValue(.stretchStackGapAboveMin)
     }
-    
-    public var stretchStackGapBelowMin: Int32 {
+
+    public func stretchStackGapBelowMin() -> Int32 {
         getMathValue(.stretchStackGapBelowMin)
     }
-    
-    public var fractionNumeratorShiftUp: Int32 {
+
+    public func fractionNumeratorShiftUp() -> Int32 {
         getMathValue(.fractionNumeratorShiftUp)
     }
-    
-    public var fractionNumeratorDisplayStyleShiftUp: Int32 {
+
+    public func fractionNumeratorDisplayStyleShiftUp() -> Int32 {
         getMathValue(.fractionNumeratorDisplayStyleShiftUp)
     }
-    
-    public var fractionDenominatorShiftDown: Int32 {
+
+    public func fractionDenominatorShiftDown() -> Int32 {
         getMathValue(.fractionDenominatorShiftDown)
     }
-    
-    public var fractionDenominatorDisplayStyleShiftDown: Int32 {
+
+    public func fractionDenominatorDisplayStyleShiftDown() -> Int32 {
         getMathValue(.fractionDenominatorDisplayStyleShiftDown)
     }
-    
-    public var fractionNumeratorGapMin: Int32 {
+
+    public func fractionNumeratorGapMin() -> Int32 {
         getMathValue(.fractionNumeratorGapMin)
     }
-    
-    public var fractionNumDisplayStyleGapMin: Int32 {
+
+    public func fractionNumDisplayStyleGapMin() -> Int32 {
         getMathValue(.fractionNumDisplayStyleGapMin)
     }
-    
-    public var fractionRuleThickness: Int32 {
+
+    public func fractionRuleThickness() -> Int32 {
         getMathValue(.fractionRuleThickness)
     }
-    
-    public var fractionDenominatorGapMin: Int32 {
+
+    public func fractionDenominatorGapMin() -> Int32 {
         getMathValue(.fractionDenominatorGapMin)
     }
-    
-    public var fractionDenomDisplayStyleGapMin: Int32 {
+
+    public func fractionDenomDisplayStyleGapMin() -> Int32 {
         getMathValue(.fractionDenomDisplayStyleGapMin)
     }
-    
-    public var skewedFractionHorizontalGap: Int32 {
+
+    public func skewedFractionHorizontalGap() -> Int32 {
         getMathValue(.skewedFractionHorizontalGap)
     }
-    
-    public var skewedFractionVerticalGap: Int32 {
+
+    public func skewedFractionVerticalGap() -> Int32 {
         getMathValue(.skewedFractionVerticalGap)
     }
-    
-    public var overbarVerticalGap: Int32 {
+
+    public func overbarVerticalGap() -> Int32 {
         getMathValue(.overbarVerticalGap)
     }
-    
-    public var overbarRuleThickness: Int32 {
+
+    public func overbarRuleThickness() -> Int32 {
         getMathValue(.overbarRuleThickness)
     }
-    
-    public var overbarExtraAscender: Int32 {
+
+    public func overbarExtraAscender() -> Int32 {
         getMathValue(.overbarExtraAscender)
     }
-    
-    public var underbarVerticalGap: Int32 {
+
+    public func underbarVerticalGap() -> Int32 {
         getMathValue(.underbarVerticalGap)
     }
-    
-    public var underbarRuleThickness: Int32 {
+
+    public func underbarRuleThickness() -> Int32 {
         getMathValue(.underbarRuleThickness)
     }
-    
-    public var underbarExtraDescender: Int32 {
+
+    public func underbarExtraDescender() -> Int32 {
         getMathValue(.underbarExtraDescender)
     }
-    
-    public var radicalVerticalGap: Int32 {
+
+    public func radicalVerticalGap() -> Int32 {
         getMathValue(.radicalVerticalGap)
     }
-    
-    public var radicalDisplayStyleVerticalGap: Int32 {
+
+    public func radicalDisplayStyleVerticalGap() -> Int32 {
         getMathValue(.radicalDisplayStyleVerticalGap)
     }
-    
-    public var radicalRuleThickness: Int32 {
+
+    public func radicalRuleThickness() -> Int32 {
         getMathValue(.radicalRuleThickness)
     }
-    
-    public var radicalExtraAscender: Int32 {
+
+    public func radicalExtraAscender() -> Int32 {
         getMathValue(.radicalExtraAscender)
     }
-    
-    public var radicalKernBeforeDegree: Int32 {
+
+    public func radicalKernBeforeDegree() -> Int32 {
         getMathValue(.radicalKernBeforeDegree)
     }
-    
-    public var radicalKernAfterDegree: Int32 {
+
+    public func radicalKernAfterDegree() -> Int32 {
         getMathValue(.radicalKernAfterDegree)
     }
-    
-    public var radicalDegreeBottomRaisePercent: Int32 {
+
+    public func radicalDegreeBottomRaisePercent() -> Int32 {
         getPercent(.radicalDegreeBottomRaisePercent)
+    }
+
+    // MARK: - helper functions
+
+    /// for {scriptPercentScaleDown, scriptScriptPercentScaleDown, radicalDegreeBottomRaisePercent}
+    func getPercent(_ index: MathConstant) -> Int32 {
+        let i = index.rawValue
+        if values[i] == nil {
+            values[i] = fetchPercent(index)
+        }
+        return values[i]!
+    }
+
+    private func fetchPercent(_ index: MathConstant) -> Int32 {
+        Int32(readInt16(base + index.getOffset()))
+    }
+
+    /// for {delimitedSubFormulaMinHeight, displayOperatorMinHeight}
+    func getMinHeight(_ index: MathConstant) -> Int32 {
+        let i = index.rawValue
+        if values[i] == nil {
+            values[i] = fetchMinHeight(index)
+        }
+        return values[i]!
+    }
+
+    private func fetchMinHeight(_ index: MathConstant) -> Int32 {
+        Int32(readUFWORD(base + index.getOffset()))
+    }
+
+    /// for the remaining
+    func getMathValue(_ index: MathConstant) -> Int32 {
+        let i = index.rawValue
+        if values[i] == nil {
+            values[i] = fetchMathValue(index)
+        }
+        return values[i]!
+    }
+
+    private func fetchMathValue(_ index: MathConstant) -> Int32 {
+        let record = MathValueRecord.read(base + index.getOffset())
+        return MathValueRecord.eval(base, record, context)
     }
 }
 
+/// The math constant index
+public enum MathConstant: Int, Comparable, CaseIterable {
+    case scriptPercentScaleDown = 0
+    case scriptScriptPercentScaleDown = 1
+    case delimitedSubFormulaMinHeight = 2
+    case displayOperatorMinHeight = 3
+    case mathLeading = 4
+    case axisHeight = 5
+    case accentBaseHeight = 6
+    case flattenedAccentBaseHeight = 7
+    case subscriptShiftDown = 8
+    case subscriptTopMax = 9
+    case subscriptBaselineDropMin = 10
+    case superscriptShiftUp = 11
+    case superscriptShiftUpCramped = 12
+    case superscriptBottomMin = 13
+    case superscriptBaselineDropMax = 14
+    case subSuperscriptGapMin = 15
+    case superscriptBottomMaxWithSubscript = 16
+    case spaceAfterScript = 17
+    case upperLimitGapMin = 18
+    case upperLimitBaselineRiseMin = 19
+    case lowerLimitGapMin = 20
+    case lowerLimitBaselineDropMin = 21
+    case stackTopShiftUp = 22
+    case stackTopDisplayStyleShiftUp = 23
+    case stackBottomShiftDown = 24
+    case stackBottomDisplayStyleShiftDown = 25
+    case stackGapMin = 26
+    case stackDisplayStyleGapMin = 27
+    case stretchStackTopShiftUp = 28
+    case stretchStackBottomShiftDown = 29
+    case stretchStackGapAboveMin = 30
+    case stretchStackGapBelowMin = 31
+    case fractionNumeratorShiftUp = 32
+    case fractionNumeratorDisplayStyleShiftUp = 33
+    case fractionDenominatorShiftDown = 34
+    case fractionDenominatorDisplayStyleShiftDown = 35
+    case fractionNumeratorGapMin = 36
+    case fractionNumDisplayStyleGapMin = 37
+    case fractionRuleThickness = 38
+    case fractionDenominatorGapMin = 39
+    case fractionDenomDisplayStyleGapMin = 40
+    case skewedFractionHorizontalGap = 41
+    case skewedFractionVerticalGap = 42
+    case overbarVerticalGap = 43
+    case overbarRuleThickness = 44
+    case overbarExtraAscender = 45
+    case underbarVerticalGap = 46
+    case underbarRuleThickness = 47
+    case underbarExtraDescender = 48
+    case radicalVerticalGap = 49
+    case radicalDisplayStyleVerticalGap = 50
+    case radicalRuleThickness = 51
+    case radicalExtraAscender = 52
+    case radicalKernBeforeDegree = 53
+    case radicalKernAfterDegree = 54
+    case radicalDegreeBottomRaisePercent = 55
 
+    // Returns the byte offset of math constant
+    func getOffset() -> Int {
+        let mathLeading = MathConstant.mathLeading.rawValue
+        if rawValue < mathLeading {
+            return rawValue * 2
+        } else {
+            return mathLeading * 2 + (rawValue - mathLeading) * 4
+        }
+    }
+
+    public static func < (lhs: MathConstant, rhs: MathConstant) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
+}

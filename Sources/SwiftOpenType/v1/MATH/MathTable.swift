@@ -37,20 +37,20 @@ public class MathTable {
 
     // MARK: - Sub-tables
 
-    public var mathConstantsTable: MathConstantsTable? {
-        let tableOffset = mathConstantsOffset()
-        if tableOffset != 0 {
-            return MathConstantsTable(data: data, tableOffset: tableOffset)
-        }
-        return nil
-    }
+//    public var mathConstantsTable: MathConstantsTable? {
+//        let tableOffset = mathConstantsOffset()
+//        if tableOffset != 0 {
+//            return MathConstantsTable(data: data, tableOffset: tableOffset)
+//        }
+//        return nil
+//    }
 
-    public var mathGlyphInfoTable: MathGlyphInfoTable? {
-        let tableOffset = mathGlyphInfoOffset()
-        if tableOffset != 0 {
-            return MathGlyphInfoTable(data: data, tableOffset: tableOffset)
-        }
-        return nil
-    }
+//    public var mathGlyphInfoTable: MathGlyphInfoTable? {
+//        let tableOffset = mathGlyphInfoOffset()
+//        if tableOffset != 0 {
+//            return MathGlyphInfoTable(data: data, tableOffset: tableOffset)
+//        }
+//        return nil
+//    }
 }
 

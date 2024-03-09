@@ -12,73 +12,49 @@ public class MathTableV2 {
     // MARK: - header fields
 
     /// Major version of the MATH table, = 1.
-    public func majorVersion() -> UInt16 {
-        readUInt16(base + 0)
-    }
+    public func majorVersion() -> UInt16 { readUInt16(base + 0) }
 
     /// Minor version of the MATH table, = 0.
-    public func minorVersion() -> UInt16 {
-        readUInt16(base + 2)
-    }
+    public func minorVersion() -> UInt16 { readUInt16(base + 2) }
 
     /// Offset to MathConstants table - from the beginning of MATH table.
-    public func mathConstantsOffset() -> Offset16 {
-        readOffset16(base + 4)
-    }
+    public func mathConstantsOffset() -> Offset16 { readOffset16(base + 4) }
 
     /// Offset to MathGlyphInfo table - from the beginning of MATH table.
-    public func mathGlyphInfoOffset() -> Offset16 {
-        readOffset16(base + 6)
-    }
+    public func mathGlyphInfoOffset() -> Offset16 { readOffset16(base + 6) }
 
     /// Offset to MathVariants table - from the beginning of MATH table.
-    public func mathVariantsOffset() -> Offset16 {
-        readOffset16(base + 8)
-    }
+    public func mathVariantsOffset() -> Offset16 { readOffset16(base + 8) }
 
-    // MARK: - Sub-tables
+    // MARK: - tables
 
-    public var mathConstantsTable: MathConstantsTableV2? {
-        _mathConstantsTable
-    }
+    public var mathConstantsTable: MathConstantsTable? { _mathConstantsTable }
 
-    public var mathGlyphInfoTable: MathGlyphInfoTableV2? {
-        _mathGlyphInfoTable
-    }
+    public var mathGlyphInfoTable: MathGlyphInfoTable? { _mathGlyphInfoTable }
 
-    public var mathVariantsTable: MathVariantsTableV2? {
-        _mathVariantsTable
-    }
+    public var mathVariantsTable: MathVariantsTableV2? { _mathVariantsTable }
 
     // MARK: - lazy variables
 
-    private lazy var _mathConstantsTable: MathConstantsTableV2? = {
+    private lazy var _mathConstantsTable: MathConstantsTable? = {
         let offset = self.mathConstantsOffset()
-        if offset != 0 {
-            return MathConstantsTableV2(base: self.base + Int(offset),
-                                        context: self.context)
-        } else {
-            return nil
-        }
+        return (offset != 0)
+            ? MathConstantsTable(base: base + Int(offset), context: context)
+            : nil
     }()
 
-    private lazy var _mathGlyphInfoTable: MathGlyphInfoTableV2? = {
+    private lazy var _mathGlyphInfoTable: MathGlyphInfoTable? = {
         let offset = self.mathGlyphInfoOffset()
-        if offset != 0 {
-            return MathGlyphInfoTableV2(base: self.base + Int(offset),
-                                        context: self.context)
-        } else {
-            return nil
-        }
+        return (offset != 0)
+            ? MathGlyphInfoTable(base: self.base + Int(offset), context: self.context)
+            : nil
     }()
 
     private lazy var _mathVariantsTable: MathVariantsTableV2? = {
         let offset = self.mathVariantsOffset()
-        if offset != 0 {
-            return MathVariantsTableV2(base: self.base + Int(offset))
-        } else {
-            return nil
-        }
+        return (offset != 0)
+            ? MathVariantsTableV2(base: self.base + Int(offset), context: context)
+            : nil
     }()
 }
 
@@ -123,9 +99,7 @@ public struct MathValueRecord {
     /// May be NULL. Suggested format for device table is 1.
     public let deviceOffset: Offset16
 
-    init() {
-        self.init(value: 0, deviceOffset: 0)
-    }
+    init() { self.init(value: 0, deviceOffset: 0) }
 
     init(value: FWORD, deviceOffset: Offset16) {
         self.value = value
@@ -144,21 +118,21 @@ public struct MathValueRecord {
         read(data: data, offset: Int(parentOffset) + offset)
     }
 
-    static func read(ptr: UnsafePointer<UInt8>) -> MathValueRecord {
+    static func read(_ ptr: UnsafePointer<UInt8>) -> MathValueRecord {
         MathValueRecord(value: readFWORD(ptr + 0),
                         deviceOffset: readOffset16(ptr + 2))
     }
 
     static func eval(_ parentBase: UnsafePointer<UInt8>,
-                     _ mathValueRecord: MathValueRecord,
+                     _ record: MathValueRecord,
                      _ context: ContextData) -> Int32
     {
-        if mathValueRecord.deviceOffset == 0 {
-            return Int32(mathValueRecord.value)
+        if record.deviceOffset == 0 {
+            return Int32(record.value)
         }
 
-        let deviceTable = DeviceTableV2(base: parentBase + Int(mathValueRecord.deviceOffset))
+        let deviceTable = DeviceTableV2(base: parentBase + Int(record.deviceOffset))
         let deltaValue = deviceTable.getDeltaValue(context.ppem, unitsPerEm: context.unitsPerEm)
-        return Int32(mathValueRecord.value) + deltaValue
+        return Int32(record.value) + deltaValue
     }
 }

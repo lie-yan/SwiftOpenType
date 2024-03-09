@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public class MathItalicsCorrectionInfoTableV2 {
+public class MathItalicsCorrectionInfoTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
     
@@ -23,12 +23,12 @@ public class MathItalicsCorrectionInfoTableV2 {
     
     /// Array of MathValueRecords defining italics correction values for each covered glyph.
     public func italicsCorrection(_ index: Int) -> MathValueRecord {
-        MathValueRecord.read(ptr: base + 4 + index * MathValueRecord.byteSize)
+        MathValueRecord.read(base + 4 + index * MathValueRecord.byteSize)
     }
     
     // MARK: - Query function
             
-    /// Return italics correction for glyphID in design units
+    /// Returns italics correction for glyphID in design units
     public func getItalicsCorrection(_ glyph: UInt16) -> Int32 {
         if let index = self.coverageTable.getCoverageIndex(glyph) {
             return MathValueRecord.eval(base,
