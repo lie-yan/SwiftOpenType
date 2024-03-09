@@ -23,7 +23,7 @@ public extension OTFont {
             if let table = mathTable?.mathVariantsTable?.getHorizGlyphConstructionTable(glyph) {
                 return getGlyphVariants(table, startOffset, &variantsCount, &variants)
             }
-        } else if direction == .BTT || direction == .TTB {
+        } else if direction == .TTB || direction == .BTT {
             if let table = mathTable?.mathVariantsTable?.getVertGlyphConstructionTable(glyph) {
                 return getGlyphVariants(table, startOffset, &variantsCount, &variants)
             }
@@ -33,6 +33,70 @@ public extension OTFont {
         variantsCount = 0
         return 0
     }
+
+    func getGlyphVariantCount(
+        _ glyph: UInt16,
+        _ direction: TextDirection,
+        _ startOffset: Int = 0
+    ) -> Int {
+        if direction == .LTR || direction == .RTL {
+            if let table = mathTable?.mathVariantsTable?.getHorizGlyphConstructionTable(glyph) {
+                return getGlyphVariantCount(table, startOffset)
+            }
+        } else if direction == .BTT || direction == .TTB {
+            if let table = mathTable?.mathVariantsTable?.getVertGlyphConstructionTable(glyph) {
+                return getGlyphVariantCount(table, startOffset)
+            }
+        }
+
+        // FALL THRU
+        return 0
+    }
+
+    @discardableResult
+    func getGlyphAssembly(
+        glyph: UInt16,
+        direction: TextDirection,
+        startOffset: Int,
+        partsCount: inout Int,
+        parts: inout [GlyphPart],
+        italicsCorrection: inout CGFloat
+    ) -> Int {
+        if direction == .LTR || direction == .RTL {
+            if let table = mathTable?.mathVariantsTable?.getHorizGlyphConstructionTable(glyph)?.glyphAssemblyTable {
+                return getGlyphAssembly(table, startOffset, &partsCount, &parts, &italicsCorrection)
+            }
+        } else if direction == .BTT || direction == .TTB {
+            if let table = mathTable?.mathVariantsTable?.getVertGlyphConstructionTable(glyph)?.glyphAssemblyTable {
+                return getGlyphAssembly(table, startOffset, &partsCount, &parts, &italicsCorrection)
+            }
+        }
+
+        // FALL THRU
+        partsCount = 0
+        return 0
+    }
+
+    func getGlyphAssemblyPartsCount(
+        glyph: UInt16,
+        direction: TextDirection,
+        startOffset: Int = 0
+    ) -> Int {
+        if direction == .LTR || direction == .RTL {
+            if let table = mathTable?.mathVariantsTable?.getHorizGlyphConstructionTable(glyph)?.glyphAssemblyTable {
+                return getGlyphAssemblyPartsCount(table, startOffset)
+            }
+        } else if direction == .BTT || direction == .TTB {
+            if let table = mathTable?.mathVariantsTable?.getVertGlyphConstructionTable(glyph)?.glyphAssemblyTable {
+                return getGlyphAssemblyPartsCount(table, startOffset)
+            }
+        }
+
+        // FALL THRU
+        return 0
+    }
+
+    // MARK: - helper functions
 
     private func getGlyphVariants(_ table: MathGlyphConstructionTableV2,
                                   _ startOffset: Int,
@@ -58,30 +122,52 @@ public extension OTFont {
         return variantsCount
     }
 
-    func getGlyphVariantCount(
-        _ glyph: UInt16,
-        _ direction: TextDirection,
-        _ startOffset: Int = 0
-    ) -> Int {
-        if direction == .LTR || direction == .RTL {
-            if let table = mathTable?.mathVariantsTable?.getHorizGlyphConstructionTable(glyph) {
-                return getGlyphVariantCount(table, startOffset)
-            }
-        } else if direction == .BTT || direction == .TTB {
-            if let table = mathTable?.mathVariantsTable?.getVertGlyphConstructionTable(glyph) {
-                return getGlyphVariantCount(table, startOffset)
-            }
-        }
-
-        // FALL THRU
-        return 0
-    }
-
     private func getGlyphVariantCount(_ table: MathGlyphConstructionTableV2,
                                       _ startOffset: Int) -> Int
     {
         precondition(startOffset >= 0)
         let count = Int(table.variantCount())
+        return count - min(startOffset, count)
+    }
+
+    private func getGlyphAssembly(
+        _ table: GlyphAssemblyTableV2,
+        _ startOffset: Int,
+        _ partsCount: inout Int,
+        _ parts: inout [GlyphPart],
+        _ italicsCorrection: inout CGFloat
+    ) -> Int {
+        precondition(startOffset >= 0)
+        precondition(partsCount >= 0)
+        precondition(parts.count >= partsCount)
+
+        let count = Int(table.partCount())
+        let start = min(startOffset, count)
+        let end = min(startOffset + partsCount, count)
+        partsCount = end - start
+
+        for i in 0 ..< partsCount {
+            let j = start + i
+            let record = table.partRecords(index: j)
+
+            parts[i] = GlyphPart(glyph: record.glyphID,
+                                 startConnectorLength: CGFloat(record.startConnectorLength) * sizePerUnit,
+                                 endConnectorLength: CGFloat(record.endConnectorLength) * sizePerUnit,
+                                 fullAdvance: CGFloat(record.fullAdvance) * sizePerUnit,
+                                 flags: PartFlags(rawValue: record.partFlags)!)
+        }
+
+        italicsCorrection = CGFloat(table.getItalicsCorrection()) * sizePerUnit
+
+        return partsCount
+    }
+
+    private func getGlyphAssemblyPartsCount(
+        _ table: GlyphAssemblyTableV2,
+        _ startOffset: Int
+    ) -> Int {
+        precondition(startOffset >= 0)
+        let count = Int(table.partCount())
         return count - min(startOffset, count)
     }
 }
@@ -96,7 +182,7 @@ public struct MathGlyphVariant {
         self.glyph = glyph
         self.advance = advance
     }
-    
+
     init() {
         self.init(glyph: 0, advance: 0)
     }

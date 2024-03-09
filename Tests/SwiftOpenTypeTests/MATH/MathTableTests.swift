@@ -427,7 +427,8 @@ final class MathTableTests: XCTestCase {
             XCTAssertEqual(font.getGlyphKerningCount(glyph, .BottomRight, 0), 9)
             XCTAssertEqual(font.getGlyphKerningCount(glyph, .BottomLeft, 0), 7)
 
-            var entries = [MathKernEntry](repeating: .init(), count: 20)
+            let entriesCount = 20
+            var entries = [MathKernEntry](repeating: .init(), count: entriesCount)
 
             // case 1
             var count = entries.count
@@ -467,7 +468,7 @@ final class MathTableTests: XCTestCase {
         }
     }
 
-    func testGlyphVariants() {
+    func testGetGlyphVariants() {
         do {
             let font = openOTFont("fonts/MathTestFontEmpty.otf", 10)
             let glyph = font.getGlyphWithName("space")
