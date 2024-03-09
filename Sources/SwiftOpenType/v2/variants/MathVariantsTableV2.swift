@@ -2,9 +2,11 @@ import CoreFoundation
 
 public class MathVariantsTableV2 {
     let base: UnsafePointer<UInt8>
+    let context: ContextData
 
-    init(base: UnsafePointer<UInt8>) {
+    init(base: UnsafePointer<UInt8>, context: ContextData) {
         self.base = base
+        self.context = context
     }
 
     // MARK: - Table fields
@@ -38,19 +40,18 @@ public class MathVariantsTableV2 {
 
     /// Array of offsets to MathGlyphConstruction tables, from the beginning of the
     /// MathVariants table, for shapes growing in the vertical direction.
-    public func vertGlyphConstructionOffsets(index: Int) -> Offset16 {
+    public func vertGlyphConstructionOffsets(_ index: Int) -> Offset16 {
         readOffset16(base + 10 + index * 2)
     }
 
     /// Array of offsets to MathGlyphConstruction tables, from the beginning of the
     /// MathVariants table, for shapes growing in the horizontal direction.
-    public func horizGlyphConstructionOffsets(index: Int) -> Offset16 {
-        let vertGlyphCount = self.vertGlyphCount()
-        let offset = 10 + Int(vertGlyphCount) * 2 + index * 2
+    public func horizGlyphConstructionOffsets(_ index: Int) -> Offset16 {
+        let offset = 10 + Int(vertGlyphCount()) * 2 + index * 2
         return readOffset16(base + offset)
     }
 
-    // MARK: - Sub-tables
+    // MARK: - Tables
 
     public var vertGlyphCoverageTable: CoverageTableV2 {
         CoverageTableV2(base: base + Int(vertGlyphCoverageOffset()))
@@ -60,33 +61,29 @@ public class MathVariantsTableV2 {
         CoverageTableV2(base: base + Int(horizGlyphCoverageOffset()))
     }
 
-//    public func vertGlyphConstructionTable(index: Int) -> MathGlyphConstructionTable {
-//        let subtableOffset = self.vertGlyphConstructionOffsets(index: index)
-//        return MathGlyphConstructionTable(data: data, tableOffset: tableOffset + subtableOffset)
-//    }
-//
-//    public func horizGlyphConstructionTable(index: Int) -> MathGlyphConstructionTable {
-//        let subtableOffset = self.horizGlyphConstructionOffsets(index: index)
-//        return MathGlyphConstructionTable(data: data, tableOffset: tableOffset + subtableOffset)
-//    }
-//
-//    // MARK: - Query functions
-//
-//    public func getVertGlyphConstructionTable(glyphID: UInt16) -> MathGlyphConstructionTable? {
-//        let coverageTable = self.vertGlyphCoverageTable
-//        if let coverageIndex = coverageTable.getCoverageIndex(glyphID: glyphID) {
-//            return self.vertGlyphConstructionTable(index: coverageIndex)
-//        }
-//        return nil
-//    }
-//
-//    public func getHorizGlyphConstructionTable(glyphID: UInt16) -> MathGlyphConstructionTable? {
-//        let coverageTable = self.horizGlyphCoverageTable
-//        if let coverageIndex = coverageTable.getCoverageIndex(glyphID: glyphID) {
-//            return self.horizGlyphConstructionTable(index: coverageIndex)
-//        }
-//        return nil
-//    }
+    public func vertGlyphConstructionTable(_ index: Int) -> MathGlyphConstructionTableV2 {
+        let offset = vertGlyphConstructionOffsets(index)
+        return MathGlyphConstructionTableV2(base: base + Int(offset), context: context)
+    }
+
+    public func horizGlyphConstructionTable(_ index: Int) -> MathGlyphConstructionTableV2 {
+        let offset = horizGlyphConstructionOffsets(index)
+        return MathGlyphConstructionTableV2(base: base + Int(offset), context: context)
+    }
+
+    // MARK: - Query functions
+
+    public func getVertGlyphConstructionTable(_ glyph: UInt16) -> MathGlyphConstructionTableV2? {
+        vertGlyphCoverageTable.getCoverageIndex(glyph).map {
+            self.vertGlyphConstructionTable($0)
+        }
+    }
+
+    public func getHorizGlyphConstructionTable(_ glyph: UInt16) -> MathGlyphConstructionTableV2? {
+        horizGlyphCoverageTable.getCoverageIndex(glyph).map {
+            self.horizGlyphConstructionTable($0)
+        }
+    }
 }
 
 public struct MathGlyphVariantRecord {

@@ -26,7 +26,7 @@ public class MathTableV2 {
     /// Offset to MathVariants table - from the beginning of MATH table.
     public func mathVariantsOffset() -> Offset16 { readOffset16(base + 8) }
 
-    // MARK: - Sub-tables
+    // MARK: - tables
 
     public var mathConstantsTable: MathConstantsTable? { _mathConstantsTable }
 
@@ -38,31 +38,23 @@ public class MathTableV2 {
 
     private lazy var _mathConstantsTable: MathConstantsTable? = {
         let offset = self.mathConstantsOffset()
-        if offset != 0 {
-            return MathConstantsTable(base: self.base + Int(offset),
-                                      context: self.context)
-        } else {
-            return nil
-        }
+        return (offset != 0)
+            ? MathConstantsTable(base: base + Int(offset), context: context)
+            : nil
     }()
 
     private lazy var _mathGlyphInfoTable: MathGlyphInfoTable? = {
         let offset = self.mathGlyphInfoOffset()
-        if offset != 0 {
-            return MathGlyphInfoTable(base: self.base + Int(offset),
-                                        context: self.context)
-        } else {
-            return nil
-        }
+        return (offset != 0)
+            ? MathGlyphInfoTable(base: self.base + Int(offset), context: self.context)
+            : nil
     }()
 
     private lazy var _mathVariantsTable: MathVariantsTableV2? = {
         let offset = self.mathVariantsOffset()
-        if offset != 0 {
-            return MathVariantsTableV2(base: self.base + Int(offset))
-        } else {
-            return nil
-        }
+        return (offset != 0)
+            ? MathVariantsTableV2(base: self.base + Int(offset), context: context)
+            : nil
     }()
 }
 

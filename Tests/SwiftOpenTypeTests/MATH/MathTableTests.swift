@@ -467,6 +467,93 @@ final class MathTableTests: XCTestCase {
         }
     }
 
+    func testGlyphVariants() {
+        do {
+            let font = openOTFont("fonts/MathTestFontEmpty.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .RTL), 0)
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .BTT), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontPartial1.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .RTL), 0)
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .BTT), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontPartial2.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .RTL), 0)
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .BTT), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontPartial3.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .RTL), 0)
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .BTT), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontPartial4.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .RTL), 0)
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .BTT), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontFull.otf", 10)
+            let pts = font.toPointsClosure()
+
+            let variantsSize = 20
+            var variants = [MathGlyphVariant](repeating: .init(), count: variantsSize)
+            var count = 0
+            var offset = 0
+
+            var glyph = font.getGlyphWithName("arrowleft")
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .BTT), 0)
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .RTL), 3)
+
+            glyph = font.getGlyphWithName("arrowup")
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .BTT), 4)
+            XCTAssertEqual(font.getGlyphVariantCount(glyph, .RTL), 0)
+
+            glyph = font.getGlyphWithName("arrowleft")
+            offset = 0
+            repeat {
+                count = variantsSize
+                font.getGlyphVariants(glyph, .RTL, offset, &count, &variants)
+                offset += count
+            } while count == variantsSize
+            XCTAssertEqual(offset, 3)
+            XCTAssertEqual(variants[0].glyph, font.getGlyphWithName("uni2190_size2"))
+            XCTAssertEqual(variants[0].advance, pts(2151))
+            XCTAssertEqual(variants[1].glyph, font.getGlyphWithName("uni2190_size3"))
+            XCTAssertEqual(variants[1].advance, pts(2401))
+            XCTAssertEqual(variants[2].glyph, font.getGlyphWithName("uni2190_size4"))
+            XCTAssertEqual(variants[2].advance, pts(2901))
+
+            glyph = font.getGlyphWithName("arrowup")
+            offset = 0
+            repeat {
+                count = variantsSize
+                font.getGlyphVariants(glyph, .BTT, offset, &count, &variants)
+                offset += count
+            } while count == variantsSize
+            XCTAssertEqual(offset, 4)
+            XCTAssertEqual(variants[0].glyph, font.getGlyphWithName("uni2191_size2"))
+            XCTAssertEqual(variants[0].advance, pts(2251))
+            XCTAssertEqual(variants[1].glyph, font.getGlyphWithName("uni2191_size3"))
+            XCTAssertEqual(variants[1].advance, pts(2501))
+            XCTAssertEqual(variants[2].glyph, font.getGlyphWithName("uni2191_size4"))
+            XCTAssertEqual(variants[2].advance, pts(3001))
+            XCTAssertEqual(variants[3].glyph, font.getGlyphWithName("uni2191_size5"))
+            XCTAssertEqual(variants[3].advance, pts(3751))
+        }
+    }
+
     func openOTFont(_ path: String, _ size: CGFloat) -> OTFont {
         OTFont(openCTFont(path, size))
     }

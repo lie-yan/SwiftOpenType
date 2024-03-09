@@ -7,6 +7,7 @@ public extension OTFont {
         return CGFloat(value ?? 0) * sizePerUnit
     }
 
+    @discardableResult
     func getGlyphVariants(
         _ glyph: UInt16,
         _ direction: TextDirection,
@@ -14,13 +15,74 @@ public extension OTFont {
         _ variantsCount: inout Int,
         _ variants: inout [MathGlyphVariant]
     ) -> Int {
-        glyph
-        direction
-        startOffset
-        variantsCount
-        variants
-        // TODO: implement this
+        precondition(startOffset >= 0)
+        precondition(variantsCount >= 0)
+        precondition(variants.count >= variantsCount)
+
+        if direction == .LTR || direction == .RTL {
+            if let table = mathTable?.mathVariantsTable?.getHorizGlyphConstructionTable(glyph) {
+                return getGlyphVariants(table, startOffset, &variantsCount, &variants)
+            }
+        } else if direction == .BTT || direction == .TTB {
+            if let table = mathTable?.mathVariantsTable?.getVertGlyphConstructionTable(glyph) {
+                return getGlyphVariants(table, startOffset, &variantsCount, &variants)
+            }
+        }
+
+        // FALL THRU
+        variantsCount = 0
         return 0
+    }
+
+    private func getGlyphVariants(_ table: MathGlyphConstructionTableV2,
+                                  _ startOffset: Int,
+                                  _ variantsCount: inout Int,
+                                  _ variants: inout [MathGlyphVariant]) -> Int
+    {
+        precondition(startOffset >= 0)
+        precondition(variantsCount >= 0)
+        precondition(variants.count >= variantsCount)
+
+        let count = Int(table.variantCount())
+        let start = min(startOffset, count)
+        let end = min(startOffset + variantsCount, count)
+        variantsCount = end - start
+
+        for i in 0 ..< variantsCount {
+            let j = start + i
+            let record = table.mathGlyphVariantRecord(index: j)
+
+            variants[i] = MathGlyphVariant(glyph: record.variantGlyph,
+                                           advance: CGFloat(record.advanceMeasurement) * sizePerUnit)
+        }
+        return variantsCount
+    }
+
+    func getGlyphVariantCount(
+        _ glyph: UInt16,
+        _ direction: TextDirection,
+        _ startOffset: Int = 0
+    ) -> Int {
+        if direction == .LTR || direction == .RTL {
+            if let table = mathTable?.mathVariantsTable?.getHorizGlyphConstructionTable(glyph) {
+                return getGlyphVariantCount(table, startOffset)
+            }
+        } else if direction == .BTT || direction == .TTB {
+            if let table = mathTable?.mathVariantsTable?.getVertGlyphConstructionTable(glyph) {
+                return getGlyphVariantCount(table, startOffset)
+            }
+        }
+
+        // FALL THRU
+        return 0
+    }
+
+    private func getGlyphVariantCount(_ table: MathGlyphConstructionTableV2,
+                                      _ startOffset: Int) -> Int
+    {
+        precondition(startOffset >= 0)
+        let count = Int(table.variantCount())
+        return count - min(startOffset, count)
     }
 }
 
@@ -33,6 +95,10 @@ public struct MathGlyphVariant {
     init(glyph: UInt16, advance: CGFloat) {
         self.glyph = glyph
         self.advance = advance
+    }
+    
+    init() {
+        self.init(glyph: 0, advance: 0)
     }
 }
 
