@@ -401,8 +401,34 @@ final class MathTableTests: XCTestCase {
             XCTAssertEqual(font.getGlyphKerningCount(glyph, .BottomLeft, 0), 7)
 
             var entries = [MathKernEntry](repeating: .init(), count: 20)
-            var count = entries.count
 
+            // case 1
+            var count = entries.count
+            XCTAssertEqual(font.getGlyphKernings(glyph, .TopRight, 0, &count, &entries), 10)
+            XCTAssertEqual(count, 10)
+            XCTAssertEqual(entries[0].maxCorrectionHeight, pts(14))
+            XCTAssertEqual(entries[0].kernValue, pts(31))
+            XCTAssertEqual(entries[1].maxCorrectionHeight, pts(23))
+            XCTAssertEqual(entries[1].kernValue, pts(52))
+            XCTAssertEqual(entries[2].maxCorrectionHeight, pts(32))
+            XCTAssertEqual(entries[2].kernValue, pts(73))
+            XCTAssertEqual(entries[3].maxCorrectionHeight, pts(41))
+            XCTAssertEqual(entries[3].kernValue, pts(94))
+            XCTAssertEqual(entries[4].maxCorrectionHeight, pts(50))
+            XCTAssertEqual(entries[4].kernValue, pts(115))
+            XCTAssertEqual(entries[5].maxCorrectionHeight, pts(59))
+            XCTAssertEqual(entries[5].kernValue, pts(136))
+            XCTAssertEqual(entries[6].maxCorrectionHeight, pts(68))
+            XCTAssertEqual(entries[6].kernValue, pts(157))
+            XCTAssertEqual(entries[7].maxCorrectionHeight, pts(77))
+            XCTAssertEqual(entries[7].kernValue, pts(178))
+            XCTAssertEqual(entries[8].maxCorrectionHeight, pts(86))
+            XCTAssertEqual(entries[8].kernValue, pts(199))
+            XCTAssertEqual(entries[9].maxCorrectionHeight, CGFloat.infinity)
+            XCTAssertEqual(entries[9].kernValue, pts(220))
+
+            // case 2
+            count = entries.count
             XCTAssertEqual(font.getGlyphKernings(glyph, .TopLeft, 0, &count, &entries), 3)
             XCTAssertEqual(count, 3)
             XCTAssertEqual(entries[0].maxCorrectionHeight, pts(20))
