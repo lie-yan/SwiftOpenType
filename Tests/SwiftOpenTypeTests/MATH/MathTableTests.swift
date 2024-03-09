@@ -19,7 +19,7 @@ final class MathTableTests: XCTestCase {
 
     func testMathConstants() {
         let font = openOTFont("fonts/latinmodern-math.otf", 12)
-        XCTAssertTrue(font.mathTable != nil)
+        XCTAssert(font.mathTable != nil)
 
         let ruleThickness: CGFloat = 0.48
         let commonGap: CGFloat = 1.44
@@ -303,7 +303,7 @@ final class MathTableTests: XCTestCase {
 
             glyph = font.getGlyphWithName("H")
             XCTAssert(table?.getCoverageIndex(glyph) != nil)
-            XCTAssertTrue(font.isGlyphExtendedShape(glyph))
+            XCTAssert(font.isGlyphExtendedShape(glyph))
         }
     }
 
@@ -468,6 +468,21 @@ final class MathTableTests: XCTestCase {
         }
     }
 
+    func testGetMinConnectorOverlap() {
+        do {
+            let font = openOTFont("fonts/MathTestFontEmpty.otf", 10)
+            XCTAssertEqual(font.getMinConnectorOverlap(.LTR), 0)
+            XCTAssertEqual(font.getMinConnectorOverlap(.TTB), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontPartial1.otf", 10)
+            let pts = font.toPointsClosure()
+            XCTAssertEqual(font.getMinConnectorOverlap(.LTR), pts(54))
+            XCTAssertEqual(font.getMinConnectorOverlap(.TTB), pts(54))
+        }
+    }
+
     func testGetGlyphVariants() {
         do {
             let font = openOTFont("fonts/MathTestFontEmpty.otf", 10)
@@ -553,6 +568,134 @@ final class MathTableTests: XCTestCase {
             XCTAssertEqual(variants[3].glyph, font.getGlyphWithName("uni2191_size5"))
             XCTAssertEqual(variants[3].advance, pts(3751))
         }
+    }
+
+    func testGetGlyphAssembly() {
+        do {
+            let font = openOTFont("fonts/MathTestFontEmpty.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .RTL), 0)
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .BTT), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontPartial1.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .RTL), 0)
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .BTT), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontPartial2.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .RTL), 0)
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .BTT), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontPartial3.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .RTL), 0)
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .BTT), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontPartial4.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .RTL), 0)
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .BTT), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontFull.otf", 10)
+            let pts = font.toPointsClosure()
+
+            let partsSize = 20
+            var parts = [GlyphPart](repeating: .init(), count: partsSize)
+            var count = 0
+            var itCorr: CGFloat = 0
+            var offset = 0
+
+            var glyph = font.getGlyphWithName("arrowright")
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .BTT), 0)
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .RTL), 3)
+
+            glyph = font.getGlyphWithName("arrowdown")
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .BTT), 5)
+            XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .RTL), 0)
+
+            glyph = font.getGlyphWithName("arrowright")
+            offset = 0
+            repeat {
+                count = partsSize
+                font.getGlyphAssembly(glyph, .RTL, offset, &count, &parts, &itCorr)
+                offset += count
+            } while count == partsSize
+            XCTAssertEqual(offset, 3)
+            XCTAssertEqual(parts[0].glyph, font.getGlyphWithName("left"))
+            XCTAssertEqual(parts[0].startConnectorLength, pts(400))
+            XCTAssertEqual(parts[0].endConnectorLength, pts(192))
+            XCTAssertEqual(parts[0].fullAdvance, pts(1000))
+            XCTAssert(!parts[0].isExtender())
+            XCTAssertEqual(parts[1].glyph, font.getGlyphWithName("horizontal"))
+            XCTAssertEqual(parts[1].startConnectorLength, pts(262))
+            XCTAssertEqual(parts[1].endConnectorLength, pts(400))
+            XCTAssertEqual(parts[1].fullAdvance, pts(1000))
+            XCTAssert(parts[1].isExtender())
+            XCTAssertEqual(parts[2].glyph, font.getGlyphWithName("right"))
+            XCTAssertEqual(parts[2].startConnectorLength, pts(158))
+            XCTAssertEqual(parts[2].endConnectorLength, pts(227))
+            XCTAssertEqual(parts[2].fullAdvance, pts(1000))
+            XCTAssert(!parts[2].isExtender())
+
+            glyph = font.getGlyphWithName("arrowdown")
+            offset = 0
+            repeat {
+                count = partsSize
+                font.getGlyphAssembly(glyph, .BTT, offset, &count, &parts, &itCorr)
+                offset += count
+            } while count == partsSize
+            XCTAssertEqual(offset, 5)
+            XCTAssertEqual(parts[0].glyph, font.getGlyphWithName("bottom"))
+            XCTAssertEqual(parts[0].startConnectorLength, pts(365))
+            XCTAssertEqual(parts[0].endConnectorLength, pts(158))
+            XCTAssertEqual(parts[0].fullAdvance, pts(1000))
+            XCTAssert(!parts[0].isExtender())
+            XCTAssertEqual(parts[1].glyph, font.getGlyphWithName("vertical"))
+            XCTAssertEqual(parts[1].startConnectorLength, pts(227))
+            XCTAssertEqual(parts[1].endConnectorLength, pts(365))
+            XCTAssertEqual(parts[1].fullAdvance, pts(1000))
+            XCTAssert(parts[1].isExtender())
+            XCTAssertEqual(parts[2].glyph, font.getGlyphWithName("center"))
+            XCTAssertEqual(parts[2].startConnectorLength, pts(54))
+            XCTAssertEqual(parts[2].endConnectorLength, pts(158))
+            XCTAssertEqual(parts[2].fullAdvance, pts(1000))
+            XCTAssert(!parts[2].isExtender())
+            XCTAssertEqual(parts[3].glyph, font.getGlyphWithName("vertical"))
+            XCTAssertEqual(parts[3].startConnectorLength, pts(400))
+            XCTAssertEqual(parts[3].endConnectorLength, pts(296))
+            XCTAssertEqual(parts[3].fullAdvance, pts(1000))
+            XCTAssert(parts[3].isExtender())
+            XCTAssertEqual(parts[4].glyph, font.getGlyphWithName("top"))
+            XCTAssertEqual(parts[4].startConnectorLength, pts(123))
+            XCTAssertEqual(parts[4].endConnectorLength, pts(192))
+            XCTAssertEqual(parts[4].fullAdvance, pts(1000))
+            XCTAssert(!parts[4].isExtender())
+
+        }
+    }
+
+    func testDebug() {
+        let font = openOTFont("fonts/MathTestFontFull.otf", 10)
+        let pts = font.toPointsClosure()
+
+        let partsSize = 20
+        var parts = [GlyphPart](repeating: .init(), count: partsSize)
+        var count = 0
+        var offset = 0
+
+        var glyph = font.getGlyphWithName("arrowright")
+        XCTAssertEqual(font.getGlyphAssemblyPartsCount(glyph, .RTL), 3)
     }
 
     func openOTFont(_ path: String, _ size: CGFloat) -> OTFont {

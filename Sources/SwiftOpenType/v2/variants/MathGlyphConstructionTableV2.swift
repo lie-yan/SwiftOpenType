@@ -55,13 +55,13 @@ public class GlyphAssemblyTableV2 {
 
     /// Number of parts in this assembly.
     public func partCount() -> UInt16 {
-        readUInt16(base + 2)
+        readUInt16(base + MathValueRecord.byteSize)
     }
 
     /// Array of part records, from left to right (for assemblies that extend
     /// horizontally) or bottom to top (for assemblies that extend vertically).
     public func partRecords(index: Int) -> GlyphPartRecord {
-        GlyphPartRecord.read(base + 4 + index * GlyphPartRecord.byteSize)
+        GlyphPartRecord.read(base + MathValueRecord.byteSize + 2 + index * GlyphPartRecord.byteSize)
     }
 
     // MARK: - Query functions

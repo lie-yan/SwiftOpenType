@@ -2,7 +2,7 @@ import CoreFoundation
 
 public extension OTFont {
     /// Returns requested minimum connector overlap or zero
-    func getMinConnectorOverlap(_: TextOrientation) -> CGFloat {
+    func getMinConnectorOverlap(_: TextDirection) -> CGFloat {
         let value = mathTable?.mathVariantsTable?.minConnectorOverlap()
         return CGFloat(value ?? 0) * sizePerUnit
     }
@@ -55,12 +55,12 @@ public extension OTFont {
 
     @discardableResult
     func getGlyphAssembly(
-        glyph: UInt16,
-        direction: TextDirection,
-        startOffset: Int,
-        partsCount: inout Int,
-        parts: inout [GlyphPart],
-        italicsCorrection: inout CGFloat
+        _ glyph: UInt16,
+        _ direction: TextDirection,
+        _ startOffset: Int,
+        _ partsCount: inout Int,
+        _ parts: inout [GlyphPart],
+        _ italicsCorrection: inout CGFloat
     ) -> Int {
         if direction == .LTR || direction == .RTL {
             if let table = mathTable?.mathVariantsTable?.getHorizGlyphConstructionTable(glyph)?.glyphAssemblyTable {
@@ -78,9 +78,9 @@ public extension OTFont {
     }
 
     func getGlyphAssemblyPartsCount(
-        glyph: UInt16,
-        direction: TextDirection,
-        startOffset: Int = 0
+        _ glyph: UInt16,
+        _ direction: TextDirection,
+        _ startOffset: Int = 0
     ) -> Int {
         if direction == .LTR || direction == .RTL {
             if let table = mathTable?.mathVariantsTable?.getHorizGlyphConstructionTable(glyph)?.glyphAssemblyTable {
@@ -154,7 +154,7 @@ public extension OTFont {
                                  startConnectorLength: CGFloat(record.startConnectorLength) * sizePerUnit,
                                  endConnectorLength: CGFloat(record.endConnectorLength) * sizePerUnit,
                                  fullAdvance: CGFloat(record.fullAdvance) * sizePerUnit,
-                                 flags: PartFlags(rawValue: record.partFlags)!)
+                                 flags: PartFlags(rawValue: record.partFlags) ?? .default)
         }
 
         italicsCorrection = CGFloat(table.getItalicsCorrection()) * sizePerUnit
@@ -206,6 +206,10 @@ public struct GlyphPart {
         self.endConnectorLength = endConnectorLength
         self.fullAdvance = fullAdvance
         self.flags = flags
+    }
+    
+    init() {
+        self.init(glyph: 0, startConnectorLength: 0, endConnectorLength: 0, fullAdvance: 0, flags: .RESERVED)
     }
 
     public func isExtender() -> Bool {

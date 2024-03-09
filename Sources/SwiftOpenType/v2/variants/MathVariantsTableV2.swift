@@ -187,6 +187,7 @@ public struct GlyphPartRecord {
 }
 
 public enum PartFlags: UInt16 {
+    case `default` = 0
     case EXTENDER_FLAG = 0x0001
     case RESERVED = 0xFFFE
 }
