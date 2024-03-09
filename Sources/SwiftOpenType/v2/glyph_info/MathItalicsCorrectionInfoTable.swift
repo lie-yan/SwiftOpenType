@@ -40,12 +40,12 @@ public class MathItalicsCorrectionInfoTable {
     
     // MARK: - helper
     
-    public var coverageTable: CoverageTableV2 {
+    public var coverageTable: CoverageTable {
         self._coverageTable
     }
     
-    private lazy var _coverageTable: CoverageTableV2 = {
-        CoverageTableV2(base: self.base + Int(self.italicsCorrectionCoverageOffset()))
+    private lazy var _coverageTable: CoverageTable = {
+        CoverageTable(base: self.base + Int(self.italicsCorrectionCoverageOffset()))
     }()
 }
 

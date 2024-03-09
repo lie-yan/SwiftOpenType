@@ -44,7 +44,7 @@ public class MathGlyphInfoTable {
         _mathTopAccentAttachmentTable
     }
 
-    public var extendedShapeCoverageTable: CoverageTableV2? {
+    public var extendedShapeCoverageTable: CoverageTable? {
         _extendedShapeCoverageTable
     }
 
@@ -74,10 +74,10 @@ public class MathGlyphInfoTable {
         }
     }()
 
-    private lazy var _extendedShapeCoverageTable: CoverageTableV2? = {
+    private lazy var _extendedShapeCoverageTable: CoverageTable? = {
         let offset = extendedShapeCoverageOffset()
         if offset != 0 {
-            return CoverageTableV2(base: self.base + Int(offset))
+            return CoverageTable(base: self.base + Int(offset))
         } else {
             return nil
         }

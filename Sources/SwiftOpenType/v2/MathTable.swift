@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public class MathTableV2 {
+public class MathTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
@@ -32,7 +32,7 @@ public class MathTableV2 {
 
     public var mathGlyphInfoTable: MathGlyphInfoTable? { _mathGlyphInfoTable }
 
-    public var mathVariantsTable: MathVariantsTableV2? { _mathVariantsTable }
+    public var mathVariantsTable: MathVariantsTable? { _mathVariantsTable }
 
     // MARK: - lazy variables
 
@@ -50,10 +50,10 @@ public class MathTableV2 {
             : nil
     }()
 
-    private lazy var _mathVariantsTable: MathVariantsTableV2? = {
+    private lazy var _mathVariantsTable: MathVariantsTable? = {
         let offset = self.mathVariantsOffset()
         return (offset != 0)
-            ? MathVariantsTableV2(base: self.base + Int(offset), context: context)
+            ? MathVariantsTable(base: self.base + Int(offset), context: context)
             : nil
     }()
 }
@@ -106,18 +106,6 @@ public struct MathValueRecord {
         self.deviceOffset = deviceOffset
     }
 
-    // TODO: remove this
-    static func read(data: CFData, offset: Int) -> MathValueRecord {
-        let value = data.readFWORD(offset)
-        let deviceOffset = data.readOffset16(offset + 2)
-        return MathValueRecord(value: value, deviceOffset: deviceOffset)
-    }
-
-    // TODO: remove this
-    static func read(data: CFData, parentOffset: Offset16, offset: Int) -> MathValueRecord {
-        read(data: data, offset: Int(parentOffset) + offset)
-    }
-
     static func read(_ ptr: UnsafePointer<UInt8>) -> MathValueRecord {
         MathValueRecord(value: readFWORD(ptr + 0),
                         deviceOffset: readOffset16(ptr + 2))
@@ -131,7 +119,7 @@ public struct MathValueRecord {
             return Int32(record.value)
         }
 
-        let deviceTable = DeviceTableV2(base: parentBase + Int(record.deviceOffset))
+        let deviceTable = DeviceTable(base: parentBase + Int(record.deviceOffset))
         let deltaValue = deviceTable.getDeltaValue(context.ppem, unitsPerEm: context.unitsPerEm)
         return Int32(record.value) + deltaValue
     }

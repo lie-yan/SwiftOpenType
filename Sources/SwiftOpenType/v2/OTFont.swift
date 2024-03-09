@@ -32,11 +32,11 @@ public class OTFont {
 
     // MARK: - tables
 
-    public var mathTable: MathTableV2? { _mathTable }
+    public var mathTable: MathTable? { _mathTable }
 
-    private lazy var _mathTable: MathTableV2? = {
+    private lazy var _mathTable: MathTable? = {
         if let data = self.getMathTableData() {
-            let table = MathTableV2(base: CFDataGetBytePtr(data), context: self.getContextData())
+            let table = MathTable(base: CFDataGetBytePtr(data), context: self.getContextData())
             if table.majorVersion() == 1 {
                 return table
             }

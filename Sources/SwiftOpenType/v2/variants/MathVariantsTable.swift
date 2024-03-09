@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public class MathVariantsTableV2 {
+public class MathVariantsTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
@@ -53,33 +53,33 @@ public class MathVariantsTableV2 {
 
     // MARK: - Tables
 
-    public var vertGlyphCoverageTable: CoverageTableV2 {
-        CoverageTableV2(base: base + Int(vertGlyphCoverageOffset()))
+    public var vertGlyphCoverageTable: CoverageTable {
+        CoverageTable(base: base + Int(vertGlyphCoverageOffset()))
     }
 
-    public var horizGlyphCoverageTable: CoverageTableV2 {
-        CoverageTableV2(base: base + Int(horizGlyphCoverageOffset()))
+    public var horizGlyphCoverageTable: CoverageTable {
+        CoverageTable(base: base + Int(horizGlyphCoverageOffset()))
     }
 
-    public func vertGlyphConstructionTable(_ index: Int) -> MathGlyphConstructionTableV2 {
+    public func vertGlyphConstructionTable(_ index: Int) -> MathGlyphConstructionTable {
         let offset = vertGlyphConstructionOffsets(index)
-        return MathGlyphConstructionTableV2(base: base + Int(offset), context: context)
+        return MathGlyphConstructionTable(base: base + Int(offset), context: context)
     }
 
-    public func horizGlyphConstructionTable(_ index: Int) -> MathGlyphConstructionTableV2 {
+    public func horizGlyphConstructionTable(_ index: Int) -> MathGlyphConstructionTable {
         let offset = horizGlyphConstructionOffsets(index)
-        return MathGlyphConstructionTableV2(base: base + Int(offset), context: context)
+        return MathGlyphConstructionTable(base: base + Int(offset), context: context)
     }
 
     // MARK: - Query functions
 
-    public func getVertGlyphConstructionTable(_ glyph: UInt16) -> MathGlyphConstructionTableV2? {
+    public func getVertGlyphConstructionTable(_ glyph: UInt16) -> MathGlyphConstructionTable? {
         vertGlyphCoverageTable.getCoverageIndex(glyph).map {
             self.vertGlyphConstructionTable($0)
         }
     }
 
-    public func getHorizGlyphConstructionTable(_ glyph: UInt16) -> MathGlyphConstructionTableV2? {
+    public func getHorizGlyphConstructionTable(_ glyph: UInt16) -> MathGlyphConstructionTable? {
         horizGlyphCoverageTable.getCoverageIndex(glyph).map {
             self.horizGlyphConstructionTable($0)
         }
@@ -101,13 +101,6 @@ public struct MathGlyphVariantRecord {
     init(variantGlyph: UInt16, advanceMeasurement: UFWORD) {
         self.variantGlyph = variantGlyph
         self.advanceMeasurement = advanceMeasurement
-    }
-
-    // Deprecated
-    static func read(data: CFData, offset: Int) -> MathGlyphVariantRecord {
-        let variantGlyph = data.readUInt16(offset)
-        let advanceMeasurement = data.readUFWORD(offset + 2)
-        return MathGlyphVariantRecord(variantGlyph: variantGlyph, advanceMeasurement: advanceMeasurement)
     }
 
     static func read(_ ptr: UnsafePointer<UInt8>) -> MathGlyphVariantRecord {
@@ -160,21 +153,6 @@ public struct GlyphPartRecord {
 
     public func isExtender() -> Bool {
         partFlags == PartFlags.EXTENDER_FLAG.rawValue
-    }
-
-    // Deprecated
-    static func read(data: CFData, offset: Int) -> GlyphPartRecord {
-        let glyphID = data.readUInt16(offset)
-        let startConnectorLength = data.readUFWORD(offset + 2)
-        let endConnectorLength = data.readUFWORD(offset + 4)
-        let fullAdvance = data.readUFWORD(offset + 6)
-        let partFlags = data.readUInt16(offset + 8)
-
-        return GlyphPartRecord(glyphID: glyphID,
-                               startConnectorLength: startConnectorLength,
-                               endConnectorLength: endConnectorLength,
-                               fullAdvance: fullAdvance,
-                               partFlags: partFlags)
     }
 
     static func read(_ ptr: UnsafePointer<UInt8>) -> GlyphPartRecord {

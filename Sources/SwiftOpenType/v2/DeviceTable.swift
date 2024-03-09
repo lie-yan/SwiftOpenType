@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public class DeviceTableV2 {
+public class DeviceTable {
     let base: UnsafePointer<UInt8>
     
     init(base: UnsafePointer<UInt8>) {

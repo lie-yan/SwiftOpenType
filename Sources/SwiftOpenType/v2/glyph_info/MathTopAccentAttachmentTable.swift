@@ -39,9 +39,9 @@ public class MathTopAccentAttachmentTable {
 
     // MARK: - helper
 
-    public var coverageTable: CoverageTableV2 {
+    public var coverageTable: CoverageTable {
         _coverageTable
     }
 
-    private lazy var _coverageTable: CoverageTableV2 = .init(base: self.base + Int(self.topAccentCoverageOffset()))
+    private lazy var _coverageTable: CoverageTable = .init(base: self.base + Int(self.topAccentCoverageOffset()))
 }

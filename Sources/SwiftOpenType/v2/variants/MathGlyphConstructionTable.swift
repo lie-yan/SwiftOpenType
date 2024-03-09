@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public class MathGlyphConstructionTableV2 {
+public class MathGlyphConstructionTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
@@ -23,21 +23,21 @@ public class MathGlyphConstructionTableV2 {
     }
 
     /// MathGlyphVariantRecords for alternative variants of the glyphs.
-    public func mathGlyphVariantRecord(index: Int) -> MathGlyphVariantRecord {
+    public func mathGlyphVariantRecord(_ index: Int) -> MathGlyphVariantRecord {
         MathGlyphVariantRecord.read(base + 4 + index * MathGlyphVariantRecord.byteSize)
     }
 
     // MARK: - table
 
-    public var glyphAssemblyTable: GlyphAssemblyTableV2? {
+    public var glyphAssemblyTable: GlyphAssemblyTable? {
         let offset = glyphAssemblyOffset()
         return (offset != 0)
-            ? GlyphAssemblyTableV2(base: base + Int(offset), context: context)
+            ? GlyphAssemblyTable(base: base + Int(offset), context: context)
             : nil
     }
 }
 
-public class GlyphAssemblyTableV2 {
+public class GlyphAssemblyTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 

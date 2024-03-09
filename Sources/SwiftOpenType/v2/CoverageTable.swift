@@ -1,6 +1,6 @@
 import CoreFoundation
 
-public class CoverageTableV2 {
+public class CoverageTable {
     let base: UnsafePointer<UInt8>
 
     init(base: UnsafePointer<UInt8>) {
@@ -111,16 +111,6 @@ public struct RangeRecord {
         self.startGlyphID = startGlyphID
         self.endGlyphID = endGlyphID
         self.startCoverageIndex = startCoverageIndex
-    }
-
-    // deprecated
-    static func read(data: CFData, offset: Int) -> RangeRecord {
-        let startGlyphID = data.readUInt16(offset)
-        let endGlyphID = data.readUInt16(offset + 2)
-        let startCoverageIndex = data.readUInt16(offset + 4)
-        return RangeRecord(startGlyphID: startGlyphID,
-                           endGlyphID: endGlyphID,
-                           startCoverageIndex: startCoverageIndex)
     }
 
     static func read(_ ptr: UnsafePointer<UInt8>) -> RangeRecord {

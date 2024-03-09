@@ -38,19 +38,19 @@ public class MathKernInfoTable {
     /// Returns the offset for given glyph id and corner
     private func getMathKernOffset(_ glyph: UInt16, _ corner: MathKernCorner) -> Offset16? {
         coverageTable().getCoverageIndex(glyph).map {
-            self.mathKernOffset($0, corner) 
+            self.mathKernOffset($0, corner)
         }
     }
 
     // MARK: - Sub-tables
 
-    public func coverageTable() -> CoverageTableV2 {
-        CoverageTableV2(base: base + Int(mathKernCoverageOffset()))
+    public func coverageTable() -> CoverageTable {
+        CoverageTable(base: base + Int(mathKernCoverageOffset()))
     }
 
-    public func getMathKernTable(_ glyph: UInt16, _ corner: MathKernCorner) -> MathKernTableV2? {
+    public func getMathKernTable(_ glyph: UInt16, _ corner: MathKernCorner) -> MathKernTable? {
         getMathKernOffset(glyph, corner).flatMap {
-            ($0 != 0) ? MathKernTableV2(base: base + Int($0), context: self.context) : nil
+            ($0 != 0) ? MathKernTable(base: base + Int($0), context: self.context) : nil
         }
     }
 
@@ -70,7 +70,7 @@ public class MathKernInfoTable {
     }
 }
 
-public class MathKernTableV2 {
+public class MathKernTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
