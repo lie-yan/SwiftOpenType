@@ -681,7 +681,6 @@ final class MathTableTests: XCTestCase {
             XCTAssertEqual(parts[4].endConnectorLength, pts(192))
             XCTAssertEqual(parts[4].fullAdvance, pts(1000))
             XCTAssert(!parts[4].isExtender())
-
         }
     }
 
