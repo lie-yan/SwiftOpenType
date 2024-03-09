@@ -400,7 +400,7 @@ final class MathTableTests: XCTestCase {
             XCTAssertEqual(font.getGlyphKerningCount(glyph, .BottomRight, 0), 9)
             XCTAssertEqual(font.getGlyphKerningCount(glyph, .BottomLeft, 0), 7)
 
-            var entries = Array(repeating: SwiftOpenType.MathKernEntry(), count: 20)
+            var entries = [MathKernEntry](repeating: .init(), count: 20)
             var count = entries.count
 
             XCTAssertEqual(font.getGlyphKernings(glyph, .TopLeft, 0, &count, &entries), 3)
