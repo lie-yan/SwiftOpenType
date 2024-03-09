@@ -89,35 +89,120 @@ public class MathVariantsTableV2 {
 //    }
 }
 
-public struct MathGlyphVariant {
-    /// The glyph index of the variant
-    public let glyph: UInt16
-    /// The advance width of the variant
-    public let advance: CGFloat
+public struct MathGlyphVariantRecord {
+    static let byteSize = 4
 
-    init(glyph: UInt16, advance: CGFloat) {
-        self.glyph = glyph
-        self.advance = advance
+    /// Glyph ID for the variant.
+    public let variantGlyph: UInt16
+    /// Advance width/height, in design units, of the variant, in the direction of requested glyph extension.
+    public let advanceMeasurement: UFWORD
+
+    init() {
+        self.init(variantGlyph: 0, advanceMeasurement: 0)
+    }
+
+    init(variantGlyph: UInt16, advanceMeasurement: UFWORD) {
+        self.variantGlyph = variantGlyph
+        self.advanceMeasurement = advanceMeasurement
+    }
+
+    // Deprecated
+    static func read(data: CFData, offset: Int) -> MathGlyphVariantRecord {
+        let variantGlyph = data.readUInt16(offset)
+        let advanceMeasurement = data.readUFWORD(offset + 2)
+        return MathGlyphVariantRecord(variantGlyph: variantGlyph, advanceMeasurement: advanceMeasurement)
+    }
+
+    static func read(_ ptr: UnsafePointer<UInt8>) -> MathGlyphVariantRecord {
+        MathGlyphVariantRecord(variantGlyph: readUInt16(ptr + 0),
+                               advanceMeasurement: readUFWORD(ptr + 2))
     }
 }
 
-public struct GlyphPart {
-    public let glyph: UInt16
-    public let startConnectorLength: CGFloat
-    public let endConnectorLength: CGFloat
-    public let fullAdvance: CGFloat
-    public let flags: PartFlags
+public struct GlyphPartRecord {
+    static let byteSize = 10
 
-    init(glyph: UInt16,
-         startConnectorLength: CGFloat, 
-         endConnectorLength: CGFloat,
-         fullAdvance: CGFloat,
-         flags: PartFlags)
+    /// Glyph ID for the part.
+    public let glyphID: UInt16
+
+    /// Advance width/ height, in design units, of the straight bar connector material
+    /// at the start of the glyph in the direction of the extension (the left end for
+    /// horizontal extension, the bottom end for vertical extension).
+    public let startConnectorLength: UFWORD
+
+    /// Advance width/ height, in design units, of the straight bar connector material
+    /// at the end of the glyph in the direction of the extension (the right end for
+    /// horizontal extension, the top end for vertical extension).
+    public let endConnectorLength: UFWORD
+
+    /// Full advance width/height for this part in the direction of the extension,
+    /// in design units.
+    public let fullAdvance: UFWORD
+
+    /// Part qualifiers. PartFlags enumeration currently uses only one bit:
+    /// 0x0001 EXTENDER_FLAG: If set, the part can be skipped or repeated.
+    /// 0xFFFE Reserved.
+    public let partFlags: UInt16
+
+    init() {
+        self.init(glyphID: 0, startConnectorLength: 0, endConnectorLength: 0, fullAdvance: 0, partFlags: 0)
+    }
+
+    init(glyphID: UInt16,
+         startConnectorLength: UFWORD,
+         endConnectorLength: UFWORD,
+         fullAdvance: UFWORD,
+         partFlags: UInt16)
     {
-        self.glyph = glyph
+        self.glyphID = glyphID
         self.startConnectorLength = startConnectorLength
         self.endConnectorLength = endConnectorLength
         self.fullAdvance = fullAdvance
-        self.flags = flags
+        self.partFlags = partFlags
     }
+
+    public func isExtender() -> Bool {
+        partFlags == PartFlags.EXTENDER_FLAG.rawValue
+    }
+
+    static func read(data: CFData, offset: Int) -> GlyphPartRecord {
+        let glyphID = data.readUInt16(offset)
+        let startConnectorLength = data.readUFWORD(offset + 2)
+        let endConnectorLength = data.readUFWORD(offset + 4)
+        let fullAdvance = data.readUFWORD(offset + 6)
+        let partFlags = data.readUInt16(offset + 8)
+
+        return GlyphPartRecord(glyphID: glyphID,
+                               startConnectorLength: startConnectorLength,
+                               endConnectorLength: endConnectorLength,
+                               fullAdvance: fullAdvance,
+                               partFlags: partFlags)
+    }
+
+    static func read(_ ptr: UnsafePointer<UInt8>) -> GlyphPartRecord {
+        GlyphPartRecord(glyphID: readUInt16(ptr),
+                        startConnectorLength: readUFWORD(ptr + 2),
+                        endConnectorLength: readUFWORD(ptr + 4),
+                        fullAdvance: readUFWORD(ptr + 6),
+                        partFlags: readUInt16(ptr + 8))
+    }
+}
+
+public enum PartFlags: UInt16 {
+    case EXTENDER_FLAG = 0x0001
+    case RESERVED = 0xFFFE
+}
+
+public enum TextOrientation: UInt32 {
+    case `default` = 0
+    case horizontal = 1
+    case vertical = 2
+}
+
+public enum TextDirection: UInt32 {
+    case Invalid = 0
+    case LTR = 1
+    case RTL = 2
+    case TTB = 3
+    case BTT = 4
 }

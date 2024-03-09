@@ -23,3 +23,36 @@ public extension OTFont {
         return 0
     }
 }
+
+public struct MathGlyphVariant {
+    /// The glyph index of the variant
+    public let glyph: UInt16
+    /// The advance width of the variant
+    public let advance: CGFloat
+
+    init(glyph: UInt16, advance: CGFloat) {
+        self.glyph = glyph
+        self.advance = advance
+    }
+}
+
+public struct GlyphPart {
+    public let glyph: UInt16
+    public let startConnectorLength: CGFloat
+    public let endConnectorLength: CGFloat
+    public let fullAdvance: CGFloat
+    public let flags: PartFlags
+
+    init(glyph: UInt16,
+         startConnectorLength: CGFloat,
+         endConnectorLength: CGFloat,
+         fullAdvance: CGFloat,
+         flags: PartFlags)
+    {
+        self.glyph = glyph
+        self.startConnectorLength = startConnectorLength
+        self.endConnectorLength = endConnectorLength
+        self.fullAdvance = fullAdvance
+        self.flags = flags
+    }
+}
