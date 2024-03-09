@@ -55,4 +55,8 @@ public struct GlyphPart {
         self.fullAdvance = fullAdvance
         self.flags = flags
     }
+
+    public func isExtender() -> Bool {
+        flags == PartFlags.EXTENDER_FLAG
+    }
 }

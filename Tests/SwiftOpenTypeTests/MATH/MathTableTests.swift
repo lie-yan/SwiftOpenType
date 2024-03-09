@@ -339,10 +339,10 @@ final class MathTableTests: XCTestCase {
             let table = font.mathTable!.mathGlyphInfoTable!.mathKernInfoTable!
             let glyph = font.getGlyphWithName("space")
 
-            XCTAssertEqual(table.getKernValue(glyph, .TopRight, 0), 0)
-            XCTAssertEqual(table.getKernValue(glyph, .TopLeft, 0), 0)
-            XCTAssertEqual(table.getKernValue(glyph, .BottomRight, 0), 0)
-            XCTAssertEqual(table.getKernValue(glyph, .BottomLeft, 0), 0)
+            XCTAssertEqual(table.getKernValue(glyph, .TopRight, 0), nil)
+            XCTAssertEqual(table.getKernValue(glyph, .TopLeft, 0), nil)
+            XCTAssertEqual(table.getKernValue(glyph, .BottomRight, 0), nil)
+            XCTAssertEqual(table.getKernValue(glyph, .BottomLeft, 0), nil)
 
             XCTAssertEqual(font.getGlyphKerning(glyph, .TopRight, 0), 0)
             XCTAssertEqual(font.getGlyphKerning(glyph, .TopLeft, 0), 0)
@@ -390,6 +390,33 @@ final class MathTableTests: XCTestCase {
     }
 
     func testGetGlyphKernings() {
+        do {
+            let font = openOTFont("fonts/MathTestFontEmpty.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .TopRight), 0)
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .TopLeft), 0)
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .BottomRight), 0)
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .BottomLeft), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontPartial2.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .TopRight), 0)
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .TopLeft), 0)
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .BottomRight), 0)
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .BottomLeft), 0)
+        }
+
+        do {
+            let font = openOTFont("fonts/MathTestFontPartial3.otf", 10)
+            let glyph = font.getGlyphWithName("space")
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .TopRight), 0)
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .TopLeft), 0)
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .BottomRight), 0)
+            XCTAssertEqual(font.getGlyphKerningCount(glyph, .BottomLeft), 0)
+        }
+
         do {
             let font = openOTFont("fonts/MathTestFontFull.otf", 10.0)
             let glyph = font.getGlyphWithName("I")

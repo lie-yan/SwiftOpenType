@@ -165,6 +165,7 @@ public struct GlyphPartRecord {
         partFlags == PartFlags.EXTENDER_FLAG.rawValue
     }
 
+    // Deprecated
     static func read(data: CFData, offset: Int) -> GlyphPartRecord {
         let glyphID = data.readUInt16(offset)
         let startConnectorLength = data.readUFWORD(offset + 2)
