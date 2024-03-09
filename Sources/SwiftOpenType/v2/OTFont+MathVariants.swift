@@ -12,7 +12,7 @@ public extension OTFont {
         _ direction: TextDirection,
         _ startOffset: Int,
         _ variantsCount: inout Int,
-        _ variants: inout [GlyphVariant]
+        _ variants: inout [MathGlyphVariant]
     ) -> Int {
         glyph
         direction

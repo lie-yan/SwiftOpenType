@@ -115,7 +115,7 @@ public class MathKernTableV2 {
 
     public func getKernEntries(_ startOffset: Int,
                                _ entriesCount: inout Int,
-                               _ kernEntries: inout [MathKernEntryDU]) -> Int
+                               _ kernEntries: inout [MathKernEntryRecord]) -> Int
     {
         precondition(entriesCount >= 0)
         precondition(kernEntries.count >= entriesCount)
@@ -137,8 +137,8 @@ public class MathKernTableV2 {
             }
 
             let kernValue = getKernValue(index: j)
-            kernEntries[i] = MathKernEntryDU(maxCorrectionHeight: maxHeight,
-                                             kernValue: kernValue)
+            kernEntries[i] = MathKernEntryRecord(maxCorrectionHeight: maxHeight,
+                                                 kernValue: kernValue)
         }
         return entriesCount
     }
@@ -183,7 +183,7 @@ public class MathKernTableV2 {
 }
 
 /// MathKernEntry in design units
-public struct MathKernEntryDU {
+public struct MathKernEntryRecord {
     public let maxCorrectionHeight: Int32
     public let kernValue: Int32
 
