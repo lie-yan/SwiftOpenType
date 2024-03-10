@@ -1,6 +1,5 @@
 import CoreFoundation
-
-public class MathKernInfoTable {
+class MathKernInfoTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
@@ -12,19 +11,19 @@ public class MathKernInfoTable {
     // MARK: - table fields
 
     /// Offset to Coverage table, from the beginning of the MathKernInfo table.
-    public func mathKernCoverageOffset() -> Offset16 {
+    func mathKernCoverageOffset() -> Offset16 {
         readOffset16(base + 0)
     }
 
     /// Number of MathKernInfoRecords. Must be the same as the number of glyph
     /// IDs referenced in the Coverage table.
-    public func mathKernCount() -> UInt16 {
+    func mathKernCount() -> UInt16 {
         readUInt16(base + 2)
     }
 
     /// Array of MathKernInfoRecords, one for each covered glyph.
-    public func mathKernInfoRecords(_ index: Int) -> MathKernInfoRecord {
-        MathKernInfoRecord.read(ptr: base + 4 + index * MathKernInfoRecord.byteSize)
+    func mathKernInfoRecords(_ index: Int) -> MathKernInfoRecord {
+        MathKernInfoRecord.read(base + 4 + index * MathKernInfoRecord.byteSize)
     }
 
     // MARK: - optimization
@@ -37,18 +36,16 @@ public class MathKernInfoTable {
 
     /// Returns the offset for given glyph id and corner
     private func getMathKernOffset(_ glyph: UInt16, _ corner: MathKernCorner) -> Offset16? {
-        coverageTable().getCoverageIndex(glyph).map {
+        mathKernCoverageTable.getCoverageIndex(glyph).map {
             self.mathKernOffset($0, corner)
         }
     }
 
     // MARK: - Sub-tables
 
-    public func coverageTable() -> CoverageTable {
-        CoverageTable(base: base + Int(mathKernCoverageOffset()))
-    }
+    private lazy var mathKernCoverageTable: CoverageTable = .init(base: base + Int(mathKernCoverageOffset()))
 
-    public func getMathKernTable(_ glyph: UInt16, _ corner: MathKernCorner) -> MathKernTable? {
+    func getMathKernTable(_ glyph: UInt16, _ corner: MathKernCorner) -> MathKernTable? {
         getMathKernOffset(glyph, corner).flatMap {
             ($0 != 0) ? MathKernTable(base: base + Int($0), context: self.context) : nil
         }
@@ -56,21 +53,21 @@ public class MathKernInfoTable {
 
     // MARK: - query functions
 
-    public func getMathKernInfoRecord(_ glyph: UInt16) -> MathKernInfoRecord? {
-        coverageTable().getCoverageIndex(glyph).map {
+    func getMathKernInfoRecord(_ glyph: UInt16) -> MathKernInfoRecord? {
+        mathKernCoverageTable.getCoverageIndex(glyph).map {
             self.mathKernInfoRecords($0)
         }
     }
 
-    public func getKernValue(_ glyph: UInt16,
-                             _ corner: MathKernCorner,
-                             _ height: Int32) -> Int32?
+    func getKernValue(_ glyph: UInt16,
+                      _ corner: MathKernCorner,
+                      _ height: Int32) -> Int32?
     {
         getMathKernTable(glyph, corner)?.getKernValue(height: height)
     }
 }
 
-public class MathKernTable {
+class MathKernTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
@@ -82,18 +79,18 @@ public class MathKernTable {
     // MARK: - table fields
 
     /// Number of heights at which the kern value changes.
-    public func heightCount() -> UInt16 {
+    func heightCount() -> UInt16 {
         readUInt16(base + 0)
     }
 
     /// Array of correction heights, in design units, sorted from lowest to highest.
-    public func correctionHeight(_ index: Int) -> MathValueRecord {
+    func correctionHeight(_ index: Int) -> MathValueRecord {
         MathValueRecord.read(base + 2 + index * MathValueRecord.byteSize)
     }
 
     /// Array of kerning values for different height ranges.
     /// Negative values are used to move glyphs closer to each other.
-    public func kernValues(_ index: Int) -> MathValueRecord {
+    func kernValues(_ index: Int) -> MathValueRecord {
         let offset = 2 + Int(heightCount()) * MathValueRecord.byteSize + index * MathValueRecord.byteSize
         return MathValueRecord.read(base + offset)
     }
@@ -101,23 +98,23 @@ public class MathKernTable {
     // MARK: - query functions
 
     /// Returns the correction height at the given index in design units
-    public func getCorrectionHeight(_ index: Int) -> Int32 {
+    func getCorrectionHeight(_ index: Int) -> Int32 {
         MathValueRecord.eval(base, correctionHeight(index), context)
     }
 
     /// Returns the kern value at the given index in design units
-    public func getKernValue(index: Int) -> Int32 {
+    func getKernValue(index: Int) -> Int32 {
         MathValueRecord.eval(base, kernValues(index), context)
     }
 
     /// Returns the kern value for the given height in design units
-    public func getKernValue(height: Int32) -> Int32 {
+    func getKernValue(height: Int32) -> Int32 {
         getKernValue(index: upper_bound(height: height))
     }
 
-    public func getKernEntries(_ startOffset: Int,
-                               _ entriesCount: inout Int,
-                               _ kernEntries: inout [MathKernEntryRecord]) -> Int
+    func getKernEntries(_ startOffset: Int,
+                        _ entriesCount: inout Int,
+                        _ kernEntries: inout [MathKernEntryRecord]) -> Int
     {
         precondition(entriesCount >= 0)
         precondition(kernEntries.count >= entriesCount)
@@ -145,7 +142,7 @@ public class MathKernTable {
         return entriesCount
     }
 
-    public func getKernEntryCount(startOffset: Int = 0) -> Int {
+    func getKernEntryCount(startOffset: Int = 0) -> Int {
         precondition(startOffset >= 0)
 
         let count = Int(heightCount()) + 1
@@ -185,9 +182,9 @@ public class MathKernTable {
 }
 
 /// MathKernEntry in design units
-public struct MathKernEntryRecord {
-    public let maxCorrectionHeight: Int32
-    public let kernValue: Int32
+struct MathKernEntryRecord {
+    let maxCorrectionHeight: Int32
+    let kernValue: Int32
 
     init(maxCorrectionHeight: Int32, kernValue: Int32) {
         self.maxCorrectionHeight = maxCorrectionHeight

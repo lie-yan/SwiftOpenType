@@ -1,68 +1,79 @@
-import CoreFoundation
 import CoreText
 
-public extension OTFont {
+public extension CTFont {
     func getSize() -> CGFloat {
-        CTFontGetSize(font)
+        CTFontGetSize(self)
+    }
+
+    /// Returns a lambda that converts design units to points
+    func toPointsClosure() -> ((Int32) -> CGFloat) {
+        let sizePerUnit = getSize() / CGFloat(getUnitsPerEm())
+        return { CGFloat($0) * sizePerUnit }
+    }
+
+    /// Returns a lambda that converts points to design units
+    func toDesignUnitsClosure() -> ((CGFloat) -> Int32) {
+        let sizePerUnit = getSize() / CGFloat(getUnitsPerEm())
+        return { Int32($0 / sizePerUnit) }
     }
 
     // MARK: - Getting Font Metrics (complete)
 
     func getAscent() -> CGFloat {
-        CTFontGetAscent(font)
+        CTFontGetAscent(self)
     }
 
     func getDescent() -> CGFloat {
-        CTFontGetDescent(font)
+        CTFontGetDescent(self)
     }
 
     func getLeading() -> CGFloat {
-        CTFontGetLeading(font)
+        CTFontGetLeading(self)
     }
 
     func getUnitsPerEm() -> UInt32 {
-        CTFontGetUnitsPerEm(font)
+        CTFontGetUnitsPerEm(self)
     }
 
     func getGlyphCount() -> Int {
-        CTFontGetGlyphCount(font)
+        CTFontGetGlyphCount(self)
     }
 
     func getBoundingBox() -> CGRect {
-        CTFontGetBoundingBox(font)
+        CTFontGetBoundingBox(self)
     }
 
     func getUnderlinePosition() -> CGFloat {
-        CTFontGetUnderlinePosition(font)
+        CTFontGetUnderlinePosition(self)
     }
 
     func getUnderlineThickness() -> CGFloat {
-        CTFontGetUnderlineThickness(font)
+        CTFontGetUnderlineThickness(self)
     }
 
     func getSlantAngle() -> CGFloat {
-        CTFontGetSlantAngle(font)
+        CTFontGetSlantAngle(self)
     }
 
     func getCapHeight() -> CGFloat {
-        CTFontGetCapHeight(font)
+        CTFontGetCapHeight(self)
     }
 
     func getXHeight() -> CGFloat {
-        CTFontGetXHeight(font)
+        CTFontGetXHeight(self)
     }
 
     // MARK: - Getting Glyph Data
 
     func getGlyphWithName(_ glyphName: String) -> CGGlyph {
-        CTFontGetGlyphWithName(font, glyphName as! CFString)
+        CTFontGetGlyphWithName(self, glyphName as! CFString)
     }
 
     func getBoundingRectForGlyph(_ orientation: CTFontOrientation,
                                  _ glyph: CGGlyph) -> CGRect
     {
         withUnsafePointer(to: glyph) {
-            CTFontGetBoundingRectsForGlyphs(font, orientation, $0, nil, 1)
+            CTFontGetBoundingRectsForGlyphs(self, orientation, $0, nil, 1)
         }
     }
 
@@ -70,7 +81,7 @@ public extension OTFont {
                                   _ glyphs: [CGGlyph]) -> CGRect
     {
         glyphs.withUnsafeBufferPointer {
-            CTFontGetBoundingRectsForGlyphs(font, orientation, $0.baseAddress!, nil, $0.count)
+            CTFontGetBoundingRectsForGlyphs(self, orientation, $0.baseAddress!, nil, $0.count)
         }
     }
 
@@ -81,7 +92,7 @@ public extension OTFont {
         precondition(glyphs.count == boundingRects.count)
         return glyphs.withUnsafeBufferPointer {
             glyphs in boundingRects.withUnsafeMutableBufferPointer {
-                boundingRects in CTFontGetBoundingRectsForGlyphs(font,
+                boundingRects in CTFontGetBoundingRectsForGlyphs(self,
                                                                  orientation,
                                                                  glyphs.baseAddress!,
                                                                  boundingRects.baseAddress!,
@@ -94,7 +105,7 @@ public extension OTFont {
                             _ glyph: CGGlyph) -> CGFloat
     {
         withUnsafePointer(to: glyph) {
-            CTFontGetAdvancesForGlyphs(font, orientation, $0, nil, 1)
+            CTFontGetAdvancesForGlyphs(self, orientation, $0, nil, 1)
         }
     }
 
@@ -102,7 +113,7 @@ public extension OTFont {
                              _ glyphs: [CGGlyph]) -> CGFloat
     {
         glyphs.withUnsafeBufferPointer {
-            CTFontGetAdvancesForGlyphs(font, orientation, $0.baseAddress!, nil, $0.count)
+            CTFontGetAdvancesForGlyphs(self, orientation, $0.baseAddress!, nil, $0.count)
         }
     }
 
@@ -113,7 +124,7 @@ public extension OTFont {
         precondition(glyphs.count == advances.count)
         return glyphs.withUnsafeBufferPointer {
             glyphs in advances.withUnsafeMutableBufferPointer {
-                advances in CTFontGetAdvancesForGlyphs(font,
+                advances in CTFontGetAdvancesForGlyphs(self,
                                                        orientation,
                                                        glyphs.baseAddress!,
                                                        advances.baseAddress!,
@@ -132,7 +143,7 @@ public extension OTFont {
         var glyph: CGGlyph = 0
         let success = character.withUnsafeBufferPointer {
             character in withUnsafeMutablePointer(to: &glyph) {
-                glyph in CTFontGetGlyphsForCharacters(font, character.baseAddress!, glyph, 1)
+                glyph in CTFontGetGlyphsForCharacters(self, character.baseAddress!, glyph, 1)
             }
         }
         return success ? glyph : nil
@@ -146,7 +157,7 @@ public extension OTFont {
     /// - Returns:
     ///     `True` if the font could encode all Unicode characters; otherwise `False`.
     ///
-    /// If a glyph could not be encoded, a value of `0` is passed back at the 
+    /// If a glyph could not be encoded, a value of `0` is passed back at the
     /// corresponding index in the `glyphs` array and the function returns `False`.
     /// It is the responsibility of the caller to handle the Unicode properties
     /// of the input characters.
@@ -156,11 +167,34 @@ public extension OTFont {
         precondition(characters.count >= glyphs.count)
         return characters.withUnsafeBufferPointer {
             characters in glyphs.withUnsafeMutableBufferPointer {
-                glyphs in CTFontGetGlyphsForCharacters(font,
+                glyphs in CTFontGetGlyphsForCharacters(self,
                                                        characters.baseAddress!,
                                                        glyphs.baseAddress!,
                                                        glyphs.count)
             }
         }
+    }
+
+    // MARK: - Table data
+
+    internal func getMathTableData() -> CFData? {
+        CTFontCopyTable(self,
+                        CTFontTableTag(kCTFontTableMATH),
+                        CTFontTableOptions(rawValue: 0))
+    }
+
+    internal func getMathTable(ppem: UInt32 = 0) -> MathTable? {
+        if let data = getMathTableData() {
+            let table = MathTable(base: CFDataGetBytePtr(data),
+                                  context: ContextData(ppem: ppem, unitsPerEm: getUnitsPerEm()))
+            if table.majorVersion() == 1 {
+                return table
+            }
+        }
+        return nil
+    }
+
+    func createCachedMathData(ppem: UInt32 = 0) -> MathData {
+        MathData(self, ppem: ppem)
     }
 }

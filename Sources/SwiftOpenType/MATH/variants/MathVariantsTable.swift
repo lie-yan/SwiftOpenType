@@ -1,6 +1,5 @@
 import CoreFoundation
-
-public class MathVariantsTable {
+class MathVariantsTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
@@ -12,87 +11,83 @@ public class MathVariantsTable {
     // MARK: - Table fields
 
     /// Minimum overlap of connecting glyphs during glyph construction, in design units.
-    public func minConnectorOverlap() -> UFWORD {
+    func minConnectorOverlap() -> UFWORD {
         readUFWORD(base + 0)
     }
 
     /// Offset to Coverage table, from the beginning of the MathVariants table.
-    public func vertGlyphCoverageOffset() -> Offset16 {
+    func vertGlyphCoverageOffset() -> Offset16 {
         readOffset16(base + 2)
     }
 
     /// Offset to Coverage table, from the beginning of the MathVariants table.
-    public func horizGlyphCoverageOffset() -> Offset16 {
+    func horizGlyphCoverageOffset() -> Offset16 {
         readOffset16(base + 4)
     }
 
     /// Number of glyphs for which information is provided for vertically growing variants.
     /// Must be the same as the number of glyph IDs referenced in the vertical Coverage table.
-    public func vertGlyphCount() -> UInt16 {
+    func vertGlyphCount() -> UInt16 {
         readUInt16(base + 6)
     }
 
     /// Number of glyphs for which information is provided for horizontally growing variants.
     /// Must be the same as the number of glyph IDs referenced in the horizontal Coverage table.
-    public func horizGlyphCount() -> UInt16 {
+    func horizGlyphCount() -> UInt16 {
         readUInt16(base + 8)
     }
 
     /// Array of offsets to MathGlyphConstruction tables, from the beginning of the
     /// MathVariants table, for shapes growing in the vertical direction.
-    public func vertGlyphConstructionOffsets(_ index: Int) -> Offset16 {
+    func vertGlyphConstructionOffsets(_ index: Int) -> Offset16 {
         readOffset16(base + 10 + index * 2)
     }
 
     /// Array of offsets to MathGlyphConstruction tables, from the beginning of the
     /// MathVariants table, for shapes growing in the horizontal direction.
-    public func horizGlyphConstructionOffsets(_ index: Int) -> Offset16 {
+    func horizGlyphConstructionOffsets(_ index: Int) -> Offset16 {
         let offset = 10 + Int(vertGlyphCount()) * 2 + index * 2
         return readOffset16(base + offset)
     }
 
     // MARK: - Tables
 
-    public var vertGlyphCoverageTable: CoverageTable {
-        CoverageTable(base: base + Int(vertGlyphCoverageOffset()))
-    }
+    private lazy var vertGlyphCoverageTable: CoverageTable = .init(base: base + Int(vertGlyphCoverageOffset()))
 
-    public var horizGlyphCoverageTable: CoverageTable {
-        CoverageTable(base: base + Int(horizGlyphCoverageOffset()))
-    }
+    private lazy var horizGlyphCoverageTable: CoverageTable = .init(base: base + Int(horizGlyphCoverageOffset()))
 
-    public func vertGlyphConstructionTable(_ index: Int) -> MathGlyphConstructionTable {
+    func vertGlyphConstructionTable(_ index: Int) -> MathGlyphConstructionTable {
         let offset = vertGlyphConstructionOffsets(index)
         return MathGlyphConstructionTable(base: base + Int(offset), context: context)
     }
 
-    public func horizGlyphConstructionTable(_ index: Int) -> MathGlyphConstructionTable {
+    func horizGlyphConstructionTable(_ index: Int) -> MathGlyphConstructionTable {
         let offset = horizGlyphConstructionOffsets(index)
         return MathGlyphConstructionTable(base: base + Int(offset), context: context)
     }
 
     // MARK: - Query functions
 
-    public func getVertGlyphConstructionTable(_ glyph: UInt16) -> MathGlyphConstructionTable? {
+    func getVertGlyphConstructionTable(_ glyph: UInt16) -> MathGlyphConstructionTable? {
         vertGlyphCoverageTable.getCoverageIndex(glyph).map {
             self.vertGlyphConstructionTable($0)
         }
     }
 
-    public func getHorizGlyphConstructionTable(_ glyph: UInt16) -> MathGlyphConstructionTable? {
+    func getHorizGlyphConstructionTable(_ glyph: UInt16) -> MathGlyphConstructionTable? {
         horizGlyphCoverageTable.getCoverageIndex(glyph).map {
             self.horizGlyphConstructionTable($0)
         }
     }
 }
 
-public struct MathGlyphVariantRecord {
+struct MathGlyphVariantRecord {
     static let byteSize = 4
 
     /// Glyph ID for the variant.
-    public let variantGlyph: UInt16
+    let variantGlyph: UInt16
     /// Advance width/height, in design units, of the variant, in the direction of requested glyph extension.
-    public let advanceMeasurement: UFWORD
+    let advanceMeasurement: UFWORD
 
     init() {
         self.init(variantGlyph: 0, advanceMeasurement: 0)
@@ -109,30 +104,30 @@ public struct MathGlyphVariantRecord {
     }
 }
 
-public struct GlyphPartRecord {
+struct GlyphPartRecord {
     static let byteSize = 10
 
     /// Glyph ID for the part.
-    public let glyphID: UInt16
+    let glyphID: UInt16
 
     /// Advance width/ height, in design units, of the straight bar connector material
     /// at the start of the glyph in the direction of the extension (the left end for
     /// horizontal extension, the bottom end for vertical extension).
-    public let startConnectorLength: UFWORD
+    let startConnectorLength: UFWORD
 
     /// Advance width/ height, in design units, of the straight bar connector material
     /// at the end of the glyph in the direction of the extension (the right end for
     /// horizontal extension, the top end for vertical extension).
-    public let endConnectorLength: UFWORD
+    let endConnectorLength: UFWORD
 
     /// Full advance width/height for this part in the direction of the extension,
     /// in design units.
-    public let fullAdvance: UFWORD
+    let fullAdvance: UFWORD
 
     /// Part qualifiers. PartFlags enumeration currently uses only one bit:
     /// 0x0001 EXTENDER_FLAG: If set, the part can be skipped or repeated.
     /// 0xFFFE Reserved.
-    public let partFlags: UInt16
+    let partFlags: UInt16
 
     init() {
         self.init(glyphID: 0, startConnectorLength: 0, endConnectorLength: 0, fullAdvance: 0, partFlags: 0)
@@ -151,7 +146,7 @@ public struct GlyphPartRecord {
         self.partFlags = partFlags
     }
 
-    public func isExtender() -> Bool {
+    func isExtender() -> Bool {
         partFlags == PartFlags.EXTENDER_FLAG.rawValue
     }
 

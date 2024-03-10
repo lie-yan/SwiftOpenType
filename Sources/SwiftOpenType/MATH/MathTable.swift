@@ -1,6 +1,5 @@
 import CoreFoundation
-
-public class MathTable {
+class MathTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
@@ -12,27 +11,27 @@ public class MathTable {
     // MARK: - header fields
 
     /// Major version of the MATH table, = 1.
-    public func majorVersion() -> UInt16 { readUInt16(base + 0) }
+    func majorVersion() -> UInt16 { readUInt16(base + 0) }
 
     /// Minor version of the MATH table, = 0.
-    public func minorVersion() -> UInt16 { readUInt16(base + 2) }
+    func minorVersion() -> UInt16 { readUInt16(base + 2) }
 
     /// Offset to MathConstants table - from the beginning of MATH table.
-    public func mathConstantsOffset() -> Offset16 { readOffset16(base + 4) }
+    func mathConstantsOffset() -> Offset16 { readOffset16(base + 4) }
 
     /// Offset to MathGlyphInfo table - from the beginning of MATH table.
-    public func mathGlyphInfoOffset() -> Offset16 { readOffset16(base + 6) }
+    func mathGlyphInfoOffset() -> Offset16 { readOffset16(base + 6) }
 
     /// Offset to MathVariants table - from the beginning of MATH table.
-    public func mathVariantsOffset() -> Offset16 { readOffset16(base + 8) }
+    func mathVariantsOffset() -> Offset16 { readOffset16(base + 8) }
 
     // MARK: - tables
 
-    public var mathConstantsTable: MathConstantsTable? { _mathConstantsTable }
+    var mathConstantsTable: MathConstantsTable? { _mathConstantsTable }
 
-    public var mathGlyphInfoTable: MathGlyphInfoTable? { _mathGlyphInfoTable }
+    var mathGlyphInfoTable: MathGlyphInfoTable? { _mathGlyphInfoTable }
 
-    public var mathVariantsTable: MathVariantsTable? { _mathVariantsTable }
+    var mathVariantsTable: MathVariantsTable? { _mathVariantsTable }
 
     // MARK: - lazy variables
 
@@ -65,7 +64,7 @@ public class MathTable {
 /// values. A format value of 0x8000 is used for the VariationIndex table, and
 /// indicates that a delta-set index is used to reference delta data in an
 /// ItemVariationStore table.
-public enum DeltaFormat: UInt16 {
+enum DeltaFormat: UInt16 {
     /// Signed 2-bit value, 8 values per uint16
     case LOCAL_2_BIT_DELTAS = 0x0001
 
@@ -80,24 +79,16 @@ public enum DeltaFormat: UInt16 {
 
     /// For future use — set to 0
     case Reserved = 0x7FFC
-
-    public func getBitsPerItem() -> Int? {
-        if rawValue <= DeltaFormat.LOCAL_8_BIT_DELTAS.rawValue {
-            return 1 << rawValue
-        } else {
-            return nil
-        }
-    }
 }
 
-public struct MathValueRecord {
+struct MathValueRecord {
     static let byteSize = 4
 
     /// The X or Y value in design units
-    public let value: FWORD
+    let value: FWORD
     /// Offset to the device table — from the beginning of parent table.
     /// May be NULL. Suggested format for device table is 1.
-    public let deviceOffset: Offset16
+    let deviceOffset: Offset16
 
     init() { self.init(value: 0, deviceOffset: 0) }
 
@@ -120,7 +111,8 @@ public struct MathValueRecord {
         }
 
         let deviceTable = DeviceTable(base: parentBase + Int(record.deviceOffset))
-        let deltaValue = deviceTable.getDeltaValue(context.ppem, unitsPerEm: context.unitsPerEm)
+        let deltaValue = deviceTable.getDeltaValue(ppem: context.ppem,
+                                                   unitsPerEm: context.unitsPerEm)
         return Int32(record.value) + deltaValue
     }
 }

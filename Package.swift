@@ -1,16 +1,13 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 5.7
 import PackageDescription
 
 let package = Package(
-    name: "SwiftOpenType",
+    name: "swift-open-type",
     products: [
         .library(
             name: "SwiftOpenType",
             targets: ["SwiftOpenType"]
         ),
-    ],
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
     ],
     targets: [
         .target(

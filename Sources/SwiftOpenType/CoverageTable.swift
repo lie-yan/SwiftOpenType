@@ -1,6 +1,12 @@
 import CoreFoundation
 
-public class CoverageTable {
+
+/**
+ * A Coverage table identifies glyphs by glyph indices (glyph IDs).
+ *
+ * Reference: [Coverage Table](https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#coverage-table)
+ */
+class CoverageTable {
     let base: UnsafePointer<UInt8>
 
     init(base: UnsafePointer<UInt8>) {
@@ -8,33 +14,34 @@ public class CoverageTable {
     }
 
     // MARK: - Table fields
+    // The method names in this section follow the OpenType spec.
 
     /// Format identifier
-    public func coverageFormat() -> UInt16 {
+    func coverageFormat() -> UInt16 {
         readUInt16(base + 0)
     }
 
     /// Number of glyphs in the glyph array.
     /// For Coverage Format 1
-    public func glyphCount() -> UInt16 {
+    func glyphCount() -> UInt16 {
         readUInt16(base + 2)
     }
 
     /// Array of glyph IDs — in numerical order.
     /// For Coverage Format 1
-    public func glyphArray(_ index: Int) -> UInt16 {
+    func glyphArray(_ index: Int) -> UInt16 {
         readUInt16(base + 4 + index * 2)
     }
 
     /// Number of RangeRecords.
     /// For Coverage Format 2
-    public func rangeCount() -> UInt16 {
+    func rangeCount() -> UInt16 {
         readUInt16(base + 2)
     }
 
     /// Array of glyph ranges — ordered by startGlyphID.
     /// For Coverage Format 2
-    public func rangeRecords(_ index: Int) -> RangeRecord {
+    func rangeRecords(_ index: Int) -> RangeRecord {
         RangeRecord.read(base + 4 + index * RangeRecord.byteSize)
     }
 
@@ -42,7 +49,7 @@ public class CoverageTable {
 
     /// Given glyph id, return the coverage index for it.
     /// If not found, return nil.
-    public func getCoverageIndex(_ glyph: UInt16) -> Int? {
+    func getCoverageIndex(_ glyph: UInt16) -> Int? {
         let f = coverageFormat()
         if f == 1 {
             return binarySearch_1(glyph)
@@ -82,7 +89,7 @@ public class CoverageTable {
 
         while left <= right {
             let mid = left + (right - left) / 2
-            let value = self.rangeRecords(mid)
+            let value = rangeRecords(mid)
 
             if target >= value.startGlyphID, target <= value.endGlyphID {
                 return Int(value.startCoverageIndex + (target - value.startGlyphID))
@@ -96,12 +103,12 @@ public class CoverageTable {
     }
 }
 
-public struct RangeRecord {
+struct RangeRecord {
     static let byteSize = 6
 
-    public let startGlyphID: UInt16 /// First glyph ID in the range
-    public let endGlyphID: UInt16 /// Last glyph ID in the range
-    public let startCoverageIndex: UInt16 /// Coverage Index of first glyph ID in range
+    let startGlyphID: UInt16 /// First glyph ID in the range
+    let endGlyphID: UInt16 /// Last glyph ID in the range
+    let startCoverageIndex: UInt16 /// Coverage Index of first glyph ID in range
 
     init() {
         self.init(startGlyphID: 0, endGlyphID: 0, startCoverageIndex: 0)

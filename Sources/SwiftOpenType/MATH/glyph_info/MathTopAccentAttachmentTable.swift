@@ -1,6 +1,5 @@
 import CoreFoundation
-
-public class MathTopAccentAttachmentTable {
+class MathTopAccentAttachmentTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
@@ -12,26 +11,26 @@ public class MathTopAccentAttachmentTable {
     // MARK: - table fields
 
     /// Offset to Coverage table, from the beginning of the MathTopAccentAttachment table.
-    public func topAccentCoverageOffset() -> Offset16 {
+    func topAccentCoverageOffset() -> Offset16 {
         readOffset16(base + 0)
     }
 
     /// Number of top accent attachment point values. Must be the same as the number of
     /// glyph IDs referenced in the Coverage table.
-    public func topAccentAttachmentCount() -> UInt16 {
+    func topAccentAttachmentCount() -> UInt16 {
         readUInt16(base + 2)
     }
 
     /// Array of MathValueRecords defining top accent attachment points for each covered glyph.
-    public func topAccentAttachment(_ index: Int) -> MathValueRecord {
+    func topAccentAttachment(_ index: Int) -> MathValueRecord {
         MathValueRecord.read(base + 4 + index * MathValueRecord.byteSize)
     }
 
     // MARK: - Query function
 
     /// Returns top accent attachment for glyphID in design units
-    public func getTopAccentAttachment(_ glyph: UInt16) -> Int32? {
-        coverageTable.getCoverageIndex(glyph).map {
+    func getTopAccentAttachment(_ glyph: UInt16) -> Int32? {
+        topAccentCoverageTable.getCoverageIndex(glyph).map {
             let record = self.topAccentAttachment($0)
             return MathValueRecord.eval(base, record, context)
         }
@@ -39,9 +38,5 @@ public class MathTopAccentAttachmentTable {
 
     // MARK: - helper
 
-    public var coverageTable: CoverageTable {
-        _coverageTable
-    }
-
-    private lazy var _coverageTable: CoverageTable = .init(base: self.base + Int(self.topAccentCoverageOffset()))
+    private lazy var topAccentCoverageTable: CoverageTable = .init(base: self.base + Int(self.topAccentCoverageOffset()))
 }

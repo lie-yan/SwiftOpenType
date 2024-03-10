@@ -89,19 +89,18 @@ import CoreFoundation
  medium space                             | normally 2/9 σ6  (= 4mu)
  thick space                              | normally 5/18 σ6 (= 5mu)
  */
-public class MathConstantsTable {
+class MathConstantsTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
-    private var values: [Int32?]
+    private lazy var values: [Int32] = computeMathConstantArray()
 
     init(base: UnsafePointer<UInt8>, context: ContextData) {
         self.base = base
         self.context = context
-        values = [Int32?](repeating: nil, count: MathConstant.allCases.count)
     }
 
-    /// Returns the math constant specified by the argument in design units.
-    public func getMathConstant(_ index: MathConstant) -> Int32 {
+    /// Returns in design units the math constant specified by the argument.
+    func getMathConstant(_ index: MathConstant) -> Int32 {
         if index <= MathConstant.scriptScriptPercentScaleDown {
             return getPercent(index)
         } else if index <= MathConstant.displayOperatorMinHeight {
@@ -111,231 +110,254 @@ public class MathConstantsTable {
         } else if index == MathConstant.radicalDegreeBottomRaisePercent {
             return getPercent(index)
         }
-
         fatalError("Unreachable")
     }
 
-    public func scriptPercentScaleDown() -> Int32 {
+    private func fetchMathConstant(_ index: MathConstant) -> Int32 {
+        if index <= MathConstant.scriptScriptPercentScaleDown {
+            return fetchPercent(index)
+        } else if index <= MathConstant.displayOperatorMinHeight {
+            return fetchMinHeight(index)
+        } else if index <= MathConstant.radicalKernAfterDegree {
+            return fetchMathValue(index)
+        } else if index == MathConstant.radicalDegreeBottomRaisePercent {
+            return fetchPercent(index)
+        }
+        fatalError("Unreachable")
+    }
+
+    private func computeMathConstantArray() -> [Int32] {
+        [Int32].init(unsafeUninitializedCapacity: MathConstant.allCases.count,
+                     initializingWith: {
+                         buffer, initializedCount in
+                         for i in MathConstant.allCases {
+                             buffer[i.rawValue] = self.fetchMathConstant(i)
+                         }
+                         initializedCount = MathConstant.allCases.count
+                     })
+    }
+
+    func scriptPercentScaleDown() -> Int32 {
         getPercent(.scriptPercentScaleDown)
     }
 
-    public func scriptScriptPercentScaleDown() -> Int32 {
+    func scriptScriptPercentScaleDown() -> Int32 {
         getPercent(.scriptScriptPercentScaleDown)
     }
 
-    public func delimitedSubFormulaMinHeight() -> Int32 {
+    func delimitedSubFormulaMinHeight() -> Int32 {
         getMinHeight(.delimitedSubFormulaMinHeight)
     }
 
-    public func displayOperatorMinHeight() -> Int32 {
+    func displayOperatorMinHeight() -> Int32 {
         getMinHeight(.displayOperatorMinHeight)
     }
 
-    public func mathLeading() -> Int32 {
+    func mathLeading() -> Int32 {
         getMathValue(.mathLeading)
     }
 
-    public func axisHeight() -> Int32 {
+    func axisHeight() -> Int32 {
         getMathValue(.axisHeight)
     }
 
-    public func accentBaseHeight() -> Int32 {
+    func accentBaseHeight() -> Int32 {
         getMathValue(.accentBaseHeight)
     }
 
-    public func flattenedAccentBaseHeight() -> Int32 {
+    func flattenedAccentBaseHeight() -> Int32 {
         getMathValue(.flattenedAccentBaseHeight)
     }
 
-    public func subscriptShiftDown() -> Int32 {
+    func subscriptShiftDown() -> Int32 {
         getMathValue(.subscriptShiftDown)
     }
 
-    public func subscriptTopMax() -> Int32 {
+    func subscriptTopMax() -> Int32 {
         getMathValue(.subscriptTopMax)
     }
 
-    public func subscriptBaselineDropMin() -> Int32 {
+    func subscriptBaselineDropMin() -> Int32 {
         getMathValue(.subscriptBaselineDropMin)
     }
 
-    public func superscriptShiftUp() -> Int32 {
+    func superscriptShiftUp() -> Int32 {
         getMathValue(.superscriptShiftUp)
     }
 
-    public func superscriptShiftUpCramped() -> Int32 {
+    func superscriptShiftUpCramped() -> Int32 {
         getMathValue(.superscriptShiftUpCramped)
     }
 
-    public func superscriptBottomMin() -> Int32 {
+    func superscriptBottomMin() -> Int32 {
         getMathValue(.superscriptBottomMin)
     }
 
-    public func superscriptBaselineDropMax() -> Int32 {
+    func superscriptBaselineDropMax() -> Int32 {
         getMathValue(.superscriptBaselineDropMax)
     }
 
-    public func subSuperscriptGapMin() -> Int32 {
+    func subSuperscriptGapMin() -> Int32 {
         getMathValue(.subSuperscriptGapMin)
     }
 
-    public func superscriptBottomMaxWithSubscript() -> Int32 {
+    func superscriptBottomMaxWithSubscript() -> Int32 {
         getMathValue(.superscriptBottomMaxWithSubscript)
     }
 
-    public func spaceAfterScript() -> Int32 {
+    func spaceAfterScript() -> Int32 {
         getMathValue(.spaceAfterScript)
     }
 
-    public func upperLimitGapMin() -> Int32 {
+    func upperLimitGapMin() -> Int32 {
         getMathValue(.upperLimitGapMin)
     }
 
-    public func upperLimitBaselineRiseMin() -> Int32 {
+    func upperLimitBaselineRiseMin() -> Int32 {
         getMathValue(.upperLimitBaselineRiseMin)
     }
 
-    public func lowerLimitGapMin() -> Int32 {
+    func lowerLimitGapMin() -> Int32 {
         getMathValue(.lowerLimitGapMin)
     }
 
-    public func lowerLimitBaselineDropMin() -> Int32 {
+    func lowerLimitBaselineDropMin() -> Int32 {
         getMathValue(.lowerLimitBaselineDropMin)
     }
 
-    public func stackTopShiftUp() -> Int32 {
+    func stackTopShiftUp() -> Int32 {
         getMathValue(.stackTopShiftUp)
     }
 
-    public func stackTopDisplayStyleShiftUp() -> Int32 {
+    func stackTopDisplayStyleShiftUp() -> Int32 {
         getMathValue(.stackTopDisplayStyleShiftUp)
     }
 
-    public func stackBottomShiftDown() -> Int32 {
+    func stackBottomShiftDown() -> Int32 {
         getMathValue(.stackBottomShiftDown)
     }
 
-    public func stackBottomDisplayStyleShiftDown() -> Int32 {
+    func stackBottomDisplayStyleShiftDown() -> Int32 {
         getMathValue(.stackBottomDisplayStyleShiftDown)
     }
 
-    public func stackGapMin() -> Int32 {
+    func stackGapMin() -> Int32 {
         getMathValue(.stackGapMin)
     }
 
-    public func stackDisplayStyleGapMin() -> Int32 {
+    func stackDisplayStyleGapMin() -> Int32 {
         getMathValue(.stackDisplayStyleGapMin)
     }
 
-    public func stretchStackTopShiftUp() -> Int32 {
+    func stretchStackTopShiftUp() -> Int32 {
         getMathValue(.stretchStackTopShiftUp)
     }
 
-    public func stretchStackBottomShiftDown() -> Int32 {
+    func stretchStackBottomShiftDown() -> Int32 {
         getMathValue(.stretchStackBottomShiftDown)
     }
 
-    public func stretchStackGapAboveMin() -> Int32 {
+    func stretchStackGapAboveMin() -> Int32 {
         getMathValue(.stretchStackGapAboveMin)
     }
 
-    public func stretchStackGapBelowMin() -> Int32 {
+    func stretchStackGapBelowMin() -> Int32 {
         getMathValue(.stretchStackGapBelowMin)
     }
 
-    public func fractionNumeratorShiftUp() -> Int32 {
+    func fractionNumeratorShiftUp() -> Int32 {
         getMathValue(.fractionNumeratorShiftUp)
     }
 
-    public func fractionNumeratorDisplayStyleShiftUp() -> Int32 {
+    func fractionNumeratorDisplayStyleShiftUp() -> Int32 {
         getMathValue(.fractionNumeratorDisplayStyleShiftUp)
     }
 
-    public func fractionDenominatorShiftDown() -> Int32 {
+    func fractionDenominatorShiftDown() -> Int32 {
         getMathValue(.fractionDenominatorShiftDown)
     }
 
-    public func fractionDenominatorDisplayStyleShiftDown() -> Int32 {
+    func fractionDenominatorDisplayStyleShiftDown() -> Int32 {
         getMathValue(.fractionDenominatorDisplayStyleShiftDown)
     }
 
-    public func fractionNumeratorGapMin() -> Int32 {
+    func fractionNumeratorGapMin() -> Int32 {
         getMathValue(.fractionNumeratorGapMin)
     }
 
-    public func fractionNumDisplayStyleGapMin() -> Int32 {
+    func fractionNumDisplayStyleGapMin() -> Int32 {
         getMathValue(.fractionNumDisplayStyleGapMin)
     }
 
-    public func fractionRuleThickness() -> Int32 {
+    func fractionRuleThickness() -> Int32 {
         getMathValue(.fractionRuleThickness)
     }
 
-    public func fractionDenominatorGapMin() -> Int32 {
+    func fractionDenominatorGapMin() -> Int32 {
         getMathValue(.fractionDenominatorGapMin)
     }
 
-    public func fractionDenomDisplayStyleGapMin() -> Int32 {
+    func fractionDenomDisplayStyleGapMin() -> Int32 {
         getMathValue(.fractionDenomDisplayStyleGapMin)
     }
 
-    public func skewedFractionHorizontalGap() -> Int32 {
+    func skewedFractionHorizontalGap() -> Int32 {
         getMathValue(.skewedFractionHorizontalGap)
     }
 
-    public func skewedFractionVerticalGap() -> Int32 {
+    func skewedFractionVerticalGap() -> Int32 {
         getMathValue(.skewedFractionVerticalGap)
     }
 
-    public func overbarVerticalGap() -> Int32 {
+    func overbarVerticalGap() -> Int32 {
         getMathValue(.overbarVerticalGap)
     }
 
-    public func overbarRuleThickness() -> Int32 {
+    func overbarRuleThickness() -> Int32 {
         getMathValue(.overbarRuleThickness)
     }
 
-    public func overbarExtraAscender() -> Int32 {
+    func overbarExtraAscender() -> Int32 {
         getMathValue(.overbarExtraAscender)
     }
 
-    public func underbarVerticalGap() -> Int32 {
+    func underbarVerticalGap() -> Int32 {
         getMathValue(.underbarVerticalGap)
     }
 
-    public func underbarRuleThickness() -> Int32 {
+    func underbarRuleThickness() -> Int32 {
         getMathValue(.underbarRuleThickness)
     }
 
-    public func underbarExtraDescender() -> Int32 {
+    func underbarExtraDescender() -> Int32 {
         getMathValue(.underbarExtraDescender)
     }
 
-    public func radicalVerticalGap() -> Int32 {
+    func radicalVerticalGap() -> Int32 {
         getMathValue(.radicalVerticalGap)
     }
 
-    public func radicalDisplayStyleVerticalGap() -> Int32 {
+    func radicalDisplayStyleVerticalGap() -> Int32 {
         getMathValue(.radicalDisplayStyleVerticalGap)
     }
 
-    public func radicalRuleThickness() -> Int32 {
+    func radicalRuleThickness() -> Int32 {
         getMathValue(.radicalRuleThickness)
     }
 
-    public func radicalExtraAscender() -> Int32 {
+    func radicalExtraAscender() -> Int32 {
         getMathValue(.radicalExtraAscender)
     }
 
-    public func radicalKernBeforeDegree() -> Int32 {
+    func radicalKernBeforeDegree() -> Int32 {
         getMathValue(.radicalKernBeforeDegree)
     }
 
-    public func radicalKernAfterDegree() -> Int32 {
+    func radicalKernAfterDegree() -> Int32 {
         getMathValue(.radicalKernAfterDegree)
     }
 
-    public func radicalDegreeBottomRaisePercent() -> Int32 {
+    func radicalDegreeBottomRaisePercent() -> Int32 {
         getPercent(.radicalDegreeBottomRaisePercent)
     }
 
@@ -343,11 +365,7 @@ public class MathConstantsTable {
 
     /// for {scriptPercentScaleDown, scriptScriptPercentScaleDown, radicalDegreeBottomRaisePercent}
     func getPercent(_ index: MathConstant) -> Int32 {
-        let i = index.rawValue
-        if values[i] == nil {
-            values[i] = fetchPercent(index)
-        }
-        return values[i]!
+        values[index.rawValue]
     }
 
     private func fetchPercent(_ index: MathConstant) -> Int32 {
@@ -356,11 +374,7 @@ public class MathConstantsTable {
 
     /// for {delimitedSubFormulaMinHeight, displayOperatorMinHeight}
     func getMinHeight(_ index: MathConstant) -> Int32 {
-        let i = index.rawValue
-        if values[i] == nil {
-            values[i] = fetchMinHeight(index)
-        }
-        return values[i]!
+        values[index.rawValue]
     }
 
     private func fetchMinHeight(_ index: MathConstant) -> Int32 {
@@ -369,11 +383,7 @@ public class MathConstantsTable {
 
     /// for the remaining
     func getMathValue(_ index: MathConstant) -> Int32 {
-        let i = index.rawValue
-        if values[i] == nil {
-            values[i] = fetchMathValue(index)
-        }
-        return values[i]!
+        values[index.rawValue]
     }
 
     private func fetchMathValue(_ index: MathConstant) -> Int32 {
@@ -447,7 +457,7 @@ public enum MathConstant: Int, Comparable, CaseIterable {
         if rawValue < mathLeading {
             return rawValue * 2
         } else {
-            return mathLeading * 2 + (rawValue - mathLeading) * 4
+            return mathLeading * 2 + (rawValue - mathLeading) * MathValueRecord.byteSize
         }
     }
 

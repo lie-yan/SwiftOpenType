@@ -1,6 +1,5 @@
 import CoreFoundation
-
-public class MathGlyphInfoTable {
+class MathGlyphInfoTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
 
@@ -12,12 +11,12 @@ public class MathGlyphInfoTable {
     // MARK: - Header fields
 
     /// Offset to MathItalicsCorrectionInfo table, from the beginning of the MathGlyphInfo table.
-    public func mathItalicsCorrectionInfoOffset() -> Offset16 {
+    func mathItalicsCorrectionInfoOffset() -> Offset16 {
         readOffset16(base + 0)
     }
 
     /// Offset to MathTopAccentAttachment table, from the beginning of the MathGlyphInfo table.
-    public func mathTopAccentAttachmentOffset() -> Offset16 {
+    func mathTopAccentAttachmentOffset() -> Offset16 {
         readOffset16(base + 2)
     }
 
@@ -25,30 +24,30 @@ public class MathGlyphInfoTable {
     /// When the glyph to the left or right of a box is an extended shape variant, the (ink) box
     /// should be used for vertical positioning purposes, not the default position defined by
     /// values in MathConstants table. May be NULL.
-    public func extendedShapeCoverageOffset() -> Offset16 {
+    func extendedShapeCoverageOffset() -> Offset16 {
         readOffset16(base + 4)
     }
 
     /// Offset to MathKernInfo table, from the beginning of the MathGlyphInfo table.
-    public func mathKernInfoOffset() -> Offset16 {
+    func mathKernInfoOffset() -> Offset16 {
         readOffset16(base + 6)
     }
 
     // MARK: - Sub-tables
 
-    public var mathItalicsCorrectionInfoTable: MathItalicsCorrectionInfoTable? {
+    var mathItalicsCorrectionInfoTable: MathItalicsCorrectionInfoTable? {
         _mathItalicsCorrectionInfoTable
     }
 
-    public var mathTopAccentAttachmentTable: MathTopAccentAttachmentTable? {
+    var mathTopAccentAttachmentTable: MathTopAccentAttachmentTable? {
         _mathTopAccentAttachmentTable
     }
 
-    public var extendedShapeCoverageTable: CoverageTable? {
+    var extendedShapeCoverageTable: CoverageTable? {
         _extendedShapeCoverageTable
     }
 
-    public var mathKernInfoTable: MathKernInfoTable? {
+    var mathKernInfoTable: MathKernInfoTable? {
         _mathKernInfoTable
     }
 
@@ -105,24 +104,24 @@ public enum MathKernCorner: Int {
     }
 }
 
-public struct MathKernInfoRecord {
+struct MathKernInfoRecord {
     static let byteSize = 8
 
     /// Offset to MathKern table for top right corner, from the beginning
     /// of the MathKernInfo table. May be NULL.
-    public let topRightMathKernOffset: Offset16
+    let topRightMathKernOffset: Offset16
 
     /// Offset to MathKern table for the top left corner, from the beginning
     /// of the MathKernInfo table. May be NULL.
-    public let topLeftMathKernOffset: Offset16
+    let topLeftMathKernOffset: Offset16
 
     /// Offset to MathKern table for bottom right corner, from the beginning
     /// of the MathKernInfo table. May be NULL.
-    public let bottomRightMathKernOffset: Offset16
+    let bottomRightMathKernOffset: Offset16
 
     /// Offset to MathKern table for bottom left corner, from the beginning
     /// of the MathKernInfo table. May be NULL.
-    public let bottomLeftMathKernOffset: Offset16
+    let bottomLeftMathKernOffset: Offset16
 
     init() {
         self.init(topRightMathKernOffset: 0,
@@ -155,7 +154,7 @@ public struct MathKernInfoRecord {
         }
     }
 
-    static func read(ptr: UnsafePointer<UInt8>) -> MathKernInfoRecord {
+    static func read(_ ptr: UnsafePointer<UInt8>) -> MathKernInfoRecord {
         MathKernInfoRecord(topRightMathKernOffset: readOffset16(ptr + 0),
                            topLeftMathKernOffset: readOffset16(ptr + 2),
                            bottomRightMathKernOffset: readOffset16(ptr + 4),
