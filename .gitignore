@@ -90,6 +90,5 @@ fastlane/test_output
 
 iOSInjectionProject/
 
-
-# Jetbrains
 .idea/
+.swiftpm/
