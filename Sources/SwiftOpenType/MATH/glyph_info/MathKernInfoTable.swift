@@ -182,12 +182,18 @@ class MathKernTable {
 }
 
 /// MathKernEntry in design units
-struct MathKernEntryRecord {
-    let maxCorrectionHeight: Int32
-    let kernValue: Int32
+public struct MathKernEntry {
+    public let maxCorrectionHeight: Int32
+    public let kernValue: Int32
 
     init(maxCorrectionHeight: Int32, kernValue: Int32) {
         self.maxCorrectionHeight = maxCorrectionHeight
         self.kernValue = kernValue
     }
+
+    init() {
+        self.init(maxCorrectionHeight: 0, kernValue: 0)
+    }
 }
+
+typealias MathKernEntryRecord = MathKernEntry
