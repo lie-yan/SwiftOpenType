@@ -37,8 +37,7 @@ do {
 do {
     let lmmath = CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil)
     let mathData = lmmath.createCachedMathData()
-    print("axis height, in pts: \(mathData.getConstant(.axisHeight))")
-    print("axis height, in pts: \(mathData.axisHeight())")
+    print("axis height, in design units: \(mathData.getConstant(.axisHeight))")
 }
 ```
 
