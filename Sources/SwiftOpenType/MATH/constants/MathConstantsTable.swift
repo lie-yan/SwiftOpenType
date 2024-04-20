@@ -92,7 +92,6 @@ import CoreFoundation
 class MathConstantsTable {
     let base: UnsafePointer<UInt8>
     let context: ContextData
-    private lazy var values: [Int32] = computeMathConstantArray()
 
     init(base: UnsafePointer<UInt8>, context: ContextData) {
         self.base = base
@@ -141,7 +140,7 @@ class MathConstantsTable {
 
     /// for {scriptPercentScaleDown, scriptScriptPercentScaleDown, radicalDegreeBottomRaisePercent}
     func getPercent(_ index: MathConstant) -> Int32 {
-        values[index.rawValue]
+        fetchPercent(index)
     }
 
     private func fetchPercent(_ index: MathConstant) -> Int32 {
@@ -150,7 +149,7 @@ class MathConstantsTable {
 
     /// for {delimitedSubFormulaMinHeight, displayOperatorMinHeight}
     func getMinHeight(_ index: MathConstant) -> Int32 {
-        values[index.rawValue]
+        fetchMinHeight(index)
     }
 
     private func fetchMinHeight(_ index: MathConstant) -> Int32 {
@@ -159,7 +158,7 @@ class MathConstantsTable {
 
     /// for the remaining
     func getMathValue(_ index: MathConstant) -> Int32 {
-        values[index.rawValue]
+        fetchMathValue(index)
     }
 
     private func fetchMathValue(_ index: MathConstant) -> Int32 {
