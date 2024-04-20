@@ -194,7 +194,7 @@ public extension CTFont {
         return nil
     }
 
-    func createCachedMathData(ppem: UInt32 = 0) -> MathData {
-        MathData(self, ppem: ppem)
+    func createCachedMathTable(ppem: UInt32 = 0) -> CachedMathTable {
+        CachedMathTable(self, ppem: ppem)
     }
 }

@@ -8,21 +8,21 @@ final class MathTableTests: XCTestCase {
     func testHasData() {
         do {
             let helvetica = CTFontCreateWithName("Helvetica" as CFString, 12, nil)
-            let mathData = helvetica.createCachedMathData()
-            XCTAssertFalse(mathData.hasData())
+            let mathTable = helvetica.createCachedMathTable()
+            XCTAssertFalse(mathTable.hasData())
         }
 
         do {
             let lmmath = openCTFont("fonts/latinmodern-math.otf", 12)
-            let mathData = lmmath.createCachedMathData()
-            XCTAssertTrue(mathData.hasData())
+            let mathTable = lmmath.createCachedMathTable()
+            XCTAssertTrue(mathTable.hasData())
         }
     }
 
     func testMathConstants() {
         let lmmath = openCTFont("fonts/latinmodern-math.otf", 12)
-        let mathData = lmmath.createCachedMathData()
-        XCTAssertTrue(mathData.hasData())
+        let mathTable = lmmath.createCachedMathTable()
+        XCTAssertTrue(mathTable.hasData())
 
         let ruleThickness: CGFloat = 0.48
         let commonGap: CGFloat = 1.44
@@ -37,131 +37,131 @@ final class MathTableTests: XCTestCase {
             XCTAssertEqual(pts(actual), expected, accuracy: accuracy)
         }
 
-        XCTAssertEqual(mathData.getConstant(.scriptPercentScaleDown), 70)
-        XCTAssertEqual(mathData.getConstant(.scriptScriptPercentScaleDown), 50)
-        assertEqual(mathData.getConstant(.delimitedSubFormulaMinHeight), 15.6)
-        assertEqual(mathData.getConstant(.displayOperatorMinHeight), 15.6)
-        assertEqual(mathData.getConstant(.mathLeading), 1.848)
-        assertEqual(mathData.getConstant(.axisHeight), 3.0)
-        assertEqual(mathData.getConstant(.accentBaseHeight), 5.4)
-        assertEqual(mathData.getConstant(.flattenedAccentBaseHeight), 7.968)
-        assertEqual(mathData.getConstant(.subscriptShiftDown), 2.964)
-        assertEqual(mathData.getConstant(.subscriptTopMax), 4.128)
-        assertEqual(mathData.getConstant(.subscriptBaselineDropMin), 2.4)
-        assertEqual(mathData.getConstant(.superscriptShiftUp), 4.356)
-        assertEqual(mathData.getConstant(.superscriptShiftUpCramped), 3.468)
-        assertEqual(mathData.getConstant(.superscriptBottomMin), 1.296)
-        assertEqual(mathData.getConstant(.superscriptBaselineDropMax), 3.0)
-        assertEqual(mathData.getConstant(.subSuperscriptGapMin), 1.92)
-        assertEqual(mathData.getConstant(.superscriptBottomMaxWithSubscript), 4.128)
-        assertEqual(mathData.getConstant(.spaceAfterScript), 0.672)
-        assertEqual(mathData.getConstant(.upperLimitGapMin), 2.4)
-        assertEqual(mathData.getConstant(.upperLimitBaselineRiseMin), 1.332)
-        assertEqual(mathData.getConstant(.lowerLimitGapMin), 2.004)
-        assertEqual(mathData.getConstant(.lowerLimitBaselineDropMin), 7.2)
-        assertEqual(mathData.getConstant(.stackTopShiftUp), 5.328)
-        assertEqual(mathData.getConstant(.stackTopDisplayStyleShiftUp), 8.124)
-        assertEqual(mathData.getConstant(.stackBottomShiftDown), 4.14)
-        assertEqual(mathData.getConstant(.stackBottomDisplayStyleShiftDown), 8.232)
-        assertEqual(mathData.getConstant(.stackGapMin), 1.44)
-        assertEqual(mathData.getConstant(.stackDisplayStyleGapMin), 3.36)
-        assertEqual(mathData.getConstant(.stretchStackTopShiftUp), 1.332)
-        assertEqual(mathData.getConstant(.stretchStackBottomShiftDown), 7.2)
-        assertEqual(mathData.getConstant(.stretchStackGapAboveMin), 2.4)
-        assertEqual(mathData.getConstant(.stretchStackGapBelowMin), 2.004)
-        assertEqual(mathData.getConstant(.fractionNumeratorShiftUp), 4.728)
-        assertEqual(mathData.getConstant(.fractionNumeratorDisplayStyleShiftUp), 8.124)
-        assertEqual(mathData.getConstant(.fractionDenominatorShiftDown), 4.14)
-        assertEqual(mathData.getConstant(.fractionDenominatorDisplayStyleShiftDown), 8.232)
-        assertEqual(mathData.getConstant(.fractionNumeratorGapMin), ruleThickness)
-        assertEqual(mathData.getConstant(.fractionNumDisplayStyleGapMin), commonGap)
-        assertEqual(mathData.getConstant(.fractionRuleThickness), ruleThickness)
-        assertEqual(mathData.getConstant(.fractionDenominatorGapMin), ruleThickness)
-        assertEqual(mathData.getConstant(.fractionDenomDisplayStyleGapMin), commonGap)
-        assertEqual(mathData.getConstant(.skewedFractionHorizontalGap), 4.2)
-        assertEqual(mathData.getConstant(.skewedFractionVerticalGap), 1.152, accuracy: eps)
-        assertEqual(mathData.getConstant(.overbarVerticalGap), commonGap)
-        assertEqual(mathData.getConstant(.overbarRuleThickness), ruleThickness)
-        assertEqual(mathData.getConstant(.overbarExtraAscender), ruleThickness)
-        assertEqual(mathData.getConstant(.underbarVerticalGap), commonGap)
-        assertEqual(mathData.getConstant(.underbarRuleThickness), ruleThickness)
-        assertEqual(mathData.getConstant(.underbarExtraDescender), ruleThickness)
-        assertEqual(mathData.getConstant(.radicalVerticalGap), 0.6)
-        assertEqual(mathData.getConstant(.radicalDisplayStyleVerticalGap), 1.776)
-        assertEqual(mathData.getConstant(.radicalRuleThickness), ruleThickness)
-        assertEqual(mathData.getConstant(.radicalExtraAscender), ruleThickness)
-        assertEqual(mathData.getConstant(.radicalKernBeforeDegree), 3.336)
-        assertEqual(mathData.getConstant(.radicalKernAfterDegree), -6.672)
-        XCTAssertEqual(mathData.getConstant(.radicalDegreeBottomRaisePercent), 60)
+        XCTAssertEqual(mathTable.getConstant(.scriptPercentScaleDown), 70)
+        XCTAssertEqual(mathTable.getConstant(.scriptScriptPercentScaleDown), 50)
+        assertEqual(mathTable.getConstant(.delimitedSubFormulaMinHeight), 15.6)
+        assertEqual(mathTable.getConstant(.displayOperatorMinHeight), 15.6)
+        assertEqual(mathTable.getConstant(.mathLeading), 1.848)
+        assertEqual(mathTable.getConstant(.axisHeight), 3.0)
+        assertEqual(mathTable.getConstant(.accentBaseHeight), 5.4)
+        assertEqual(mathTable.getConstant(.flattenedAccentBaseHeight), 7.968)
+        assertEqual(mathTable.getConstant(.subscriptShiftDown), 2.964)
+        assertEqual(mathTable.getConstant(.subscriptTopMax), 4.128)
+        assertEqual(mathTable.getConstant(.subscriptBaselineDropMin), 2.4)
+        assertEqual(mathTable.getConstant(.superscriptShiftUp), 4.356)
+        assertEqual(mathTable.getConstant(.superscriptShiftUpCramped), 3.468)
+        assertEqual(mathTable.getConstant(.superscriptBottomMin), 1.296)
+        assertEqual(mathTable.getConstant(.superscriptBaselineDropMax), 3.0)
+        assertEqual(mathTable.getConstant(.subSuperscriptGapMin), 1.92)
+        assertEqual(mathTable.getConstant(.superscriptBottomMaxWithSubscript), 4.128)
+        assertEqual(mathTable.getConstant(.spaceAfterScript), 0.672)
+        assertEqual(mathTable.getConstant(.upperLimitGapMin), 2.4)
+        assertEqual(mathTable.getConstant(.upperLimitBaselineRiseMin), 1.332)
+        assertEqual(mathTable.getConstant(.lowerLimitGapMin), 2.004)
+        assertEqual(mathTable.getConstant(.lowerLimitBaselineDropMin), 7.2)
+        assertEqual(mathTable.getConstant(.stackTopShiftUp), 5.328)
+        assertEqual(mathTable.getConstant(.stackTopDisplayStyleShiftUp), 8.124)
+        assertEqual(mathTable.getConstant(.stackBottomShiftDown), 4.14)
+        assertEqual(mathTable.getConstant(.stackBottomDisplayStyleShiftDown), 8.232)
+        assertEqual(mathTable.getConstant(.stackGapMin), 1.44)
+        assertEqual(mathTable.getConstant(.stackDisplayStyleGapMin), 3.36)
+        assertEqual(mathTable.getConstant(.stretchStackTopShiftUp), 1.332)
+        assertEqual(mathTable.getConstant(.stretchStackBottomShiftDown), 7.2)
+        assertEqual(mathTable.getConstant(.stretchStackGapAboveMin), 2.4)
+        assertEqual(mathTable.getConstant(.stretchStackGapBelowMin), 2.004)
+        assertEqual(mathTable.getConstant(.fractionNumeratorShiftUp), 4.728)
+        assertEqual(mathTable.getConstant(.fractionNumeratorDisplayStyleShiftUp), 8.124)
+        assertEqual(mathTable.getConstant(.fractionDenominatorShiftDown), 4.14)
+        assertEqual(mathTable.getConstant(.fractionDenominatorDisplayStyleShiftDown), 8.232)
+        assertEqual(mathTable.getConstant(.fractionNumeratorGapMin), ruleThickness)
+        assertEqual(mathTable.getConstant(.fractionNumDisplayStyleGapMin), commonGap)
+        assertEqual(mathTable.getConstant(.fractionRuleThickness), ruleThickness)
+        assertEqual(mathTable.getConstant(.fractionDenominatorGapMin), ruleThickness)
+        assertEqual(mathTable.getConstant(.fractionDenomDisplayStyleGapMin), commonGap)
+        assertEqual(mathTable.getConstant(.skewedFractionHorizontalGap), 4.2)
+        assertEqual(mathTable.getConstant(.skewedFractionVerticalGap), 1.152, accuracy: eps)
+        assertEqual(mathTable.getConstant(.overbarVerticalGap), commonGap)
+        assertEqual(mathTable.getConstant(.overbarRuleThickness), ruleThickness)
+        assertEqual(mathTable.getConstant(.overbarExtraAscender), ruleThickness)
+        assertEqual(mathTable.getConstant(.underbarVerticalGap), commonGap)
+        assertEqual(mathTable.getConstant(.underbarRuleThickness), ruleThickness)
+        assertEqual(mathTable.getConstant(.underbarExtraDescender), ruleThickness)
+        assertEqual(mathTable.getConstant(.radicalVerticalGap), 0.6)
+        assertEqual(mathTable.getConstant(.radicalDisplayStyleVerticalGap), 1.776)
+        assertEqual(mathTable.getConstant(.radicalRuleThickness), ruleThickness)
+        assertEqual(mathTable.getConstant(.radicalExtraAscender), ruleThickness)
+        assertEqual(mathTable.getConstant(.radicalKernBeforeDegree), 3.336)
+        assertEqual(mathTable.getConstant(.radicalKernAfterDegree), -6.672)
+        XCTAssertEqual(mathTable.getConstant(.radicalDegreeBottomRaisePercent), 60)
     }
 
     func testMathConstants_2() {
         do {
             let font = openCTFont("fonts/MathTestFontEmpty.otf", 10.0)
-            let mathData = font.createCachedMathData()
-            XCTAssert(mathData.getConstant(.axisHeight) == 0) // MathConstants not available
+            let mathTable = font.createCachedMathTable()
+            XCTAssert(mathTable.getConstant(.axisHeight) == 0) // MathConstants not available
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontFull.otf", 10.0)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
-            XCTAssertEqual(mathData.getConstant(.scriptPercentScaleDown), 87)
-            XCTAssertEqual(mathData.getConstant(.scriptScriptPercentScaleDown), 76)
-            XCTAssertEqual(mathData.getConstant(.delimitedSubFormulaMinHeight), 100)
-            XCTAssertEqual(mathData.getConstant(.displayOperatorMinHeight), 200)
-            XCTAssertEqual(mathData.getConstant(.mathLeading), 300)
-            XCTAssertEqual(mathData.getConstant(.axisHeight), 400)
-            XCTAssertEqual(mathData.getConstant(.accentBaseHeight), 500)
-            XCTAssertEqual(mathData.getConstant(.flattenedAccentBaseHeight), 600)
-            XCTAssertEqual(mathData.getConstant(.subscriptShiftDown), 700)
-            XCTAssertEqual(mathData.getConstant(.subscriptTopMax), 800)
-            XCTAssertEqual(mathData.getConstant(.subscriptBaselineDropMin), 900)
-            XCTAssertEqual(mathData.getConstant(.superscriptShiftUp), 1100)
-            XCTAssertEqual(mathData.getConstant(.superscriptShiftUpCramped), 1200)
-            XCTAssertEqual(mathData.getConstant(.superscriptBottomMin), 1300)
-            XCTAssertEqual(mathData.getConstant(.superscriptBaselineDropMax), 1400)
-            XCTAssertEqual(mathData.getConstant(.subSuperscriptGapMin), 1500)
-            XCTAssertEqual(mathData.getConstant(.superscriptBottomMaxWithSubscript), 1600)
-            XCTAssertEqual(mathData.getConstant(.spaceAfterScript), 1700)
-            XCTAssertEqual(mathData.getConstant(.upperLimitGapMin), 1800)
-            XCTAssertEqual(mathData.getConstant(.upperLimitBaselineRiseMin), 1900)
-            XCTAssertEqual(mathData.getConstant(.lowerLimitGapMin), 2200)
-            XCTAssertEqual(mathData.getConstant(.lowerLimitBaselineDropMin), 2300)
-            XCTAssertEqual(mathData.getConstant(.stackTopShiftUp), 2400)
-            XCTAssertEqual(mathData.getConstant(.stackTopDisplayStyleShiftUp), 2500)
-            XCTAssertEqual(mathData.getConstant(.stackBottomShiftDown), 2600)
-            XCTAssertEqual(mathData.getConstant(.stackBottomDisplayStyleShiftDown), 2700)
-            XCTAssertEqual(mathData.getConstant(.stackGapMin), 2800)
-            XCTAssertEqual(mathData.getConstant(.stackDisplayStyleGapMin), 2900)
-            XCTAssertEqual(mathData.getConstant(.stretchStackTopShiftUp), 3000)
-            XCTAssertEqual(mathData.getConstant(.stretchStackBottomShiftDown), 3100)
-            XCTAssertEqual(mathData.getConstant(.stretchStackGapAboveMin), 3200)
-            XCTAssertEqual(mathData.getConstant(.stretchStackGapBelowMin), 3300)
-            XCTAssertEqual(mathData.getConstant(.fractionNumeratorShiftUp), 3400)
-            XCTAssertEqual(mathData.getConstant(.fractionNumeratorDisplayStyleShiftUp), 3500)
-            XCTAssertEqual(mathData.getConstant(.fractionDenominatorShiftDown), 3600)
-            XCTAssertEqual(mathData.getConstant(.fractionDenominatorDisplayStyleShiftDown), 3700)
-            XCTAssertEqual(mathData.getConstant(.fractionNumeratorGapMin), 3800)
-            XCTAssertEqual(mathData.getConstant(.fractionNumDisplayStyleGapMin), 3900)
-            XCTAssertEqual(mathData.getConstant(.fractionRuleThickness), 4000)
-            XCTAssertEqual(mathData.getConstant(.fractionDenominatorGapMin), 4100)
-            XCTAssertEqual(mathData.getConstant(.fractionDenomDisplayStyleGapMin), 4200)
-            XCTAssertEqual(mathData.getConstant(.skewedFractionHorizontalGap), 4300)
-            XCTAssertEqual(mathData.getConstant(.skewedFractionVerticalGap), 4400)
-            XCTAssertEqual(mathData.getConstant(.overbarVerticalGap), 4500)
-            XCTAssertEqual(mathData.getConstant(.overbarRuleThickness), 4600)
-            XCTAssertEqual(mathData.getConstant(.overbarExtraAscender), 4700)
-            XCTAssertEqual(mathData.getConstant(.underbarVerticalGap), 4800)
-            XCTAssertEqual(mathData.getConstant(.underbarRuleThickness), 4900)
-            XCTAssertEqual(mathData.getConstant(.underbarExtraDescender), 5000)
-            XCTAssertEqual(mathData.getConstant(.radicalVerticalGap), 5100)
-            XCTAssertEqual(mathData.getConstant(.radicalDisplayStyleVerticalGap), 5200)
-            XCTAssertEqual(mathData.getConstant(.radicalRuleThickness), 5300)
-            XCTAssertEqual(mathData.getConstant(.radicalExtraAscender), 5400)
-            XCTAssertEqual(mathData.getConstant(.radicalKernBeforeDegree), 5500)
-            XCTAssertEqual(mathData.getConstant(.radicalKernAfterDegree), 5600)
-            XCTAssertEqual(mathData.getConstant(.radicalDegreeBottomRaisePercent), 65)
+            XCTAssertEqual(mathTable.getConstant(.scriptPercentScaleDown), 87)
+            XCTAssertEqual(mathTable.getConstant(.scriptScriptPercentScaleDown), 76)
+            XCTAssertEqual(mathTable.getConstant(.delimitedSubFormulaMinHeight), 100)
+            XCTAssertEqual(mathTable.getConstant(.displayOperatorMinHeight), 200)
+            XCTAssertEqual(mathTable.getConstant(.mathLeading), 300)
+            XCTAssertEqual(mathTable.getConstant(.axisHeight), 400)
+            XCTAssertEqual(mathTable.getConstant(.accentBaseHeight), 500)
+            XCTAssertEqual(mathTable.getConstant(.flattenedAccentBaseHeight), 600)
+            XCTAssertEqual(mathTable.getConstant(.subscriptShiftDown), 700)
+            XCTAssertEqual(mathTable.getConstant(.subscriptTopMax), 800)
+            XCTAssertEqual(mathTable.getConstant(.subscriptBaselineDropMin), 900)
+            XCTAssertEqual(mathTable.getConstant(.superscriptShiftUp), 1100)
+            XCTAssertEqual(mathTable.getConstant(.superscriptShiftUpCramped), 1200)
+            XCTAssertEqual(mathTable.getConstant(.superscriptBottomMin), 1300)
+            XCTAssertEqual(mathTable.getConstant(.superscriptBaselineDropMax), 1400)
+            XCTAssertEqual(mathTable.getConstant(.subSuperscriptGapMin), 1500)
+            XCTAssertEqual(mathTable.getConstant(.superscriptBottomMaxWithSubscript), 1600)
+            XCTAssertEqual(mathTable.getConstant(.spaceAfterScript), 1700)
+            XCTAssertEqual(mathTable.getConstant(.upperLimitGapMin), 1800)
+            XCTAssertEqual(mathTable.getConstant(.upperLimitBaselineRiseMin), 1900)
+            XCTAssertEqual(mathTable.getConstant(.lowerLimitGapMin), 2200)
+            XCTAssertEqual(mathTable.getConstant(.lowerLimitBaselineDropMin), 2300)
+            XCTAssertEqual(mathTable.getConstant(.stackTopShiftUp), 2400)
+            XCTAssertEqual(mathTable.getConstant(.stackTopDisplayStyleShiftUp), 2500)
+            XCTAssertEqual(mathTable.getConstant(.stackBottomShiftDown), 2600)
+            XCTAssertEqual(mathTable.getConstant(.stackBottomDisplayStyleShiftDown), 2700)
+            XCTAssertEqual(mathTable.getConstant(.stackGapMin), 2800)
+            XCTAssertEqual(mathTable.getConstant(.stackDisplayStyleGapMin), 2900)
+            XCTAssertEqual(mathTable.getConstant(.stretchStackTopShiftUp), 3000)
+            XCTAssertEqual(mathTable.getConstant(.stretchStackBottomShiftDown), 3100)
+            XCTAssertEqual(mathTable.getConstant(.stretchStackGapAboveMin), 3200)
+            XCTAssertEqual(mathTable.getConstant(.stretchStackGapBelowMin), 3300)
+            XCTAssertEqual(mathTable.getConstant(.fractionNumeratorShiftUp), 3400)
+            XCTAssertEqual(mathTable.getConstant(.fractionNumeratorDisplayStyleShiftUp), 3500)
+            XCTAssertEqual(mathTable.getConstant(.fractionDenominatorShiftDown), 3600)
+            XCTAssertEqual(mathTable.getConstant(.fractionDenominatorDisplayStyleShiftDown), 3700)
+            XCTAssertEqual(mathTable.getConstant(.fractionNumeratorGapMin), 3800)
+            XCTAssertEqual(mathTable.getConstant(.fractionNumDisplayStyleGapMin), 3900)
+            XCTAssertEqual(mathTable.getConstant(.fractionRuleThickness), 4000)
+            XCTAssertEqual(mathTable.getConstant(.fractionDenominatorGapMin), 4100)
+            XCTAssertEqual(mathTable.getConstant(.fractionDenomDisplayStyleGapMin), 4200)
+            XCTAssertEqual(mathTable.getConstant(.skewedFractionHorizontalGap), 4300)
+            XCTAssertEqual(mathTable.getConstant(.skewedFractionVerticalGap), 4400)
+            XCTAssertEqual(mathTable.getConstant(.overbarVerticalGap), 4500)
+            XCTAssertEqual(mathTable.getConstant(.overbarRuleThickness), 4600)
+            XCTAssertEqual(mathTable.getConstant(.overbarExtraAscender), 4700)
+            XCTAssertEqual(mathTable.getConstant(.underbarVerticalGap), 4800)
+            XCTAssertEqual(mathTable.getConstant(.underbarRuleThickness), 4900)
+            XCTAssertEqual(mathTable.getConstant(.underbarExtraDescender), 5000)
+            XCTAssertEqual(mathTable.getConstant(.radicalVerticalGap), 5100)
+            XCTAssertEqual(mathTable.getConstant(.radicalDisplayStyleVerticalGap), 5200)
+            XCTAssertEqual(mathTable.getConstant(.radicalRuleThickness), 5300)
+            XCTAssertEqual(mathTable.getConstant(.radicalExtraAscender), 5400)
+            XCTAssertEqual(mathTable.getConstant(.radicalKernBeforeDegree), 5500)
+            XCTAssertEqual(mathTable.getConstant(.radicalKernAfterDegree), 5600)
+            XCTAssertEqual(mathTable.getConstant(.radicalDegreeBottomRaisePercent), 65)
         }
     }
 
@@ -170,63 +170,63 @@ final class MathTableTests: XCTestCase {
 
         let glyph = font.getGlyphWithName("f")
 
-        let mathData = font.createCachedMathData()
-        XCTAssertEqual(mathData.getGlyphItalicsCorrection(glyph), 79)
+        let mathTable = font.createCachedMathTable()
+        XCTAssertEqual(mathTable.getGlyphItalicsCorrection(glyph), 79)
     }
 
     func testMathItalicsCorrection_2() {
         // MathGlyphInfo not available
         do {
             let font = openCTFont("fonts/MathTestFontEmpty.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphItalicsCorrection(glyph), 0)
+            XCTAssertEqual(mathTable.getGlyphItalicsCorrection(glyph), 0)
         }
 
         // MathGlyphInfo empty
         do {
             let font = openCTFont("fonts/MathTestFontPartial1.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphItalicsCorrection(glyph), 0)
+            XCTAssertEqual(mathTable.getGlyphItalicsCorrection(glyph), 0)
         }
 
         // MathItalicsCorrectionInfo empty
         do {
             let font = openCTFont("fonts/MathTestFontPartial2.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphItalicsCorrection(glyph), 0)
+            XCTAssertEqual(mathTable.getGlyphItalicsCorrection(glyph), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontFull.otf", 10)
 
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             var glyph: CGGlyph
 
             glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphItalicsCorrection(glyph), 0) // Glyph without italic correction.
+            XCTAssertEqual(mathTable.getGlyphItalicsCorrection(glyph), 0) // Glyph without italic correction.
 
             glyph = font.getGlyphWithName("A")
-            XCTAssertEqual(mathData.getGlyphItalicsCorrection(glyph), 197)
+            XCTAssertEqual(mathTable.getGlyphItalicsCorrection(glyph), 197)
 
             glyph = font.getGlyphWithName("B")
-            XCTAssertEqual(mathData.getGlyphItalicsCorrection(glyph), 150)
+            XCTAssertEqual(mathTable.getGlyphItalicsCorrection(glyph), 150)
 
             glyph = font.getGlyphWithName("C")
-            XCTAssertEqual(mathData.getGlyphItalicsCorrection(glyph), 452)
+            XCTAssertEqual(mathTable.getGlyphItalicsCorrection(glyph), 452)
         }
     }
 
     func testMathTopAccentAttachment() {
         let font = openCTFont("fonts/latinmodern-math.otf", 12)
 
-        let mathData = font.createCachedMathData()
+        let mathTable = font.createCachedMathTable()
 
         let glyph = font.getGlyphWithName("f")
-        XCTAssertEqual(mathData.getGlyphTopAccentAttachment(glyph), 262)
+        XCTAssertEqual(mathTable.getGlyphTopAccentAttachment(glyph), 262)
     }
 
     func testMathTopAccentAttachment_2() {
@@ -234,47 +234,47 @@ final class MathTableTests: XCTestCase {
         do {
             let font = openCTFont("fonts/MathTestFontEmpty.otf", 10)
 
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphTopAccentAttachment(glyph), 500)
+            XCTAssertEqual(mathTable.getGlyphTopAccentAttachment(glyph), 500)
         }
 
         // MathGlyphInfo empty
         do {
             let font = openCTFont("fonts/MathTestFontPartial1.otf", 10)
 
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphTopAccentAttachment(glyph), 500)
+            XCTAssertEqual(mathTable.getGlyphTopAccentAttachment(glyph), 500)
         }
 
         // MathTopAccentAttachment empty
         do {
             let font = openCTFont("fonts/MathTestFontPartial2.otf", 10)
 
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphTopAccentAttachment(glyph), 500)
+            XCTAssertEqual(mathTable.getGlyphTopAccentAttachment(glyph), 500)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontFull.otf", 10)
 
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             var glyph: CGGlyph
 
             glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphTopAccentAttachment(glyph), 500)
+            XCTAssertEqual(mathTable.getGlyphTopAccentAttachment(glyph), 500)
 
             glyph = font.getGlyphWithName("D")
-            XCTAssertEqual(mathData.getGlyphTopAccentAttachment(glyph), 374)
+            XCTAssertEqual(mathTable.getGlyphTopAccentAttachment(glyph), 374)
 
             glyph = font.getGlyphWithName("E")
-            XCTAssertEqual(mathData.getGlyphTopAccentAttachment(glyph), 346)
+            XCTAssertEqual(mathTable.getGlyphTopAccentAttachment(glyph), 346)
 
             glyph = font.getGlyphWithName("F")
-            XCTAssertEqual(mathData.getGlyphTopAccentAttachment(glyph), 318)
+            XCTAssertEqual(mathTable.getGlyphTopAccentAttachment(glyph), 318)
         }
     }
 
@@ -283,29 +283,29 @@ final class MathTableTests: XCTestCase {
         do {
             let font = openCTFont("fonts/MathTestFontEmpty.otf", 10)
             let glyph = font.getGlyphWithName("space")
-            let mathData = font.createCachedMathData()
-            XCTAssertFalse(mathData.isGlyphExtendedShape(glyph))
+            let mathTable = font.createCachedMathTable()
+            XCTAssertFalse(mathTable.isGlyphExtendedShape(glyph))
         }
 
         // MathGlyphInfo empty
         do {
             let font = openCTFont("fonts/MathTestFontPartial1.otf", 10)
             let glyph = font.getGlyphWithName("space")
-            let mathData = font.createCachedMathData()
-            XCTAssertFalse(mathData.isGlyphExtendedShape(glyph))
+            let mathTable = font.createCachedMathTable()
+            XCTAssertFalse(mathTable.isGlyphExtendedShape(glyph))
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontFull.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             var glyph: CGGlyph
 
             glyph = font.getGlyphWithName("G")
-            XCTAssertFalse(mathData.isGlyphExtendedShape(glyph))
+            XCTAssertFalse(mathTable.isGlyphExtendedShape(glyph))
 
             glyph = font.getGlyphWithName("H")
-            XCTAssert(mathData.isGlyphExtendedShape(glyph))
+            XCTAssert(mathTable.isGlyphExtendedShape(glyph))
         }
     }
 
@@ -314,55 +314,55 @@ final class MathTableTests: XCTestCase {
         do {
             let font = openCTFont("fonts/MathTestFontEmpty.otf", 10)
             let glyph = font.getGlyphWithName("space")
-            let mathData = font.createCachedMathData()
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 0), 0)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopLeft, 0), 0)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .BottomRight, 0), 0)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .BottomLeft, 0), 0)
+            let mathTable = font.createCachedMathTable()
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 0), 0)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopLeft, 0), 0)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .BottomRight, 0), 0)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .BottomLeft, 0), 0)
         }
 
         // MathKernInfo empty
         do {
             let font = openCTFont("fonts/MathTestFontPartial2.otf", 10)
             let glyph = font.getGlyphWithName("space")
-            let mathData = font.createCachedMathData()
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 0), 0)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopLeft, 0), 0)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .BottomRight, 0), 0)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .BottomLeft, 0), 0)
+            let mathTable = font.createCachedMathTable()
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 0), 0)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopLeft, 0), 0)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .BottomRight, 0), 0)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .BottomLeft, 0), 0)
         }
 
         // MathKernInfoRecords empty
         do {
             let font = openCTFont("fonts/MathTestFontPartial3.otf", 10)
             let glyph = font.getGlyphWithName("space")
-            let mathData = font.createCachedMathData()
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 0), 0)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopLeft, 0), 0)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .BottomRight, 0), 0)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .BottomLeft, 0), 0)
+            let mathTable = font.createCachedMathTable()
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 0), 0)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopLeft, 0), 0)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .BottomRight, 0), 0)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .BottomLeft, 0), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontFull.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let glyph = font.getGlyphWithName("I")
 
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 7), 31) // less than min height
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 14), 52) // equal to min height
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 20), 52)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 23), 73)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 31), 73)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 32), 94)
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 86), 220) // equal to max height
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 91), 220) // larger than max height
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 96), 220) // larger than max height
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 7), 31) // less than min height
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 14), 52) // equal to min height
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 20), 52)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 23), 73)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 31), 73)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 32), 94)
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 86), 220) // equal to max height
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 91), 220) // larger than max height
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 96), 220) // larger than max height
 
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopRight, 39), 94) // top right
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .TopLeft, 39), 55) // top left
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .BottomRight, 39), 22) // bottom right
-            XCTAssertEqual(mathData.getGlyphKerning(glyph, .BottomLeft, 39), 50) // bottom left
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopRight, 39), 94) // top right
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .TopLeft, 39), 55) // top left
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .BottomRight, 39), 22) // bottom right
+            XCTAssertEqual(mathTable.getGlyphKerning(glyph, .BottomLeft, 39), 50) // bottom left
         }
     }
 
@@ -371,52 +371,52 @@ final class MathTableTests: XCTestCase {
             let font = openCTFont("fonts/MathTestFontEmpty.otf", 10)
             let glyph = font.getGlyphWithName("space")
 
-            let mathData = font.createCachedMathData()
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .TopRight), 0)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .TopLeft), 0)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .BottomRight), 0)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .BottomLeft), 0)
+            let mathTable = font.createCachedMathTable()
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .TopRight), 0)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .TopLeft), 0)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .BottomRight), 0)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .BottomLeft), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontPartial2.otf", 10)
             let glyph = font.getGlyphWithName("space")
 
-            let mathData = font.createCachedMathData()
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .TopRight), 0)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .TopLeft), 0)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .BottomRight), 0)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .BottomLeft), 0)
+            let mathTable = font.createCachedMathTable()
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .TopRight), 0)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .TopLeft), 0)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .BottomRight), 0)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .BottomLeft), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontPartial3.otf", 10)
             let glyph = font.getGlyphWithName("space")
 
-            let mathData = font.createCachedMathData()
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .TopRight), 0)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .TopLeft), 0)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .BottomRight), 0)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .BottomLeft), 0)
+            let mathTable = font.createCachedMathTable()
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .TopRight), 0)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .TopLeft), 0)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .BottomRight), 0)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .BottomLeft), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontFull.otf", 10.0)
             let glyph = font.getGlyphWithName("I")
 
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .TopRight, 0), 10)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .TopLeft, 0), 3)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .BottomRight, 0), 9)
-            XCTAssertEqual(mathData.getGlyphKerningCount(glyph, .BottomLeft, 0), 7)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .TopRight, 0), 10)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .TopLeft, 0), 3)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .BottomRight, 0), 9)
+            XCTAssertEqual(mathTable.getGlyphKerningCount(glyph, .BottomLeft, 0), 7)
 
             let entriesCount = 20
             var entries = [MathKernEntry](repeating: .init(), count: entriesCount)
 
             // case 1
             var count = entries.count
-            XCTAssertEqual(mathData.getGlyphKernings(glyph, .TopRight, 0, &count, &entries), 10)
+            XCTAssertEqual(mathTable.getGlyphKernings(glyph, .TopRight, 0, &count, &entries), 10)
             XCTAssertEqual(count, 10)
             XCTAssertEqual(entries[0].maxCorrectionHeight, 14)
             XCTAssertEqual(entries[0].kernValue, 31)
@@ -441,7 +441,7 @@ final class MathTableTests: XCTestCase {
 
             // case 2
             count = entries.count
-            XCTAssertEqual(mathData.getGlyphKernings(glyph, .TopLeft, 0, &count, &entries), 3)
+            XCTAssertEqual(mathTable.getGlyphKernings(glyph, .TopLeft, 0, &count, &entries), 3)
             XCTAssertEqual(count, 3)
             XCTAssertEqual(entries[0].maxCorrectionHeight, 20)
             XCTAssertEqual(entries[0].kernValue, 25)
@@ -455,52 +455,52 @@ final class MathTableTests: XCTestCase {
     func testGetGlyphVariants() {
         do {
             let font = openCTFont("fonts/MathTestFontEmpty.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .RTL), 0)
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .BTT), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontPartial1.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .RTL), 0)
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .BTT), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontPartial2.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .RTL), 0)
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .BTT), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontPartial3.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .RTL), 0)
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .BTT), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontPartial4.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .RTL), 0)
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .BTT), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontFull.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let variantsSize = 20
             var variants = [MathGlyphVariant](repeating: .init(), count: variantsSize)
@@ -508,18 +508,18 @@ final class MathTableTests: XCTestCase {
             var offset = 0
 
             var glyph = font.getGlyphWithName("arrowleft")
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .BTT), 0)
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .RTL), 3)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .RTL), 3)
 
             glyph = font.getGlyphWithName("arrowup")
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .BTT), 4)
-            XCTAssertEqual(mathData.getGlyphVariantCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .BTT), 4)
+            XCTAssertEqual(mathTable.getGlyphVariantCount(glyph, .RTL), 0)
 
             glyph = font.getGlyphWithName("arrowleft")
             offset = 0
             repeat {
                 count = variantsSize
-                mathData.getGlyphVariants(glyph, .RTL, offset, &count, &variants)
+                mathTable.getGlyphVariants(glyph, .RTL, offset, &count, &variants)
                 offset += count
             } while count == variantsSize
             XCTAssertEqual(offset, 3)
@@ -534,7 +534,7 @@ final class MathTableTests: XCTestCase {
             offset = 0
             repeat {
                 count = variantsSize
-                mathData.getGlyphVariants(glyph, .BTT, offset, &count, &variants)
+                mathTable.getGlyphVariants(glyph, .BTT, offset, &count, &variants)
                 offset += count
             } while count == variantsSize
             XCTAssertEqual(offset, 4)
@@ -552,85 +552,85 @@ final class MathTableTests: XCTestCase {
     func testGetMinConnectorOverlap() {
         do {
             let font = openCTFont("fonts/MathTestFontEmpty.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
-            XCTAssertEqual(mathData.getMinConnectorOverlap(.LTR), 0)
-            XCTAssertEqual(mathData.getMinConnectorOverlap(.TTB), 0)
+            XCTAssertEqual(mathTable.getMinConnectorOverlap(.LTR), 0)
+            XCTAssertEqual(mathTable.getMinConnectorOverlap(.TTB), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontPartial1.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
-            XCTAssertEqual(mathData.getMinConnectorOverlap(.LTR), 54)
-            XCTAssertEqual(mathData.getMinConnectorOverlap(.TTB), 54)
+            XCTAssertEqual(mathTable.getMinConnectorOverlap(.LTR), 54)
+            XCTAssertEqual(mathTable.getMinConnectorOverlap(.TTB), 54)
         }
     }
 
     func testGetGlyphAssembly() {
         do {
             let font = openCTFont("fonts/MathTestFontEmpty.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .RTL), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .BTT), 0)
 
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontPartial1.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .RTL), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .BTT), 0)
 
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontPartial2.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .RTL), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .BTT), 0)
 
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontPartial3.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .RTL), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .BTT), 0)
 
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontPartial4.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let glyph = font.getGlyphWithName("space")
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .RTL), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .BTT), 0)
 
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
         }
 
         do {
             let font = openCTFont("fonts/MathTestFontFull.otf", 10)
-            let mathData = font.createCachedMathData()
+            let mathTable = font.createCachedMathTable()
 
             let partsSize = 20
             var parts = [GlyphPart](repeating: .init(), count: partsSize)
@@ -639,26 +639,26 @@ final class MathTableTests: XCTestCase {
             var offset = 0
 
             var glyph = font.getGlyphWithName("arrowleft")
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 124)
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 124)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 0)
 
             glyph = font.getGlyphWithName("arrowup")
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 331)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .LTR), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyItalicsCorrection(glyph, .TTB), 331)
 
             glyph = font.getGlyphWithName("arrowright")
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .BTT), 0)
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .RTL), 3)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .BTT), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .RTL), 3)
 
             glyph = font.getGlyphWithName("arrowdown")
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .BTT), 5)
-            XCTAssertEqual(mathData.getGlyphAssemblyPartCount(glyph, .RTL), 0)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .BTT), 5)
+            XCTAssertEqual(mathTable.getGlyphAssemblyPartCount(glyph, .RTL), 0)
 
             glyph = font.getGlyphWithName("arrowright")
             offset = 0
             repeat {
                 count = partsSize
-                mathData.getGlyphAssembly(glyph, .RTL, offset, &count, &parts, &itCorr)
+                mathTable.getGlyphAssembly(glyph, .RTL, offset, &count, &parts, &itCorr)
                 offset += count
             } while count == partsSize
             XCTAssertEqual(offset, 3)
@@ -683,7 +683,7 @@ final class MathTableTests: XCTestCase {
             offset = 0
             repeat {
                 count = partsSize
-                mathData.getGlyphAssembly(glyph, .BTT, offset, &count, &parts, &itCorr)
+                mathTable.getGlyphAssembly(glyph, .BTT, offset, &count, &parts, &itCorr)
                 offset += count
             } while count == partsSize
             XCTAssertEqual(offset, 5)
@@ -728,16 +728,16 @@ final class MathTableTests: XCTestCase {
     func testDocDemo() {
         do {
             let helvetica = CTFontCreateWithName("Helvetica" as CFString, 12.0, nil)
-            let mathData = helvetica.createCachedMathData()
-            if !mathData.hasData() {
+            let mathTable = helvetica.createCachedMathTable()
+            if !mathTable.hasData() {
                 print("no MATH table")
             }
         }
 
         do {
             let lmmath = CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil)
-            let mathData = lmmath.createCachedMathData()
-            print("axis height, in design units: \(mathData.getConstant(.axisHeight))")
+            let mathTable = lmmath.createCachedMathTable()
+            print("axis height, in design units: \(mathTable.getConstant(.axisHeight))")
         }
     }
 }

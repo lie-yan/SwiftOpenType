@@ -1,7 +1,7 @@
 import CoreFoundation
 import CoreText
 
-public class MathData {
+public class CachedMathTable {
     let font: CTFont
     let ppem: UInt32
     let sizePerUnit: CGFloat
