@@ -28,16 +28,16 @@ Access to `MATH` table is fully supported.
 ```swift
 do {
     let helvetica = CTFontCreateWithName("Helvetica" as CFString, 12.0, nil)
-    let mathData = helvetica.createCachedMathData()
-    if !mathData.hasData() {
+    let mathTable = helvetica.createCachedMathTable()
+    if !mathTable.hasData() {
         print("no MATH table")
     }
 }
 
 do {
     let lmmath = CTFontCreateWithName("Latin Modern Math" as CFString, 12.0, nil)
-    let mathData = lmmath.createCachedMathData()
-    print("axis height, in design units: \(mathData.getConstant(.axisHeight))")
+    let mathTable = lmmath.createCachedMathTable()
+    print("axis height, in design units: \(mathTable.getConstant(.axisHeight))")
 }
 ```
 
