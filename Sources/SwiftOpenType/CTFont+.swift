@@ -17,6 +17,18 @@ public extension CTFont {
         return { Int32($0 / sizePerUnit) }
     }
 
+    /// Converts design units to points
+    func toPoints(_ du: Int32) -> CGFloat {
+        let sizePerUnit = getSize() / CGFloat(getUnitsPerEm())
+        return CGFloat(du) * sizePerUnit
+    }
+
+    /// Converts points to design units
+    func toDesignUnits(_ pts: CGFloat) -> Int32 {
+        let sizePerUnit = getSize() / CGFloat(getUnitsPerEm())
+        return Int32(pts / sizePerUnit)
+    }
+
     // MARK: - Getting Font Metrics (complete)
 
     func getAscent() -> CGFloat {
