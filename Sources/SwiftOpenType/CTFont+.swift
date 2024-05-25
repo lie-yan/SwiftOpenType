@@ -80,9 +80,7 @@ public extension CTFont {
     func getBoundingRectForGlyphs(_ orientation: CTFontOrientation,
                                   _ glyphs: [CGGlyph]) -> CGRect
     {
-        glyphs.withUnsafeBufferPointer {
-            CTFontGetBoundingRectsForGlyphs(self, orientation, $0.baseAddress!, nil, $0.count)
-        }
+        CTFontGetBoundingRectsForGlyphs(self, orientation, glyphs, nil, glyphs.count)
     }
 
     func getBoundingRectsForGlyphs(_ orientation: CTFontOrientation,
@@ -90,15 +88,7 @@ public extension CTFont {
                                    _ boundingRects: inout [CGRect]) -> CGRect
     {
         precondition(glyphs.count == boundingRects.count)
-        return glyphs.withUnsafeBufferPointer {
-            glyphs in boundingRects.withUnsafeMutableBufferPointer {
-                boundingRects in CTFontGetBoundingRectsForGlyphs(self,
-                                                                 orientation,
-                                                                 glyphs.baseAddress!,
-                                                                 boundingRects.baseAddress!,
-                                                                 glyphs.count)
-            }
-        }
+        return CTFontGetBoundingRectsForGlyphs(self, orientation, glyphs, &boundingRects, glyphs.count)
     }
 
     func getAdvanceForGlyph(_ orientation: CTFontOrientation,
@@ -112,9 +102,7 @@ public extension CTFont {
     func getAdvanceForGlyphs(_ orientation: CTFontOrientation,
                              _ glyphs: [CGGlyph]) -> CGFloat
     {
-        glyphs.withUnsafeBufferPointer {
-            CTFontGetAdvancesForGlyphs(self, orientation, $0.baseAddress!, nil, $0.count)
-        }
+        CTFontGetAdvancesForGlyphs(self, orientation, glyphs, nil, glyphs.count)
     }
 
     func getAdvancesForGlyphs(_ orientation: CTFontOrientation,
@@ -122,15 +110,7 @@ public extension CTFont {
                               _ advances: inout [CGSize]) -> CGFloat
     {
         precondition(glyphs.count == advances.count)
-        return glyphs.withUnsafeBufferPointer {
-            glyphs in advances.withUnsafeMutableBufferPointer {
-                advances in CTFontGetAdvancesForGlyphs(self,
-                                                       orientation,
-                                                       glyphs.baseAddress!,
-                                                       advances.baseAddress!,
-                                                       glyphs.count)
-            }
-        }
+        return CTFontGetAdvancesForGlyphs(self, orientation, glyphs, &advances, glyphs.count)
     }
 
     // MARK: - Working with Glyphs
@@ -140,13 +120,14 @@ public extension CTFont {
     /// - Returns:
     ///     the corresponding glyph id, or nil
     func getGlyphForCharacter(_ character: [UniChar]) -> CGGlyph? {
-        var glyph: CGGlyph = 0
-        let success = character.withUnsafeBufferPointer {
-            character in withUnsafeMutablePointer(to: &glyph) {
-                glyph in CTFontGetGlyphsForCharacters(self, character.baseAddress!, glyph, 1)
-            }
-        }
-        return success ? glyph : nil
+        // Undocumented behavior of CTFontGetGlyphsForCharacters with non-bmp code points:
+        // When a surrogate pair is detected, the glyph index used is the index of the high
+        // surrogate. It is documented that if a mapping is unavailable, the glyph will be set
+        // to 0.
+        precondition(character.count <= 2)
+        var glyphs: [CGGlyph] = Array(repeating: 0, count: character.count)
+        let success = CTFontGetGlyphsForCharacters(self, character, &glyphs, glyphs.count)
+        return success ? glyphs.first : nil
     }
 
     /// - Parameters:
@@ -162,17 +143,11 @@ public extension CTFont {
     /// It is the responsibility of the caller to handle the Unicode properties
     /// of the input characters.
     func getGlyphsForCharacters(_ characters: [UniChar],
-                                _ glyphs: inout [CGGlyph]) -> Bool
+                                _ glyphs: inout [CGGlyph],
+                                _ count: Int? = nil) -> Bool
     {
-        precondition(characters.count >= glyphs.count)
-        return characters.withUnsafeBufferPointer {
-            characters in glyphs.withUnsafeMutableBufferPointer {
-                glyphs in CTFontGetGlyphsForCharacters(self,
-                                                       characters.baseAddress!,
-                                                       glyphs.baseAddress!,
-                                                       glyphs.count)
-            }
-        }
+        precondition(count != nil || characters.count == glyphs.count)
+        return CTFontGetGlyphsForCharacters(self, characters, &glyphs, count ?? glyphs.count)
     }
 
     // MARK: - Table data
