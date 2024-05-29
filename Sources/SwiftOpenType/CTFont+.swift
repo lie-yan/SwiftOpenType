@@ -1,6 +1,6 @@
 import CoreText
 
-public extension CTFont {
+extension CTFont {
     func getSize() -> CGFloat {
         CTFontGetSize(self)
     }
@@ -164,13 +164,13 @@ public extension CTFont {
 
     // MARK: - Table data
 
-    internal func getMathTableData() -> CFData? {
+    func getMathTableData() -> CFData? {
         CTFontCopyTable(self,
                         CTFontTableTag(kCTFontTableMATH),
                         CTFontTableOptions(rawValue: 0))
     }
 
-    internal func getMathTable(ppem: UInt32 = 0) -> MathTable? {
+    func getMathTable(ppem: UInt32 = 0) -> MathTable? {
         if let data = getMathTableData() {
             let table = MathTable(base: CFDataGetBytePtr(data),
                                   context: ContextData(ppem: ppem, unitsPerEm: getUnitsPerEm()))
