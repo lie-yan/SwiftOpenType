@@ -92,3 +92,4 @@ iOSInjectionProject/
 
 .idea/
 .swiftpm/
+post-pr-merge.sh
